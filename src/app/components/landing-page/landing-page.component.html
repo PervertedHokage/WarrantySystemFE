@@ -5,7 +5,7 @@
   <button title="Menu" tuiIconButton tuiNavigationDrawer type="button" [(open)]="open" class="menu-mobile">
     <tui-data-list>
       @for (group of drawer | keyvalue; track group.key) {
-    <tui-opt-group [label]="">
+      <tui-opt-group [label]="">
         @for (item of group.value; track item) {
         <button tuiOption new type="button" (click)="open = false" [iconStart]="item.icon">
           {{ item.name }}
@@ -20,7 +20,7 @@
     <span tuiFade>Warranty Portal</span>
   </span>
   <hr />
-  <button appearance="secondary-grayscale" iconStart="@tui.log-in" tuiButton type="button">
+  <button appearance="secondary-grayscale" iconStart="@tui.log-in" tuiButton type="button" (click)="navigateToLogin()">
     Đăng nhập
   </button>
 </header>

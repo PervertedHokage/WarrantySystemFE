@@ -1,7 +1,7 @@
 import { KeyValuePipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { tuiAsPortal, TuiPortals } from '@taiga-ui/cdk';
 import {
   TuiAppearance,
@@ -38,6 +38,8 @@ import { TuiNavigation } from '@taiga-ui/layout';
   providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
 })
 export class LandingPageComponent extends TuiPortals {
+  private router = inject(Router);
+  
   isMainView = true;
   protected expanded = false;
   protected open = false;
@@ -55,5 +57,9 @@ export class LandingPageComponent extends TuiPortals {
 
   protected handleToggle(): void {
     this.expanded = !this.expanded;
+  }
+
+  protected navigateToLogin(): void {
+    this.router.navigate(['/login']);
   }
 }
