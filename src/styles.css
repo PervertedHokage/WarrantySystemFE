@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+html {
+  block-size: auto;
+}
+
+body {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  block-size: auto;
+  min-block-size: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,308 @@
+<div class="custom-portal">
+  <ng-container #viewContainer />
+</div>
+<header tuiNavigationHeader>
+  <button title="Menu" tuiIconButton tuiNavigationDrawer type="button" [(open)]="open" class="menu-mobile">
+    <tui-data-list>
+      @for (group of drawer | keyvalue; track group.key) {
+    <tui-opt-group [label]="">
+        @for (item of group.value; track item) {
+        <button tuiOption new type="button" (click)="open = false" [iconStart]="item.icon">
+          {{ item.name }}
+        </button>
+        }
+      </tui-opt-group>
+      }
+    </tui-data-list>
+  </button>
+  <span tuiNavigationLogo>
+    <tui-icon icon="@tui.home" />
+    <span tuiFade>Warranty Portal</span>
+  </span>
+  <hr />
+  <button appearance="secondary-grayscale" iconStart="@tui.log-in" tuiButton type="button">
+    Đăng nhập
+  </button>
+</header>
+<div class="content-div">
+  <aside [tuiNavigationAside]="expanded" class="menu-desktop">
+    <header>
+      <button tuiAsideItem type="button" [iconStart]="expanded ? '@tui.chevron-left' : '@tui.chevron-right'"
+        (click)="handleToggle()">
+        {{ expanded ? 'Thu nhỏ' : 'Mở rộng' }}
+      </button>
+    </header>
+    <button iconStart="@tui.newspaper" type="button" [tuiAsideItem]="hint">
+      <ng-container [ngTemplateOutlet]="hint" />
+      <ng-template #hint>
+        <span tuiFade>Đăng ký bảo hành</span>
+      </ng-template>
+    </button>
+    <button iconStart="@tui.history" tuiAsideItem type="button">
+      Lịch sử bảo hành
+    </button>
+    <button iconStart="@tui.contact" tuiAsideItem [routerLink]="routes.Navigation">
+      Liên hệ
+    </button>
+  </aside>
+  <div tuiNavigationMain>
+    <div class="wrapper">
+      <div class="container">
+        <section id="create-request" class="page active">
+          <div class="page-header">
+            <h2>Tạo yêu cầu bảo hành</h2>
+            <p>Vui lòng điền đầy đủ thông tin để gửi yêu cầu bảo hành</p>
+          </div>
+          <form id="warranty-form" class="form-container">
+            <!-- Customer Information -->
+            <div class="form-section">
+              <h3>Thông tin khách hàng</h3>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="customer-name">Khách hàng <span style="color:red">*</span></label>
+                    <input type="text" id="customer-name" name="customer-name" required>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="contact-person">Người liên hệ</label>
+                    <input type="text" id="contact-person" name="contact-person">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="mobile">Điện thoại di động <span style="color:red">*</span></label>
+                    <input type="tel" id="mobile" name="mobile" required>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="address">Địa chỉ</label>
+                    <input type="text" id="address" name="address">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="location">Vị trí định vị</label>
+                    <input type="text" id="location" name="location">
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="area">Vui lòng chọn khu vực</label>
+                    <select id="area" name="area">
+                      <option value="">Chọn khu vực</option>
+                      <option value="north">Miền Bắc</option>
+                      <option value="central">Miền Trung</option>
+                      <option value="south">Miền Nam</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="detail-address">Địa chỉ chi tiết</label>
+                    <input id="detail-address" name="detail-address" rows="2" />
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="smart-address">Nhận diện địa chỉ thông minh</label>
+                    <input type="text" id="smart-address" name="smart-address">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="form-section">
+              <h3>Thông tin sản phẩm</h3>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="product-name">Tên sản phẩm <span style="color:red">*</span></label>
+                    <select id="product-name" name="product-name" required>
+                      <option value="">Vui lòng chọn</option>
+                      <option value="product1">MobyData Smart Device 1</option>
+                      <option value="product2">MobyData Smart Device 2</option>
+                      <option value="product3">MobyData Smart Device Pro</option>
+                      <option value="product4">MobyData IoT Gateway</option>
+                      <option value="product5">MobyData Sensor Hub</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="failure-type">Hiện tượng hỏng hóc <span style="color:red">*</span></label>
+                    <select id="failure-type" name="failure-type" required>
+                      <option value="">Vui lòng chọn</option>
+                      <option value="power">Không lên nguồn</option>
+                      <option value="screen">Màn hình không hiển thị</option>
+                      <option value="connection">Kết nối không ổn định</option>
+                      <option value="performance">Hiệu suất kém</option>
+                      <option value="other">Lỗi khác</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="serial-number">Số SN sản phẩm <span style="color:red">*</span></label>
+                <input type="text" id="serial-number" name="serial-number" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="has-silicon-case">Có bao silicon bảo vệ không?</label>
+                    <select id="has-silicon-case" name="has-silicon-case">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="yes">Có</option>
+                      <option value="no">Không</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="has-adapter">Có bộ đối nguồn (adapter) không?</label>
+                    <select id="has-adapter" name="has-adapter">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="yes">Có</option>
+                      <option value="no">Không</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="has-data-cable">Có cấp dữ liệu không?</label>
+                    <select id="has-data-cable" name="has-data-cable">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="yes">Có</option>
+                      <option value="no">Không</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="has-battery">Có pin không?</label>
+                    <select id="has-battery" name="has-battery">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="yes">Có</option>
+                      <option value="no">Không</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="has-opening-error">Có lỗi khí mở hộp không?</label>
+                    <select id="has-opening-error" name="has-opening-error">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="yes">Có</option>
+                      <option value="no">Không</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="has-damage">Có bị rơi hoặc ép, va đập không?</label>
+                    <select id="has-damage" name="has-damage">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="yes">Có</option>
+                      <option value="no">Không</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="environment">Môi trường sử dụng</label>
+                <select id="environment" name="environment">
+                  <option value="">Vui lòng chọn</option>
+                  <option value="normal">Môi trường bình thường</option>
+                  <option value="hot">Môi trường nóng</option>
+                  <option value="cold">Môi trường kho lạnh</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="failure-context">Trong trường hợp nào thì xuất hiện hiện tượng hỏng hóc?</label>
+                <textarea id="failure-context" name="failure-context" rows="3"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="attachments">Đính kèm hình ảnh hay file</label>
+                <input type="file" id="attachments" name="attachments" multiple>
+              </div>
+            </div>
+
+            <!-- Shipping Information -->
+            <div class="form-section">
+              <h3>Thông tin vận chuyển</h3>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="shipping-company">Công ty vận chuyển</label>
+                    <select id="shipping-company" name="shipping-company">
+                      <option value="">Vui lòng chọn</option>
+                      <option value="viettel-post">Viettel Post</option>
+                      <option value="vn-post">VNPost</option>
+                      <option value="ghn">Giao hàng nhanh</option>
+                      <option value="ghtk">Giao hàng tiết kiệm</option>
+                      <option value="j&t">J&T Express</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="tracking-number">Số vận đơn</label>
+                    <input type="text" id="tracking-number" name="tracking-number">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-section">
+              <h3>Thông tin bổ sung</h3>
+              <div class="form-row">
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="software-version">Phiên bản phần mềm</label>
+                    <input type="text" id="software-version" name="software-version">
+                  </div>
+                </div>
+                <div class="form-col">
+                  <div class="form-group">
+                    <label for="repair-address">Địa chỉ gửi máy để sửa chữa</label>
+                    <input type="text" id="repair-address" name="repair-address">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="notes">Ghi chú</label>
+                <textarea id="notes" name="notes" rows="4"></textarea>
+              </div>
+            </div>
+            <button class="btn btn-block">Gửi yêu cầu bảo hành</button>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

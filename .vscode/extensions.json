@@ -1,0 +1,14 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
+  "recommendations": [
+    "angular.ng-template",
+    "formulahendry.auto-rename-tag",
+    "pranaygp.vscode-css-peek",
+    "editorconfig.editorconfig",
+    "infinity1207.angular2-switcher",
+    "mhutchie.git-graph",
+    "ecmel.vscode-html-css",
+    "oderwat.indent-rainbow",
+    "esbenp.prettier-vscode"
+  ]
+}
