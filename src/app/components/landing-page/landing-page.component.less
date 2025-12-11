@@ -25,6 +25,10 @@
   }
 }
 
+button[tuiOption].active {
+  background-color: var(--tui-background-neutral-1-pressed);
+}
+
 .wrapper {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, sans-serif;
@@ -40,6 +44,7 @@
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
+  max-width: 100% !important;
   height: 100%;
   animation: slideUp 0.5s ease-out;
 }
@@ -286,19 +291,17 @@
   height: calc(100% - 48px);
 }
 
-.border0height100() {
-  border: 0 !important;
-  height: 100% !important;
-}
-
 aside {
-  .border0height100();
+  border: 0 !important;
+  height: calc(100vh - 48px) !important;
 }
 
 div[tuiNavigationMain] {
-  .border0height100();
+  border: 0 !important;
+  height: 100% !important;
   grid-auto-rows: 1fr;
   width: 100%;
+  min-height: calc(100vh - 48px);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%),
     linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -391,14 +394,7 @@ div[tuiNavigationMain] {
   overflow-y: auto;
 }
 
-/* Ẩn tất cả các trang mặc định */
 .page {
-  display: none;
-}
-
-/* Chỉ hiển thị trang active */
-.page.active {
-  display: block;
   width: 100%;
 }
 
@@ -598,12 +594,8 @@ textarea:focus {
 }
 
 .tab-content {
+  width: 1200px;
   padding: 0;
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
 }
 
 .requests-table {

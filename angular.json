@@ -45,9 +45,12 @@
               "@taiga-ui/core/styles/taiga-ui-theme.less",
               "@taiga-ui/core/styles/taiga-ui-fonts.less",
               "@taiga-ui/styles/taiga-ui-global.less",
+              "node_modules/@slickgrid-universal/common/dist/styles/css/slickgrid-theme-bootstrap.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {

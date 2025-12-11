@@ -7,7 +7,9 @@
       @for (group of drawer | keyvalue; track group.key) {
       <tui-opt-group [label]="">
         @for (item of group.value; track item) {
-        <button tuiOption new type="button" (click)="open = false" [iconStart]="item.icon">
+        <button tuiOption new type="button" (click)="open = false" [iconStart]="item.icon"
+          [class.active]="currentTab == item.tabIndex"
+          (click)="item.tabIndex ? currentTab = item.tabIndex : currentTab">
           {{ item.name }}
         </button>
         }
@@ -32,22 +34,23 @@
         {{ expanded ? 'Thu nhỏ' : 'Mở rộng' }}
       </button>
     </header>
-    <button iconStart="@tui.newspaper" type="button" [tuiAsideItem]="hint">
-      <ng-container [ngTemplateOutlet]="hint" />
-      <ng-template #hint>
-        <span tuiFade>Đăng ký bảo hành</span>
-      </ng-template>
+    <button iconStart="@tui.newspaper" type="button" tuiAsideItem
+      [tuiAppearanceState]="currentTab == 1 ? 'active' : null" (click)="currentTab = 1">
+      Đăng ký bảo hành
     </button>
-    <button iconStart="@tui.history" tuiAsideItem type="button">
+    <button iconStart="@tui.history" tuiAsideItem type="button" [tuiAppearanceState]="currentTab == 2 ? 'active' : null"
+      (click)="currentTab = 2">
       Lịch sử bảo hành
     </button>
-    <button iconStart="@tui.contact" tuiAsideItem [routerLink]="routes.Navigation">
+    <button iconStart="@tui.contact" tuiAsideItem type="button" [tuiAppearanceState]="currentTab == 3 ? 'active' : null"
+      (click)="currentTab = 3">
       Liên hệ
     </button>
   </aside>
   <div tuiNavigationMain>
     <div class="wrapper">
       <div class="container">
+        @if(currentTab == 1){
         <section id="create-request" class="page active">
           <div class="page-header">
             <h2>Tạo yêu cầu bảo hành</h2>
@@ -302,6 +305,135 @@
             <button class="btn btn-block">Gửi yêu cầu bảo hành</button>
           </form>
         </section>
+        }
+        @if(currentTab == 2){
+        <section id="warranty-history" class="page active">
+          <div class="page-header">
+            <h2>Lịch sử bảo hành</h2>
+            <p>Tìm kiếm và theo dõi các yêu cầu bảo hành của bạn</p>
+          </div>
+
+          <div class="search-box">
+            <form id="search-form" class="search-form">
+              <div class="form-group">
+                <label for="search-phone">Số điện thoại</label>
+                <input type="tel" id="search-phone" name="search-phone" placeholder="Nhập số điện thoại">
+              </div>
+              <div class="form-group">
+                <label for="search-email">Email</label>
+                <input type="email" id="search-email" name="search-email" placeholder="Nhập địa chỉ email">
+              </div>
+              <div class="form-group" style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn">Tìm kiếm</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-container">
+            <div class="tabs">
+              <div class="tab active" data-tab="tab1">
+                <span class="tab-badge">3</span> Tiếp nhận thông tin
+              </div>
+              <div class="tab" data-tab="tab2">
+                <span class="tab-badge">2</span> Xác minh thông tin
+              </div>
+              <div class="tab" data-tab="tab3">
+                <span class="tab-badge">5</span> Chẩn đoán sơ bộ
+              </div>
+              <div class="tab" data-tab="tab4">
+                <span class="tab-badge">1</span> Báo giá
+              </div>
+              <div class="tab" data-tab="tab5">
+                <span class="tab-badge">4</span> Sửa chữa/Bảo hành
+              </div>
+              <div class="tab" data-tab="tab6">
+                <span class="tab-badge">2</span> Hoàn trả
+              </div>
+            </div>
+
+            <div class="tab-content">
+              <angular-slickgrid gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions"
+                [dataset]="dataset">
+              </angular-slickgrid>
+            </div>
+          </div>
+        </section>
+        }
+        @if(currentTab == 3){
+        <section id="contact" class="page active">
+          <div class="page-header">
+            <h2>Liên hệ với chúng tôi</h2>
+            <p>Trung tâm bảo hành luôn sẵn sàng hỗ trợ bạn</p>
+          </div>
+
+          <div class="contact-container">
+            <div class="contact-info">
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <i class="fas fa-building"></i>
+                </div>
+                <div class="contact-details">
+                  <h4>Trung tâm bảo hành MobyData</h4>
+                  <p>Số 123, Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <i class="fas fa-phone"></i>
+                </div>
+                <div class="contact-details">
+                  <h4>Điện thoại</h4>
+                  <p>0123 456 789</p>
+                  <p>Hotline: 1900 1234 (Miễn phí)</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="contact-details">
+                  <h4>Email</h4>
+                  <p>ttbh&#64;mobydata.com</p>
+                  <p>support&#64;mobydata.com</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <i class="fas fa-globe"></i>
+                </div>
+                <div class="contact-details">
+                  <h4>Trang web</h4>
+                  <p>www.mobydata.com</p>
+                  <p>www.mobydata.com/warranty</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="contact-details">
+                  <h4>Giờ làm việc</h4>
+                  <p>Thứ 2 - Thứ 6: 8:00 - 17:00</p>
+                  <p>Thứ 7: 8:00 - 12:00</p>
+                  <p>Chủ nhật: Nghỉ</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-placeholder">
+              <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-right: 15px;"></i>
+              <div>
+                <h3>Vị trí trung tâm bảo hành</h3>
+                <p>Bản đồ sẽ hiển thị tại đây</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        }
       </div>
     </div>
   </div>
