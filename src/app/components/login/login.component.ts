@@ -9,7 +9,11 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { log } from 'ng-zorro-antd/core/logger';
+import { AuthService } from '../../auth/auth.service';
+import { jwtDecode } from 'jwt-decode';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -24,6 +28,7 @@ export class LoginComponent {
   token: any;
   constructor(
     private formBuilder: FormBuilder,
+    private authService: AuthService,
     private router: Router
   ) {
     this.loginForm = this.formBuilder.group({
@@ -35,8 +40,33 @@ export class LoginComponent {
   onLogin(): void {
     this.submitted = true;
     if (this.loginForm.invalid) return;
+
     this.isLoading = true;
     this.errorMessage = '';
 
+    this.authService.login(this.loginForm.value).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.token = this.authService.getToken();
+
+        try {
+          const decoded: any = jwtDecode(this.token);
+        } catch (error) {
+          console.error('Invalid token', error);
+        }
+
+        // 👉 Redirect về trang trước khi login nếu có
+        const target = this.authService.RedirectUrl || '';
+
+        this.authService.RedirectUrl = null; // reset
+        this.router.navigate([target]);
+      },
+
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = err?.error?.message || 'Đăng nhập thất bại';
+      },
+    });
   }
+
 }
