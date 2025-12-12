@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-
+import {AuthGuard} from '../app/auth/auth.guard'
 export const routes: Routes = [
   {
     path: '',
@@ -15,6 +15,21 @@ export const routes: Routes = [
     loadComponent: async () => {
       const c = await import('./components/login/login.component');
       return c.LoginComponent;
+    },
+  },
+  {
+    path: 'admin',
+    canActivate: [AuthGuard],
+    loadComponent: async () => {
+      const c = await import('./components/admin/admin.component');
+      return c.AdminComponent;
+    },
+  },
+  {
+    path: 'admin/organization',
+    loadComponent: async () => {
+      const c = await import('./components/admin/pages/organization/organization.component');
+      return c.OrganizationComponent;
     },
   },
   {

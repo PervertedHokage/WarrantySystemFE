@@ -4,7 +4,7 @@
   "configurations": [
     {
       "name": "ng serve",
-      "type": "chrome",
+      "type": "msedge",
       "request": "launch",
       "preLaunchTask": "npm: start",
       "url": "https://localhost:4200/",
