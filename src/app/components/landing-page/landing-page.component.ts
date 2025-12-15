@@ -1,5 +1,12 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,8 +22,14 @@ import {
 } from '@taiga-ui/core';
 import { TuiFade, TuiTabs } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
-import { AngularSlickgridModule, Column, GridOption } from 'angular-slickgrid';
-
+import {
+  AngularSlickgridModule,
+  Column,
+  Filters,
+  Formatters,
+  GridOption,
+} from 'angular-slickgrid';
+declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
   templateUrl: './landing-page.component.html',
@@ -39,9 +52,18 @@ import { AngularSlickgridModule, Column, GridOption } from 'angular-slickgrid';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
 })
-export class LandingPageComponent extends TuiPortals {
+export class LandingPageComponent extends TuiPortals implements OnInit {
   private router = inject(Router);
-  currentTab = 1;
+  private _currentTab = 0;
+  get currentTab() {
+    return this._currentTab;
+  }
+  set currentTab(value: number) {
+    this._currentTab = value;
+    if (this._currentTab == 1) {
+      setTimeout(() => this.initCaptcha());
+    } else this.destroyCaptcha();
+  }
   protected expanded = false;
   protected open = false;
   protected switch = false;
@@ -58,12 +80,17 @@ export class LandingPageComponent extends TuiPortals {
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: any[] = [];
-
+  @ViewChild('captchaHolder')
+  captchaHolder?: ElementRef<HTMLDivElement>;
+  private widgetId?: number;
+  private scriptLoaded = false;
   constructor() {
     super();
     this.prepareGrid();
   }
-
+  ngOnInit(): void {
+    this.currentTab = 1;
+  }
   prepareGrid() {
     this.columnDefinitions = [
       {
@@ -72,83 +99,53 @@ export class LandingPageComponent extends TuiPortals {
         field: 'requestCode',
         sortable: true,
         type: 'string',
-        width: 200,
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
       },
       {
         id: 'createdDate',
         name: 'Ngày tạo',
         field: 'createdDate',
         sortable: true,
-        width: 200,
+        type: 'dateUtc',
+        formatter: Formatters.dateTimeIsoAmPm,
+        filterable: true,
+        filter: { model: Filters['compoundDate'] },
       },
       {
         id: 'customer',
         name: 'Khách hàng',
         field: 'customer',
         sortable: true,
-        width: 200,
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
       },
-      { id: 'product', name: 'Sản phẩm', field: 'product', width: 200 },
-      { id: 'status', name: 'Trạng thái', field: 'status', width: 200 },
+      {
+        id: 'product',
+        name: 'Sản phẩm',
+        field: 'product',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
+      {
+        id: 'status',
+        name: 'Trạng thái',
+        field: 'status',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
     ];
 
     this.gridOptions = {
       enableAutoResize: true,
+      autoResize: {
+        container: '.tab-content',
+        resizeDetection: 'container',
+      },
       enableFiltering: true,
       enableSorting: true,
-      enableGridMenu: true,
-      gridMenu: {
-        commandTitle: 'Custom Commands',
-        columnTitle: 'Columns',
-        iconCssClass: 'fa fa-ellipsis-v',
-        menuWidth: 17,
-        resizeOnShowHeaderRow: true,
-        commandItems: [
-          {
-            iconCssClass: 'fa fa-filter text-danger',
-            title: 'Clear All Filters',
-            disabled: false,
-            command: 'clear-filter',
-          },
-          {
-            iconCssClass: 'fa fa-random',
-            title: 'Toggle Filter Row',
-            disabled: false,
-            command: 'toggle-filter',
-          },
-          // you can add sub-menus by adding nested `commandItems`
-          {
-            // we can also have multiple nested sub-menus
-            command: 'export',
-            title: 'Exports',
-            positionOrder: 99,
-            commandItems: [
-              { command: 'exports-txt', title: 'Text (tab delimited)' },
-              {
-                command: 'sub-menu',
-                title: 'Excel',
-                cssClass: 'green',
-                subMenuTitle: 'available formats',
-                subMenuTitleCssClass: 'text-italic orange',
-                commandItems: [
-                  { command: 'exports-csv', title: 'Excel (csv)' },
-                  { command: 'exports-xlsx', title: 'Excel (xlsx)' },
-                ],
-              },
-            ],
-          },
-        ],
-        onCommand: (e, args) => {
-          if (args.command === 'toggle-filter') {
-            // this.gridOptions.setHeaderRowVisibility(
-            //   !this.gridOptions.getOptions().showHeaderRow
-            // );
-          } else if (args.command === 'clear-filter') {
-            // this.gridOptions.clearFilters();
-            // this.gridOptions.refresh();
-          }
-        },
-      },
+      forceFitColumns: true,
+      enableAutoResizeColumnsByCellContent: false,
     };
 
     // fill the dataset with your data (or read it from the DB)
@@ -348,6 +345,54 @@ export class LandingPageComponent extends TuiPortals {
         status: 1,
       },
     ];
+  }
+  private async initCaptcha() {
+    if (!this.captchaHolder || this.widgetId !== undefined) return;
+
+    await this.loadScript();
+
+    setTimeout(() => {
+      this.widgetId = grecaptcha.render(this.captchaHolder?.nativeElement, {
+        sitekey: '6Ldb8CssAAAAAI-kwsDqcgipSPu6AOffl8j2FaIi',
+      });
+    }, 50);
+  }
+
+  private destroyCaptcha() {
+    if (this.widgetId !== undefined) {
+      grecaptcha.reset(this.widgetId);
+      this.widgetId = undefined;
+    }
+  }
+
+  private loadScript(): Promise<void> {
+    return new Promise((resolve) => {
+      if ((window as any).grecaptcha) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        grecaptcha = (<any>window)['grecaptcha'];
+        const check = () => {
+          if (
+            (window as any).grecaptcha &&
+            typeof (window as any).grecaptcha.ready === 'function'
+          ) {
+            (window as any).grecaptcha.ready(() => resolve());
+          } else {
+            setTimeout(check, 25);
+          }
+        };
+        check();
+      };
+
+      document.body.appendChild(script);
+    });
   }
   protected handleToggle(): void {
     this.expanded = !this.expanded;
