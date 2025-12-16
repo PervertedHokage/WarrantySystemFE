@@ -48,9 +48,7 @@ import { AuthInterceptor } from '../../../../auth/auth.interceptor';
     NzFormModule,
     NzInputModule,
     ReactiveFormsModule,
-    NgIf,
     NzSpinModule,
-    HasPermissionDirective,
     FormsModule,
     NzTreeSelectModule
   ],

@@ -1,118 +1,112 @@
 <nz-layout class="app-layout">
   <nz-sider class="menu-sidebar" nzCollapsible nzWidth="270px" nzBreakpoint="md" [(nzCollapsed)]="isCollapsed"
-      [nzCollapsedWidth]="isMobile ? 0:80" [nzTrigger]="null" nzTheme="light">
-      <div class="sidebar-logo d-flex justify-content-center align-items-center" nzTheme="light">
-          <a routerLink="/home" class="text-center">
-              <!-- <img [src]="" alt="logo" class="img-logo" /> -->
-              <img [src]="isCollapsed ? 'assets/images/icon-logo-RTC-2023.png' : 'assets/images/logo-RTC-2023-1200-banchuan.png'"
-                  alt="" class="p-1">
-              <!-- <h1>RTC</h1> -->
-          </a>
-      </div>
-
-
-      <ul nz-menu nzMode="inline">
-          @for (m of menus; track m.key) {
-          <!-- Render leaf items ở top level -->
-          <li nz-menu-item *ngIf="isLeaf(m) && m.isPermission" (click)="(m.router || '') === ''
+    [nzCollapsedWidth]="isMobile ? 0:80" [nzTrigger]="null" nzTheme="light">
+    <div class="sidebar-logo d-flex justify-content-center align-items-center" nzTheme="light">
+      <a routerLink="/home" class="text-center">
+        <!-- <img [src]="" alt="logo" class="img-logo" /> -->
+        <img
+          [src]="isCollapsed ? 'assets/images/icon-logo-RTC-2023.png' : 'assets/images/logo-RTC-2023-1200-banchuan.png'"
+          alt="" class="p-1">
+        <!-- <h1>RTC</h1> -->
+      </a>
+    </div>
+    <ul nz-menu nzMode="inline">
+      @for (m of menus; track m.key) {
+      <!-- Render leaf items ở top level -->
+      <li nz-menu-item *ngIf="isLeaf(m) && m.isPermission" (click)="(m.router || '') === ''
                           ? newTab(m.comp, m.title, m.data)
                           : menuService.goToOldLink((m.router ||''),m.data)">
-              <img [src]="m.icon" class="menu-icon" *ngIf="(m.icon || '') != ''" width="24px"
-                  style="margin-right: 8px; vertical-align: bottom;" />
-              <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(m.icon || '') == ''" />
-              <span class="m-0 fw-bold" *ngIf="!isCollapsed">{{m.title}}</span>
-          </li>
-          
-          <!-- Render group items -->
-          <ng-template #nzTitle style="padding: 0 16px;">
-              <img [src]="m.icon" class="menu-icon" *ngIf="(m.icon || '') != ''" width="24px"
-                  style="margin-right: 8px; vertical-align: bottom;" />
-              <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(m.icon || '') == ''" />
-              <p class="m-0 fw-bold">{{ m.title }}</p>
-          </ng-template>
-          <li nz-submenu [nzTitle]="nzTitle" *ngIf="isGroup(m) "
-              [nzOpen]="menuKey === m.key">
-              <ul>
-                  @for (c1 of m.children; track c1.key) {
-                  <li nz-menu-item *ngIf="isLeaf(c1) && c1.isPermission && c1.isOpen" (click)="(c1.router || '') === ''
+        <img [src]="m.icon" class="menu-icon" *ngIf="(m.icon || '') != ''" width="24px"
+          style="margin-right: 8px; vertical-align: bottom;" />
+        <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(m.icon || '') == ''" />
+        <span class="m-0 fw-bold" *ngIf="!isCollapsed">{{m.title}}</span>
+      </li>
+      <!-- Render group items -->
+      <ng-template #nzTitle style="padding: 0 16px;">
+        <img [src]="m.icon" class="menu-icon" *ngIf="(m.icon || '') != ''" width="24px"
+          style="margin-right: 8px; vertical-align: bottom;" />
+        <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(m.icon || '') == ''" />
+        <p class="m-0 fw-bold">{{ m.title }}</p>
+      </ng-template>
+      <li nz-submenu [nzTitle]="nzTitle" *ngIf="isGroup(m) " [nzOpen]="menuKey === m.key">
+        <ul>
+          @for (c1 of m.children; track c1.key) {
+          <li nz-menu-item *ngIf="isLeaf(c1) && c1.isPermission && c1.isOpen" (click)="(c1.router || '') === ''
                           ? newTab(c1.comp, c1.title, c1.data)
                           : menuService.goToOldLink((c1.router ||''),c1.data)">
-                      <img [src]="c1.icon" class="menu-icon" *ngIf="(c1.icon || '') != ''" width="24px" />
-                      <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(c1.icon || '') == ''" />
-                      {{c1.title}}
-                  </li>
+            <img [src]="c1.icon" class="menu-icon" *ngIf="(c1.icon || '') != ''" width="24px" />
+            <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(c1.icon || '') == ''" />
+            {{c1.title}}
+          </li>
 
-                  <ng-template #nzTitle1 style="padding: 0 16px;">
-                      <img [src]="c1.icon" class="menu-icon" *ngIf="(c1.icon || '') != ''" width="24px"
-                          style="margin-right: 8px; vertical-align: middle;" />
-                      <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(c1.icon || '') == ''" />
-                      <p class="m-0" style="white-space: pre-line;">{{ c1.title }}</p>
-                  </ng-template>
-                  <li nz-submenu [nzTitle]="nzTitle1" *ngIf="isGroup(c1)">
-                      <ul>
-                          @for (c2 of c1.children; track c2.key) {
-                          <li nz-menu-item *ngIf="isLeaf(c2) " (click)="(c2.router || '') === ''
+          <ng-template #nzTitle1 style="padding: 0 16px;">
+            <img [src]="c1.icon" class="menu-icon" *ngIf="(c1.icon || '') != ''" width="24px"
+              style="margin-right: 8px; vertical-align: middle;" />
+            <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(c1.icon || '') == ''" />
+            <p class="m-0" style="white-space: pre-line;">{{ c1.title }}</p>
+          </ng-template>
+          <li nz-submenu [nzTitle]="nzTitle1" *ngIf="isGroup(c1)">
+            <ul>
+              @for (c2 of c1.children; track c2.key) {
+              <li nz-menu-item *ngIf="isLeaf(c2) " (click)="(c2.router || '') === ''
                           ? newTab(c2.comp, c2.title, c2.data)
                           : menuService.goToOldLink((c2.router ||''),c2.data)" style="font-size: 11px !important;">
-                              <img [src]="c2.icon" class="menu-icon" *ngIf="(c2.icon || '') != ''" width="24px" />
-                              <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(c2.icon || '') == ''" />
-                              {{c2.title}}
-                          </li>
+                <img [src]="c2.icon" class="menu-icon" *ngIf="(c2.icon || '') != ''" width="24px" />
+                <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(c2.icon || '') == ''" />
+                {{c2.title}}
+              </li>
 
 
-                          <ng-template #nzTitle2 style="padding: 0 16px;">
-                              <img [src]="c2.icon" class="menu-icon" *ngIf="(c2.icon || '') != ''" width="24px"
-                                  style="margin-right: 8px; vertical-align: middle;" />
-                              <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(c2.icon || '') == ''" />
-                              <p class="m-0" style="white-space: pre-line !important;font-size: 11px !important;">{{
-                                  c2.title }} </p>
+              <ng-template #nzTitle2 style="padding: 0 16px;">
+                <img [src]="c2.icon" class="menu-icon" *ngIf="(c2.icon || '') != ''" width="24px"
+                  style="margin-right: 8px; vertical-align: middle;" />
+                <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(c2.icon || '') == ''" />
+                <p class="m-0" style="white-space: pre-line !important;font-size: 11px !important;">{{
+                  c2.title }} </p>
 
 
-                          </ng-template>
-                          <li nz-submenu [nzTitle]="nzTitle2" *ngIf="isGroup(c2) ">
-                              <ul>
-                                  @for (c3 of c2.children; track c3.key) {
-                                  <li nz-menu-item *ngIf="isLeaf(c3) " (click)="(c3.router || '') === ''
+              </ng-template>
+              <li nz-submenu [nzTitle]="nzTitle2" *ngIf="isGroup(c2) ">
+                <ul>
+                  @for (c3 of c2.children; track c3.key) {
+                  <li nz-menu-item *ngIf="isLeaf(c3) " (click)="(c3.router || '') === ''
                           ? newTab(c3.comp, c3.title, c3.data)
                           : menuService.goToOldLink((c3.router ||''),c3.data)" style="font-size: 10px !important;">
-                                      <img [src]="c3.icon" class="menu-icon" *ngIf="(c3.icon || '') != ''"
-                                          width="24px" />
-                                      <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(c3.icon || '') == ''" />
-                                      {{c3.title}}
-                                  </li>
-                                  }
-
-                              </ul>
-                          </li>
-                          }
-
-                      </ul>
+                    <img [src]="c3.icon" class="menu-icon" *ngIf="(c3.icon || '') != ''" width="24px" />
+                    <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(c3.icon || '') == ''" />
+                    {{c3.title}}
                   </li>
                   }
-              </ul>
+
+                </ul>
+              </li>
+              }
+
+            </ul>
           </li>
           }
-      </ul>
+        </ul>
+      </li>
+      }
+    </ul>
   </nz-sider>
   <nz-layout>
-      <nz-header>
-          <div class="app-header">
+    <nz-header>
+      <div class="app-header">
 
-              <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-                  <nz-icon class="trigger text-light" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" />
-              </span>
-              <div style="width: 100%; max-width: 100%; overflow: auto" class="app-header-tabs">
+        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+          <nz-icon class="trigger text-light" [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'" />
+        </span>
+        <div style="width: 100%; max-width: 100%; overflow: auto" class="app-header-tabs">
 
-                  <nz-tabset nzType="editable-card" nzHideAdd [(nzSelectedIndex)]="selectedIndex"
-                      (nzClose)="closeTab($event)">
-                      <nz-tab *ngFor="let tab of dynamicTabs" [nzTitle]="tab.title" [nzClosable]="true"
-                          class="text-uppercase">
+          <nz-tabset nzType="editable-card" nzHideAdd [(nzSelectedIndex)]="selectedIndex" (nzClose)="closeTab($event)">
+            <nz-tab *ngFor="let tab of dynamicTabs" [nzTitle]="tab.title" [nzClosable]="true" class="text-uppercase">
 
-                      </nz-tab>
-                  </nz-tabset>
-              </div>
-              <div class="header-trigger">
-                  <!-- <button nz-button nz-dropdown [nzDropdownMenu]="appmenu" nzPlacement="bottomRight" nzType="text"
+            </nz-tab>
+          </nz-tabset>
+        </div>
+        <div class="header-trigger">
+          <!-- <button nz-button nz-dropdown [nzDropdownMenu]="appmenu" nzPlacement="bottomRight" nzType="text"
                       class=" text-light" nzTrigger="click">
                       <img src="assets/icon/app_store.svg" width="16">
                   </button>
@@ -132,32 +126,32 @@
                       </div>
                   </nz-dropdown-menu> -->
 
-                  <app-app-notifycation-dropdown [items]="notifItems" (itemClick)="onPick($event)">
-                      <button nz-button nzType="text" class="text-light fs-7" trigger>
-                          <nz-badge [nzOverflowCount]="9" [nzCount]="notifItems.length" class="fs-7">
-                              <img src="assets/icon/notification_home.svg" width="16" class="bell-icon">
-                          </nz-badge>
-                      </button>
-                  </app-app-notifycation-dropdown>
-                  <app-app-user-dropdown>
-                      <button nz-button nzType="text" trigger>
-                          <img src="assets/icon/user.svg" width="16">
-                      </button>
-                  </app-app-user-dropdown>
-              </div>
-          </div>
-      </nz-header>
-      <nz-content class="">
+          <app-app-notifycation-dropdown [items]="notifItems" (itemClick)="onPick($event)">
+            <button nz-button nzType="text" class="text-light fs-7" trigger>
+              <nz-badge [nzOverflowCount]="9" [nzCount]="notifItems.length" class="fs-7">
+                <img src="assets/icon/notification_home.svg" width="16" class="bell-icon">
+              </nz-badge>
+            </button>
+          </app-app-notifycation-dropdown>
+          <app-app-user-dropdown>
+            <button nz-button nzType="text" trigger>
+              <img src="assets/icon/user.svg" width="16">
+            </button>
+          </app-app-user-dropdown>
+        </div>
+      </div>
+    </nz-header>
+    <nz-content class="">
 
-          <div class="content-host">
-              <ng-container *ngFor="let tab of dynamicTabs; let i = index">
-                  <div [hidden]="selectedIndex !== i" class="tab-pane">
-                      <ng-container *ngComponentOutlet="tab.comp; injector: tab.injector">
-                      </ng-container>
-                  </div>
-              </ng-container>
+      <div class="content-host">
+        <ng-container *ngFor="let tab of dynamicTabs; let i = index">
+          <div [hidden]="selectedIndex !== i" class="tab-pane">
+            <ng-container *ngComponentOutlet="tab.comp; injector: tab.injector">
+            </ng-container>
           </div>
-      </nz-content>
-      <!-- <nz-footer class="p-2 text-uppercase"> &copy; 2025, made by rtc technology việt nam</nz-footer> -->
+        </ng-container>
+      </div>
+    </nz-content>
+    <!-- <nz-footer class="p-2 text-uppercase"> &copy; 2025, made by rtc technology việt nam</nz-footer> -->
   </nz-layout>
 </nz-layout>

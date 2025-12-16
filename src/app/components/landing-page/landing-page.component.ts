@@ -7,7 +7,13 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { tuiAsPortal, TuiPortals } from '@taiga-ui/cdk';
@@ -29,6 +35,7 @@ import {
   Formatters,
   GridOption,
 } from 'angular-slickgrid';
+import { WarrantyClaim } from '../../models/warranty-claim.model';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -48,6 +55,7 @@ declare let grecaptcha: any;
     TuiTabs,
     TuiTextfield,
     TranslateModule,
+    ReactiveFormsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
@@ -61,6 +69,7 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
   set currentTab(value: number) {
     this._currentTab = value;
     if (this._currentTab == 1) {
+      this.newWarrantyClaimForm.reset();
       setTimeout(() => this.initCaptcha());
     } else this.destroyCaptcha();
   }
@@ -83,9 +92,43 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
   @ViewChild('captchaHolder')
   captchaHolder?: ElementRef<HTMLDivElement>;
   private widgetId?: number;
-  private scriptLoaded = false;
-  constructor() {
+  private newWarrantyClaim = new WarrantyClaim();
+  newWarrantyClaimForm: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) {
     super();
+    this.newWarrantyClaimForm = this.formBuilder.group({
+      Id: [this.newWarrantyClaim.Id],
+      CustomerName: [this.newWarrantyClaim.CustomerName, [Validators.required]],
+      CustomerEmail: [this.newWarrantyClaim.CustomerEmail],
+      CustomerPhoneNumber: [
+        this.newWarrantyClaim.CustomerPhoneNumber,
+        [Validators.required],
+      ],
+      CustomerAddress: [this.newWarrantyClaim.CustomerAddress],
+      ProductName: [this.newWarrantyClaim.ProductName, [Validators.required]],
+      ProductId: [this.newWarrantyClaim.ProductId],
+      IssueId: [this.newWarrantyClaim.IssueId, [Validators.required]],
+      SerialNumber: [this.newWarrantyClaim.SerialNumber, [Validators.required]],
+      HasProtection: [this.newWarrantyClaim.HasProtection],
+      HasAdapter: [this.newWarrantyClaim.HasAdapter],
+      HasCable: [this.newWarrantyClaim.HasCable],
+      HasBattery: [this.newWarrantyClaim.HasBattery],
+      HasIssueWhenOpenBox: [this.newWarrantyClaim.HasIssueWhenOpenBox],
+      HasCollision: [this.newWarrantyClaim.HasCollision],
+      OperationEnvironment: [this.newWarrantyClaim.OperationEnvironment],
+      Status: [this.newWarrantyClaim.Status],
+      Type: [this.newWarrantyClaim.Type],
+      FileAddress: [this.newWarrantyClaim.FileAddress],
+      Transporter: [this.newWarrantyClaim.Transporter],
+      LadingNumber: [this.newWarrantyClaim.LadingNumber],
+      Note: [this.newWarrantyClaim.Note],
+      RecipientAddress: [this.newWarrantyClaim.RecipientAddress],
+      CreatedDate: [this.newWarrantyClaim.CreatedDate],
+      CreatedBy: [this.newWarrantyClaim.CreatedBy],
+      UpdatedDate: [this.newWarrantyClaim.UpdatedDate],
+      UpdatedBy: [this.newWarrantyClaim.UpdatedBy],
+    });
     this.prepareGrid();
   }
   ngOnInit(): void {
@@ -400,5 +443,16 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
 
   protected navigateToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  protected onSubmitForm() {
+    if (this.newWarrantyClaimForm.invalid) {
+      this.newWarrantyClaimForm.markAllAsTouched();
+      return;
+    }
+
+    const payload = new WarrantyClaim(this.newWarrantyClaimForm.getRawValue());
+
+    //this.service.createWarrantyClaim(payload).subscribe();
   }
 }

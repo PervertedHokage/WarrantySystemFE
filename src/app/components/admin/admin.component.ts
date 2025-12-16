@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Params, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -37,10 +43,8 @@ type TabItem = {
   data?: any; // Lưu data để so sánh unique key
 };
 
-
 export const isLeaf = (m: MenuItem): m is LeafItem => m.kind === 'leaf';
 export const isGroup = (m: MenuItem): m is GroupItem => m.kind === 'group';
-
 
 @Component({
   selector: 'app-admin',
@@ -65,8 +69,7 @@ export const isGroup = (m: MenuItem): m is GroupItem => m.kind === 'group';
   styleUrl: './admin.component.less',
   standalone: true,
 })
-export class AdminComponent implements OnInit {
-
+export class AdminComponent implements OnInit, AfterViewInit {
   constructor(
     private auth: AuthService,
     private router: Router,
@@ -74,6 +77,7 @@ export class AdminComponent implements OnInit {
     private notification: NzNotificationService,
     private injector: Injector,
     private menuEventService: MenuEventService,
+    private cdr: ChangeDetectorRef
   ) {
     this.menus = this.menuService.getMenus();
   }
@@ -91,18 +95,14 @@ export class AdminComponent implements OnInit {
 
   menu: any = {};
   //#endregion
-  notifItems: NotifyItem[] = [
-  ];
+  notifItems: NotifyItem[] = [];
 
   menuKey: string = '';
   ngOnInit(): void {
-
-
     this.menuService.menuKey$.subscribe((x) => {
       this.menuKey = x;
     });
     this.setOpenMenu(this.menuKey);
-
 
     // Subscribe vào event mở tab từ các component con
     this.menuEventService.onOpenTab$.subscribe((tabData) => {
@@ -110,6 +110,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.cdr.detectChanges();
+  }
 
   newTab(comp: Type<any>, title: string, data?: any) {
     if (this.isMobile) {
@@ -129,18 +132,13 @@ export class AdminComponent implements OnInit {
 
     this.dynamicTabs = [...this.dynamicTabs, { title, comp, injector }];
     setTimeout(() => (this.selectedIndex = this.dynamicTabs.length - 1));
-
   }
 
   closeTab({ index }: { index: number }) {
     this.dynamicTabs.splice(index, 1);
     if (this.selectedIndex >= this.dynamicTabs.length)
       this.selectedIndex = this.dynamicTabs.length - 1;
-
-
   }
-
-
 
   logout() {
     this.auth.logout();
@@ -174,6 +172,4 @@ export class AdminComponent implements OnInit {
   openOnly(key: string) {
     this.setOpenMenu(key);
   }
-
-
 }

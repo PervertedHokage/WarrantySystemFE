@@ -53,10 +53,14 @@
         @if(currentTab == 1){
         <section id="create-request" class="page active">
           <div class="page-header">
+            <div class="icon-wrapper">
+              <div class="warranty-icon">🛡️</div>
+            </div>
             <h2>Tạo yêu cầu bảo hành</h2>
             <p>Vui lòng điền đầy đủ thông tin để gửi yêu cầu bảo hành</p>
           </div>
-          <form id="warranty-form" class="form-container">
+          <form id="warranty-form" class="form-container" [formGroup]="newWarrantyClaimForm"
+            (ngSubmit)="onSubmitForm()">
             <!-- Customer Information -->
             <div class="form-section">
               <h3>Thông tin khách hàng</h3>
@@ -64,7 +68,7 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="customer-name">Khách hàng <span style="color:red">*</span></label>
-                    <input type="text" id="customer-name" name="customer-name" required>
+                    <input type="text" id="customer-name" name="customer-name" required formControlName="CustomerName">
                   </div>
                 </div>
                 <div class="form-col">
@@ -79,13 +83,13 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="mobile">Điện thoại di động <span style="color:red">*</span></label>
-                    <input type="tel" id="mobile" name="mobile" required>
+                    <input type="tel" id="mobile" name="mobile" required formControlName="CustomerPhoneNumber">
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="address">Địa chỉ</label>
-                    <input type="text" id="address" name="address">
+                    <input type="text" id="address" name="address" formControlName="CustomerAddress">
                   </div>
                 </div>
               </div>
@@ -133,7 +137,7 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="product-name">Tên sản phẩm <span style="color:red">*</span></label>
-                    <select id="product-name" name="product-name" required>
+                    <select id="product-name" name="product-name" required formControlName="ProductName">
                       <option value="">Vui lòng chọn</option>
                       <option value="product1">MobyData Smart Device 1</option>
                       <option value="product2">MobyData Smart Device 2</option>
@@ -146,13 +150,13 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="failure-type">Hiện tượng hỏng hóc <span style="color:red">*</span></label>
-                    <select id="failure-type" name="failure-type" required>
-                      <option value="">Vui lòng chọn</option>
-                      <option value="power">Không lên nguồn</option>
-                      <option value="screen">Màn hình không hiển thị</option>
-                      <option value="connection">Kết nối không ổn định</option>
-                      <option value="performance">Hiệu suất kém</option>
-                      <option value="other">Lỗi khác</option>
+                    <select id="failure-type" name="failure-type" required formControlName="IssueId">
+                      <option value="" selected hidden>Vui lòng chọn</option>
+                      <option value="1">Không lên nguồn</option>
+                      <option value="2">Màn hình không hiển thị</option>
+                      <option value="3">Kết nối không ổn định</option>
+                      <option value="4">Hiệu suất kém</option>
+                      <option value="5">Lỗi khác</option>
                     </select>
                   </div>
                 </div>
@@ -160,27 +164,27 @@
 
               <div class="form-group">
                 <label for="serial-number">Số SN sản phẩm <span style="color:red">*</span></label>
-                <input type="text" id="serial-number" name="serial-number" required>
+                <input type="text" id="serial-number" name="serial-number" required formControlName="SerialNumber">
               </div>
 
               <div class="form-row">
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-silicon-case">Có bao silicon bảo vệ không?</label>
-                    <select id="has-silicon-case" name="has-silicon-case">
+                    <select id="has-silicon-case" name="has-silicon-case" formControlName="HasProtection">
                       <option value="">Vui lòng chọn</option>
-                      <option value="yes">Có</option>
-                      <option value="no">Không</option>
+                      <option value="1">Có</option>
+                      <option value="0">Không</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-adapter">Có bộ đối nguồn (adapter) không?</label>
-                    <select id="has-adapter" name="has-adapter">
+                    <select id="has-adapter" name="has-adapter" formControlName="HasAdapter">
                       <option value="">Vui lòng chọn</option>
-                      <option value="yes">Có</option>
-                      <option value="no">Không</option>
+                      <option value="1">Có</option>
+                      <option value="0">Không</option>
                     </select>
                   </div>
                 </div>
@@ -190,20 +194,20 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-data-cable">Có cấp dữ liệu không?</label>
-                    <select id="has-data-cable" name="has-data-cable">
+                    <select id="has-data-cable" name="has-data-cable" formControlName="HasCable">
                       <option value="">Vui lòng chọn</option>
-                      <option value="yes">Có</option>
-                      <option value="no">Không</option>
+                      <option value="1">Có</option>
+                      <option value="0">Không</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-battery">Có pin không?</label>
-                    <select id="has-battery" name="has-battery">
+                    <select id="has-battery" name="has-battery" formControlName="HasBattery">
                       <option value="">Vui lòng chọn</option>
-                      <option value="yes">Có</option>
-                      <option value="no">Không</option>
+                      <option value="1">Có</option>
+                      <option value="0">Không</option>
                     </select>
                   </div>
                 </div>
@@ -213,20 +217,20 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-opening-error">Có lỗi khí mở hộp không?</label>
-                    <select id="has-opening-error" name="has-opening-error">
+                    <select id="has-opening-error" name="has-opening-error" formControlName="HasIssueWhenOpenBox">
                       <option value="">Vui lòng chọn</option>
-                      <option value="yes">Có</option>
-                      <option value="no">Không</option>
+                      <option value="1">Có</option>
+                      <option value="0">Không</option>
                     </select>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-damage">Có bị rơi hoặc ép, va đập không?</label>
-                    <select id="has-damage" name="has-damage">
+                    <select id="has-damage" name="has-damage" formControlName="HasCollision">
                       <option value="">Vui lòng chọn</option>
-                      <option value="yes">Có</option>
-                      <option value="no">Không</option>
+                      <option value="1">Có</option>
+                      <option value="0">Không</option>
                     </select>
                   </div>
                 </div>
@@ -234,11 +238,11 @@
 
               <div class="form-group">
                 <label for="environment">Môi trường sử dụng</label>
-                <select id="environment" name="environment">
+                <select id="environment" name="environment" formControlName="OperationEnvironment">
                   <option value="">Vui lòng chọn</option>
-                  <option value="normal">Môi trường bình thường</option>
-                  <option value="hot">Môi trường nóng</option>
-                  <option value="cold">Môi trường kho lạnh</option>
+                  <option value="1">Môi trường bình thường</option>
+                  <option value="2">Môi trường nóng</option>
+                  <option value="3">Môi trường kho lạnh</option>
                 </select>
               </div>
 
@@ -310,6 +314,9 @@
         @if(currentTab == 2){
         <section id="warranty-history" class="page active">
           <div class="page-header">
+            <div class="icon-wrapper">
+              <div class="warranty-icon">📋</div>
+            </div>
             <h2>Lịch sử bảo hành</h2>
             <p>Tìm kiếm và theo dõi các yêu cầu bảo hành của bạn</p>
           </div>
@@ -363,6 +370,9 @@
         @if(currentTab == 3){
         <section id="contact" class="page active">
           <div class="page-header">
+            <div class="icon-wrapper">
+              <div class="warranty-icon">💼</div>
+            </div>
             <h2>Liên hệ với chúng tôi</h2>
             <p>Trung tâm bảo hành luôn sẵn sàng hỗ trợ bạn</p>
           </div>

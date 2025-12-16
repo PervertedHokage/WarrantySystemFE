@@ -4,10 +4,9 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OrganizationService {
-
   private _url = environment.host + 'api/organization/';
 
   constructor(private http: HttpClient) {}
@@ -61,18 +60,18 @@ export class OrganizationService {
   buildOrgTree(items: any[]): any[] {
     const map = new Map<number, any>();
 
-    items.forEach(item => {
+    items.forEach((item) => {
       map.set(item.Id, {
         title: item.OrganizationName,
-        key: item.Id,        // key là number
-        value: item.Id,      // value là number
-        children: []
+        key: item.Id, // key là number
+        value: item.Id, // value là number
+        children: [],
       });
     });
 
     const roots: any[] = [];
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const node = map.get(item.Id);
 
       if (item.ParentId === 0) {
@@ -83,7 +82,7 @@ export class OrganizationService {
       }
     });
 
-    map.forEach(n => {
+    map.forEach((n) => {
       if (n.children.length === 0) {
         n.isLeaf = true;
         delete n.children;
@@ -92,5 +91,4 @@ export class OrganizationService {
 
     return roots;
   }
-
 }
