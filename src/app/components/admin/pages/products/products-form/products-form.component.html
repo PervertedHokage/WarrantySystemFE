@@ -1,0 +1,89 @@
+<div class="modal-body">
+  <form nz-form [formGroup]="formGroup" nzLayout="vertical" class="fs-7 mt-2">
+    <nz-row [nzGutter]="16">
+      <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="12" [nzLg]="12">
+        <nz-form-item>
+          <nz-form-label for="unitNameInput" class="form-label p-0"
+            >Mã sản phẩm<span class="text-danger ps-1"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
+              formGroup.get('Code')?.hasError('required') &&
+              (formGroup.get('Code')?.dirty || formGroup.get('Code')?.touched)
+                ? 'Vui lòng nhập mã sản phầm!'
+                : formGroup.get('Code')?.hasError('maxlength')
+                ? 'Mã TB tối đa 20 ký tự!'
+                : undefined
+            "
+          >
+            <input
+              id="unitNameInput"
+              nz-input
+              name="Code"
+              placeholder="Nhập mã sản phẩm"
+              formControlName="Code"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="12" [nzLg]="12">
+        <nz-form-item>
+          <nz-form-label for="unitNameInput" class="form-label p-0"
+            >Tên sản phẩm<span class="text-danger ps-1"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
+              formGroup.get('Name')?.hasError('required') &&
+              (formGroup.get('Name')?.dirty || formGroup.get('Name')?.touched)
+                ? 'Vui lòng nhập tên sản phẩm!'
+                : formGroup.get('Name')?.hasError('maxlength')
+                ? 'Tên loại tối đa 100 ký tự!'
+                : undefined
+            "
+          >
+            <input
+              id="unitNameInput"
+              nz-input
+              name="Name"
+              placeholder="Nhập tên sản phẩm"
+              formControlName="Name"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row>
+      <nz-col [nzSpan]="24">
+        <nz-form-item>
+          <nz-form-label for="DescriptionText" class="form-label p-0"
+            >Mô tả</nz-form-label
+          >
+          <nz-form-control [nzSpan]="24">
+            <textarea
+              id="DescriptionText"
+              nz-input
+              name="Description"
+              placeholder="Nhập mô tả sản phẩm"
+              formControlName="Description"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+
+    <div class="modal-footer mt-3 gap-3">
+      <button nz-button nzDanger nzType="default" (click)="close()">
+        Đóng
+      </button>
+      <button nz-button nzType="primary" (click)="saveProductData()">
+        Lưu
+      </button>
+    </div>
+  </form>
+</div>

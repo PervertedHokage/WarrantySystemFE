@@ -14,4 +14,9 @@ export class ProductService {
     getDataProducts(): Observable<any> {
     return this.http.get<any>(environment.host + `api/products/get-products`);
   }
+
+   saveDataProduct(data:any):Observable<any>
+ {
+  return this.http.post(environment.host + `api/products/save-product`, data)
+ }
 }
