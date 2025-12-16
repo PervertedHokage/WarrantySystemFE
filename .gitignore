@@ -44,3 +44,4 @@ Thumbs.db
 #Custom
 config.json
 config.dev.json
+environment.ts
