@@ -1,8 +1,0 @@
-{
-  "i18n-ally.localesPaths": [],
-  "i18n-ally.extract.ignoredByFiles": {
-    "src\\app\\components\\landing-page\\landing-page.component.html": [
-      "\r\n        }\r\n        @if(currentTab == 3){\r\n        "
-    ]
-  }
-}

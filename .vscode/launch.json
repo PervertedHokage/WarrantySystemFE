@@ -7,18 +7,18 @@
       "type": "msedge",
       "request": "launch",
       "preLaunchTask": "npm: start",
-      "url": "https://localhost:4200/",
+      "url": "http://localhost:4200/",
       "runtimeArgs": [
         "--remote-debugging-port=9222",
         "--disable-session-crashed-bubble",
         //"--load-extension=C:/angular-dev-tool"
       ],
-      "userDataDir": "${workspaceFolder}/.vscode/chrome",
+      "userDataDir": "${workspaceFolder}/.vscode/edge",
       "postDebugTask": "stop dev server"
     },
     {
       "name": "ng test",
-      "type": "chrome",
+      "type": "msedge",
       "request": "launch",
       "preLaunchTask": "npm: test",
       "url": "http://localhost:9876/debug.html"
