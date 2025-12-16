@@ -1,0 +1,50 @@
+
+      <ng-container class="w-100">
+        <div class="card h-100 border-0 rounded-0">
+          <div class="card-header bg-white p-1">
+            <div class="d-flex gap-1">
+              <button
+                class="btn-add"
+                nz-button
+                nzType="default"
+                nzSize="small"
+                (click)="onAddProduct(false)"
+              >
+                <img src="assets/icon/action_add_item_16.png" /> Thêm
+              </button>
+              <button
+                class="btn-edit"
+                nz-button
+                nzType="default"
+                nzSize="small"
+                (click)="onAddProduct(true)"
+              >
+                <img src="assets/icon/action_edit_item_16.png" /> Sửa
+              </button>
+
+              <button
+                class="btn-delete"
+                nz-button
+                nzType="default"
+                nzSize="small"
+                (click)="onDeleteProduct()"
+
+              >
+                <img src="assets/icon/action_delete_item_16.png" /> Xóa
+              </button>
+            </div>
+          </div>
+          <div class="grid-container">
+             <angular-slickgrid
+            gridId="productsGrid"
+            [columns]="columnDefinitions"
+            [options]="gridOptions"
+            [dataset]="dataset"
+            (angularGridReady)="gridReady($event)"  
+            (onActiveCellChanged)="onActiveCellChanged($event)"
+            (selectedRowsChanged)="onSelectedRowsChanged($event)"
+          >
+          </angular-slickgrid>
+          </div>
+        </div>
+      </ng-container>

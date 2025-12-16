@@ -1,0 +1,17 @@
+.grid-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  
+  ::ng-deep angular-slickgrid {
+    width: 100% !important;
+    max-width: 100%;
+    
+    .slickgrid-container {
+      width: 100% !important;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+  }
+}
+
