@@ -55,8 +55,7 @@ export class LoginComponent {
           console.error('Invalid token', error);
         }
 
-        // 👉 Redirect về trang trước khi login nếu có
-        const target = this.authService.RedirectUrl || '';
+        const target = this.authService.RedirectUrl || '/admin';
 
         this.authService.RedirectUrl = null; // reset
         this.router.navigate([target]);

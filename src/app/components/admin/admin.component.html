@@ -13,6 +13,17 @@
 
       <ul nz-menu nzMode="inline">
           @for (m of menus; track m.key) {
+          <!-- Render leaf items ở top level -->
+          <li nz-menu-item *ngIf="isLeaf(m) && m.isPermission" (click)="(m.router || '') === ''
+                          ? newTab(m.comp, m.title, m.data)
+                          : menuService.goToOldLink((m.router ||''),m.data)">
+              <img [src]="m.icon" class="menu-icon" *ngIf="(m.icon || '') != ''" width="24px"
+                  style="margin-right: 8px; vertical-align: bottom;" />
+              <nz-icon nzType="caret-right" nzTheme="outline" *ngIf="(m.icon || '') == ''" />
+              <span class="m-0 fw-bold" *ngIf="!isCollapsed">{{m.title}}</span>
+          </li>
+          
+          <!-- Render group items -->
           <ng-template #nzTitle style="padding: 0 16px;">
               <img [src]="m.icon" class="menu-icon" *ngIf="(m.icon || '') != ''" width="24px"
                   style="margin-right: 8px; vertical-align: bottom;" />

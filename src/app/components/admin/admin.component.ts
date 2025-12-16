@@ -151,7 +151,12 @@ export class AdminComponent implements OnInit {
   }
 
   private setOpenMenu(key: string | null) {
-    this.menus.forEach((m) => (m.isOpen = key !== null && m.key === key));
+    // Chỉ set isOpen cho group items, không set cho leaf items
+    this.menus.forEach((m) => {
+      if (this.isGroup(m)) {
+        m.isOpen = key !== null && m.key === key;
+      }
+    });
     // localStorage.setItem('openMenuKey', key ?? '');
   }
 
