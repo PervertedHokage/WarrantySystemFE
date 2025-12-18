@@ -34,7 +34,9 @@
               </button>
             </div>
           </div>
-          <div class="grid-container">
+          <nz-splitter>
+            <nz-splitter-panel>
+                <div class="grid-container">
              <angular-slickgrid
             gridId="productsGrid"
             [columns]="columnDefinitions"
@@ -46,5 +48,11 @@
           >
           </angular-slickgrid>
           </div>
+            </nz-splitter-panel>
+            <nz-splitter-panel>
+              <div>hihi</div>
+            </nz-splitter-panel>
+          </nz-splitter>
+        
         </div>
       </ng-container>

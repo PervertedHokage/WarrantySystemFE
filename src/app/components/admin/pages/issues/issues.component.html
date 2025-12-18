@@ -1,0 +1,63 @@
+<div >
+  <div class="card-header bg-white p-1">
+    <div class="d-flex gap-1">
+      <button
+        class="btn-add"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onAddIssues(false)"
+      >
+        <img src="assets/icon/action_add_item_16.png" /> Thêm
+      </button>
+      <button
+        class="btn-edit"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onAddIssues(true)"
+      >
+        <img src="assets/icon/action_edit_item_16.png" /> Sửa
+      </button>
+      <button
+        class="btn-delete"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onDeleteIssues()"
+      >
+        <img src="assets/icon/action_delete_item_16.png" /> Xóa
+      </button>
+    </div>
+  </div>
+  <div class="grid-container">
+    <nz-splitter nzLayout="horizontal" style="height: 90vh !important;">
+      <nz-splitter-panel nzDefaultSize="50%">
+        <div class="grid-master-container">
+          <angular-slickgrid
+            gridId="issuesGroupGrid"
+            [columns]="columnIssuesGroup"
+            [options]="gridOptionsIssuesGroup"
+            [dataset]="datasetIssuesGroup" 
+            (onAngularGridCreated)="gridReady($event)"  
+            (onActiveCellChanged)="onActiveCellChanged($event)"
+            (selectedRowsChanged)="onSelectedRowsChanged($event)"
+          >
+          </angular-slickgrid>
+        </div>
+      </nz-splitter-panel>
+      <nz-splitter-panel nzDefaultSize="50%">
+        <div class="grid-detail-container">
+          <angular-slickgrid
+            gridId="issuesGrid"
+            [columns]="columnIssues"
+            [options]="gridOptionsIssues"
+            [dataset]="datasetIssues"
+            (onAngularGridCreated)="gridIssuesReady($event)"
+          >
+          </angular-slickgrid>
+        </div>
+      </nz-splitter-panel>
+    </nz-splitter>
+  </div>
+</div>

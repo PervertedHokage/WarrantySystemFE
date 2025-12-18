@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .card-header {
+    flex-shrink: 0;
+  }
+  
+  .grid-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.grid-master-container,
+.grid-detail-container {
+  height: 100%;
+  width: 100%;
+}
