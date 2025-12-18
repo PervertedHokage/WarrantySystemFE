@@ -14,6 +14,7 @@ import { NOTIFICATION_TITLE } from '../../../app.config';
 // IMPORT FORM
 import {OrganizationComponent} from '../pages/organization/organization.component'
 import { ProductsComponent } from '../pages/products/products.component';
+import { IssuesComponent } from '../pages/issues/issues.component';
 
 
 @Injectable({
@@ -88,6 +89,15 @@ export class MenuService {
               isOpen: true,
               isPermission: true,
               comp: ProductsComponent,
+              icon: 'assets/icon/menu_crm.svg',
+          },
+               {
+              kind: 'leaf',
+              key: 'IssuesComponent',
+              title: 'Hiện tượng hỏng ',
+              isOpen: true,
+              isPermission: true,
+              comp: IssuesComponent,
               icon: 'assets/icon/menu_crm.svg',
           },
         ];
