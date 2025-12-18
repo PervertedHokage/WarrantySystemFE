@@ -11,6 +11,7 @@ import { NOTIFICATION_TITLE } from '../../../app.config';
 
 // IMPORT FORM
 import { ProductsComponent } from '../pages/products/products.component';
+import { IssuesComponent } from '../pages/issues/issues.component';
 
 import { OrganizationComponent } from '../pages/organization/organization.component';
 import { WarrantyManagementComponent } from '../pages/warranty-management/warranty-management.component';
@@ -46,40 +47,41 @@ export class MenuService {
     1, 23, 24, 78, 88, 1221, 1313, 1434, 1431, 53, 51, 1534,
   ];
 
-  getMenus(): MenuItem[] {
-    let id = this.appUserService.currentUser?.ID || 0;
-    let employeeID = this.appUserService.currentUser?.EmployeeID || 0;
-    let departmentID = this.appUserService.currentUser?.DepartmentID || 0;
-    let positionID = this.appUserService.currentUser?.PositionID || 0;
-    let isHR =
-      this.employeeHRs.includes(employeeID) ||
-      this.departmentHRs.includes(departmentID);
-    const isAdmin =
-      this.appUserService.currentUser?.IsAdmin &&
-      this.appUserService.currentUser?.EmployeeID <= 0;
-    const menus: MenuItem[] = [
-      //#region menu CRM
-      {
-        kind: 'group',
-        key: 'crm',
-        stt: 1,
-        title: 'Organization',
-        isOpen: true,
-        isPermission: true,
-        icon: 'assets/icon/menu_crm.svg',
-        children: [
+    getMenus(): MenuItem[] {
+        let id = this.appUserService.currentUser?.ID || 0;
+        let employeeID = this.appUserService.currentUser?.EmployeeID || 0;
+        let departmentID = this.appUserService.currentUser?.DepartmentID || 0;
+        let positionID = this.appUserService.currentUser?.PositionID || 0;
+        let isHR =
+            this.employeeHRs.includes(employeeID) ||
+            this.departmentHRs.includes(departmentID);
+
+        const isAdmin =
+            this.appUserService.currentUser?.IsAdmin &&
+            this.appUserService.currentUser?.EmployeeID <= 0;
+        const menus: MenuItem[] = [
+          //#region menu CRM
           {
-            kind: 'leaf',
-            key: 'OrganizationComponent',
-            title: 'User',
-            isOpen: true,
-            isPermission: true,
-            comp: OrganizationComponent,
-            // icon: 'assets/icon/menu_crm.svg',
+              kind: 'group',
+              key: 'crm',
+              stt: 1,
+              title: 'Organization',
+              isOpen: true,
+              isPermission: true,
+              icon: 'assets/icon/menu_crm.svg',
+              children: [
+                  {
+                      kind: 'leaf',
+                      key: 'OrganizationComponent',
+                      title: 'User',
+                      isOpen: true,
+                      isPermission: true,
+                      comp: OrganizationComponent,
+                      // icon: 'assets/icon/menu_crm.svg',
+                  },
+              ],
           },
-        ],
-      },
-      {
+                {
         kind: 'group',
         key: 'management',
         stt: 2,
@@ -99,16 +101,26 @@ export class MenuService {
           },
         ],
       },
-      {
-        kind: 'leaf',
-        key: 'ProductsComponent',
-        title: 'Sản phẩm',
-        isOpen: true,
-        isPermission: true,
-        comp: ProductsComponent,
-        icon: 'assets/icon/menu_crm.svg',
-      },
-    ];
+          {
+              kind: 'leaf',
+              key: 'ProductsComponent',
+              title: 'Sản phẩm',
+              isOpen: true,
+              isPermission: true,
+              comp: ProductsComponent,
+              icon: 'assets/icon/menu_crm.svg',
+          },
+               {
+              kind: 'leaf',
+              key: 'IssuesComponent',
+              title: 'Hiện tượng hỏng ',
+              isOpen: true,
+              isPermission: true,
+              comp: IssuesComponent,
+              icon: 'assets/icon/menu_crm.svg',
+          },
+        ];
+
 
     return menus;
   }
