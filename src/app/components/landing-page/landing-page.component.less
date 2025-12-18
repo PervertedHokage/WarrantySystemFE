@@ -230,7 +230,7 @@ button[tuiOption].active {
 
 .form-group textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 56px;
 }
 
 .form-group input:focus,
@@ -406,15 +406,30 @@ div[tuiNavigationMain] {
   }
 }
 
-
 .page-header {
   border-bottom: 1px solid #ddd;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  background: linear-gradient(300deg, deepskyblue, #32cd32, #4169e1, #228b22, #0000ff, #008000, #00008b, #006400, #4682b4, #20b2aa);
+  background-size: 600% 600%;
+  animation: gradient-animation 60s ease infinite;
   color: white;
   padding: 40px 30px;
   text-align: center;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .page-header h2 {

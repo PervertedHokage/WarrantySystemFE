@@ -16,7 +16,12 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { tuiAsPortal, TuiPortals } from '@taiga-ui/cdk';
+import {
+  tuiAsPortal,
+  TuiPortals,
+  TuiStringHandler,
+  TuiStringMatcher,
+} from '@taiga-ui/cdk';
 import {
   TuiAppearance,
   TuiButton,
@@ -26,7 +31,15 @@ import {
   TuiIcon,
   TuiTextfield,
 } from '@taiga-ui/core';
-import { TuiFade, TuiTabs } from '@taiga-ui/kit';
+import {
+  TuiChevron,
+  TuiComboBox,
+  TuiSelect,
+  TuiDataListWrapper,
+  TuiFade,
+  TuiTabs,
+  TuiTextarea,
+} from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
 import {
   AngularSlickgridModule,
@@ -36,6 +49,10 @@ import {
   GridOption,
 } from 'angular-slickgrid';
 import { WarrantyClaim } from '../../models/warranty-claim.model';
+import { LandingPageService } from '../../services/landing-page.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NOTIFICATION_TITLE } from '../../app.config';
+import { APIResponse } from '../../models/api-response.interface';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -48,12 +65,17 @@ declare let grecaptcha: any;
     TuiAppearance,
     TuiButton,
     TuiDataList,
+    TuiDataListWrapper,
     TuiDropdown,
+    TuiSelect,
     TuiFade,
     TuiIcon,
     TuiNavigation,
     TuiTabs,
     TuiTextfield,
+    TuiTextarea,
+    TuiChevron,
+    TuiComboBox,
     TranslateModule,
     ReactiveFormsModule,
   ],
@@ -94,11 +116,62 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
   private widgetId?: number;
   private newWarrantyClaim = new WarrantyClaim();
   newWarrantyClaimForm: FormGroup;
+  areaList = [
+    { value: 1, name: 'Miền bắc' },
+    { value: 2, name: 'Miền trung' },
+    { value: 3, name: 'Miền nam' },
+  ];
+  productList = [
+    'MobyData Smart Device 1',
+    'MobyData Smart Device 2',
+    'MobyData Smart Device Pro',
+    'MobyData IoT Gateway',
+    'MobyData Sensor Hub',
+  ];
 
-  constructor(private formBuilder: FormBuilder) {
+  issueList = [
+    { value: 1, name: 'Lỗi 1' },
+    { value: 2, name: 'Lỗi 2' },
+    { value: 3, name: 'Lỗi 3' },
+  ];
+
+  yesNoList = [
+    { value: true, name: 'Có' },
+    { value: false, name: 'Không' },
+  ];
+
+  environmentList = [
+    { value: 1, name: 'Môi trường bình thường' },
+    { value: 2, name: 'Môi trường nóng' },
+    { value: 3, name: 'Môi trường kho lạnh' },
+  ];
+  protected readonly areaStringify: TuiStringHandler<number> =
+    this.stringifyFrom(this.areaList);
+  protected readonly areaMatcher: TuiStringMatcher<number> = this.matcherFrom(
+    this.areaList
+  );
+  protected readonly issueStringify: TuiStringHandler<number> =
+    this.stringifyFrom(this.issueList);
+  protected readonly issueMatcher: TuiStringMatcher<number> = this.matcherFrom(
+    this.issueList
+  );
+  protected readonly booleanStringify: TuiStringHandler<boolean> =
+    this.stringifyFrom(this.yesNoList);
+  protected readonly booleanMatcher: TuiStringMatcher<number> =
+    this.matcherFrom(this.yesNoList);
+  protected readonly environmentStringify: TuiStringHandler<number> =
+    this.stringifyFrom(this.yesNoList);
+  protected readonly environmentMatcher: TuiStringMatcher<number> =
+    this.matcherFrom(this.yesNoList);
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private landingPageService: LandingPageService,
+    private notification: NzNotificationService
+  ) {
     super();
     this.newWarrantyClaimForm = this.formBuilder.group({
-      Id: [this.newWarrantyClaim.Id],
+      Id: [0],
       CustomerName: [this.newWarrantyClaim.CustomerName, [Validators.required]],
       CustomerEmail: [this.newWarrantyClaim.CustomerEmail],
       CustomerPhoneNumber: [
@@ -128,6 +201,7 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
       CreatedBy: [this.newWarrantyClaim.CreatedBy],
       UpdatedDate: [this.newWarrantyClaim.UpdatedDate],
       UpdatedBy: [this.newWarrantyClaim.UpdatedBy],
+      _dummy: [null],
     });
     this.prepareGrid();
   }
@@ -233,8 +307,6 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
         product: 'MobyData IoT Gateway',
         status: 1,
       },
-
-      // 20 more
       {
         id: 'MD-8201',
         requestCode: 'MD-8201',
@@ -448,11 +520,51 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
   protected onSubmitForm() {
     if (this.newWarrantyClaimForm.invalid) {
       this.newWarrantyClaimForm.markAllAsTouched();
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng điền đầy đủ thông tin hợp lệ'
+      );
       return;
     }
 
-    const payload = new WarrantyClaim(this.newWarrantyClaimForm.getRawValue());
-
+    const data = new WarrantyClaim(this.newWarrantyClaimForm.getRawValue());
+    data.Id = 0; // just in case
+    this.landingPageService.createWarrantyClaim(data).subscribe({
+      next: () => {
+        this.notification.success(
+          NOTIFICATION_TITLE.success,
+          'Đăng ký thành công'
+        );
+        this.newWarrantyClaimForm.reset();
+      },
+      error: (error: APIResponse<WarrantyClaim>) => {
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Đăng ký thất bại: ' + error.message
+        );
+      },
+    });
     //this.service.createWarrantyClaim(payload).subscribe();
   }
+  private stringifyFrom<T extends IdName, K>(
+    list: readonly T[]
+  ): TuiStringHandler<K> {
+    return (value: K) => list.find((item) => item.value === value)?.name ?? '';
+  }
+  private matcherFrom<T extends IdName, K>(
+    list: readonly T[]
+  ): TuiStringMatcher<K> {
+    return (value: K, query: string) => {
+      const { name } = list.find((item) => item.value === value)!;
+
+      return (
+        String(value) === query || name.toLowerCase() === query.toLowerCase()
+      );
+    };
+  }
+}
+
+interface IdName {
+  value: any;
+  name: string;
 }

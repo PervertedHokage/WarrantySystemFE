@@ -68,13 +68,17 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="customer-name">Khách hàng <span style="color:red">*</span></label>
-                    <input type="text" id="customer-name" name="customer-name" required formControlName="CustomerName">
+                    <tui-textfield>
+                      <input tuiTextfield formControlName="CustomerName" />
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="contact-person">Người liên hệ</label>
-                    <input type="text" id="contact-person" name="contact-person">
+                    <tui-textfield>
+                      <input tuiTextfield />
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -83,13 +87,17 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="mobile">Điện thoại di động <span style="color:red">*</span></label>
-                    <input type="tel" id="mobile" name="mobile" required formControlName="CustomerPhoneNumber">
+                    <tui-textfield>
+                      <input tuiTextfield type="tel" formControlName="CustomerPhoneNumber" />
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="address">Địa chỉ</label>
-                    <input type="text" id="address" name="address" formControlName="CustomerAddress">
+                    <tui-textfield>
+                      <input tuiTextfield formControlName="CustomerAddress" />
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -98,18 +106,24 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="location">Vị trí định vị</label>
-                    <input type="text" id="location" name="location">
+                    <tui-textfield>
+                      <input tuiTextfield />
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="area">Vui lòng chọn khu vực</label>
-                    <select id="area" name="area">
-                      <option value="">Chọn khu vực</option>
-                      <option value="north">Miền Bắc</option>
-                      <option value="central">Miền Trung</option>
-                      <option value="south">Miền Nam</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="areaStringify">
+                      <input placeholder="Vui lòng chọn" tuiComboBox [matcher]="areaMatcher" formControlName="_dummy" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of areaList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -118,13 +132,17 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="detail-address">Địa chỉ chi tiết</label>
-                    <input id="detail-address" name="detail-address" rows="2" />
+                    <tui-textfield>
+                      <textarea tuiTextarea></textarea>
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="smart-address">Nhận diện địa chỉ thông minh</label>
-                    <input type="text" id="smart-address" name="smart-address">
+                    <tui-textfield>
+                      <textarea tuiTextarea></textarea>
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -137,27 +155,32 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="product-name">Tên sản phẩm <span style="color:red">*</span></label>
-                    <select id="product-name" name="product-name" required formControlName="ProductName">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="product1">MobyData Smart Device 1</option>
-                      <option value="product2">MobyData Smart Device 2</option>
-                      <option value="product3">MobyData Smart Device Pro</option>
-                      <option value="product4">MobyData IoT Gateway</option>
-                      <option value="product5">MobyData Sensor Hub</option>
-                    </select>
+                    <tui-textfield tuiChevron>
+                      <input placeholder="Vui lòng chọn" tuiComboBox formControlName="ProductName" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of productList ; track item){
+                        <button new tuiOption type="button" [value]="item">
+                          {{ item }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="failure-type">Hiện tượng hỏng hóc <span style="color:red">*</span></label>
-                    <select id="failure-type" name="failure-type" required formControlName="IssueId">
-                      <option value="" selected hidden>Vui lòng chọn</option>
-                      <option value="1">Không lên nguồn</option>
-                      <option value="2">Màn hình không hiển thị</option>
-                      <option value="3">Kết nối không ổn định</option>
-                      <option value="4">Hiệu suất kém</option>
-                      <option value="5">Lỗi khác</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="issueStringify">
+                      <input placeholder="Vui lòng chọn" tuiComboBox [matcher]="issueMatcher"
+                        formControlName="IssueId" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of issueList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -171,21 +194,31 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-silicon-case">Có bao silicon bảo vệ không?</label>
-                    <select id="has-silicon-case" name="has-silicon-case" formControlName="HasProtection">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="1">Có</option>
-                      <option value="0">Không</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="booleanStringify">
+                      <input tuiSelect formControlName="HasProtection" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of yesNoList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-adapter">Có bộ đối nguồn (adapter) không?</label>
-                    <select id="has-adapter" name="has-adapter" formControlName="HasAdapter">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="1">Có</option>
-                      <option value="0">Không</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="booleanStringify">
+                      <input tuiSelect formControlName="HasAdapter" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of yesNoList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -194,21 +227,31 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-data-cable">Có cấp dữ liệu không?</label>
-                    <select id="has-data-cable" name="has-data-cable" formControlName="HasCable">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="1">Có</option>
-                      <option value="0">Không</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="booleanStringify">
+                      <input tuiSelect formControlName="HasCable" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of yesNoList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-battery">Có pin không?</label>
-                    <select id="has-battery" name="has-battery" formControlName="HasBattery">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="1">Có</option>
-                      <option value="0">Không</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="booleanStringify">
+                      <input tuiSelect formControlName="HasBattery" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of yesNoList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
@@ -217,38 +260,54 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-opening-error">Có lỗi khí mở hộp không?</label>
-                    <select id="has-opening-error" name="has-opening-error" formControlName="HasIssueWhenOpenBox">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="1">Có</option>
-                      <option value="0">Không</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="booleanStringify">
+                      <input tuiSelect formControlName="HasIssueWhenOpenBox" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of yesNoList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-damage">Có bị rơi hoặc ép, va đập không?</label>
-                    <select id="has-damage" name="has-damage" formControlName="HasCollision">
-                      <option value="">Vui lòng chọn</option>
-                      <option value="1">Có</option>
-                      <option value="0">Không</option>
-                    </select>
+                    <tui-textfield tuiChevron [stringify]="booleanStringify">
+                      <input tuiSelect formControlName="HasCollision" />
+                      <tui-data-list *tuiTextfieldDropdown>
+                        @for( item of yesNoList ; track item.value){
+                        <button new tuiOption type="button" [value]="item.value">
+                          {{ item.name }}
+                        </button>
+                        }
+                      </tui-data-list>
+                    </tui-textfield>
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="environment">Môi trường sử dụng</label>
-                <select id="environment" name="environment" formControlName="OperationEnvironment">
-                  <option value="">Vui lòng chọn</option>
-                  <option value="1">Môi trường bình thường</option>
-                  <option value="2">Môi trường nóng</option>
-                  <option value="3">Môi trường kho lạnh</option>
-                </select>
+                <tui-textfield tuiChevron [stringify]="booleanStringify">
+                  <input tuiSelect formControlName="OperationEnvironment" />
+                  <tui-data-list *tuiTextfieldDropdown>
+                    @for( item of environmentList ; track item.value){
+                    <button new tuiOption type="button" [value]="item.value">
+                      {{ item.name }}
+                    </button>
+                    }
+                  </tui-data-list>
+                </tui-textfield>
               </div>
 
               <div class="form-group">
                 <label for="failure-context">Trong trường hợp nào thì xuất hiện hiện tượng hỏng hóc?</label>
-                <textarea id="failure-context" name="failure-context" rows="3"></textarea>
+                <tui-textfield>
+                  <textarea tuiTextarea></textarea>
+                </tui-textfield>
               </div>
 
               <div class="form-group">
@@ -303,7 +362,9 @@
 
               <div class="form-group mb-1">
                 <label for="notes">Ghi chú</label>
-                <textarea id="notes" name="notes" rows="4"></textarea>
+                  <tui-textfield>
+                    <textarea tuiTextarea></textarea>
+                  </tui-textfield>
               </div>
             </div>
             <div #captchaHolder class="d-flex justify-content-center mb-1"></div>
