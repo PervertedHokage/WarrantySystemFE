@@ -104,16 +104,16 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
   defineGrid() {
     this.columnDefinitions = [
-      {
-        id: 'Id',
-        name: 'ID',
-        field: 'Id',
-        width: 50,
-        sortable: true,
-        type: 'number',
-        filterable: true,
-        filter: { model: Filters['compoundInputText'] },
-      },
+      // {
+      //   id: 'Id',
+      //   name: 'ID',
+      //   field: 'Id',
+      //   width: 50,
+      //   sortable: true,
+      //   type: 'number',
+      //   filterable: true,
+      //   filter: { model: Filters['compoundInputText'] },
+      // },
       {
         id: 'Code',
         name: 'Mã sản phẩm',
@@ -253,11 +253,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const dataContext =
-      this.angularGrid?.gridService?.getDataItemByRowIndex(row) ||
-      this.dataView?.getItem(row) ||
-      this.angularGrid?.dataView?.getItem(row) ||
-      args?.grid?.getDataItem?.(row);
+    const dataContext = args?.grid?.getDataItem?.(row);
 
     this.ProductID = dataContext?.Id ?? 0;
     this.ProductData = dataContext || null;
@@ -275,11 +271,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     }
 
     const rowIndex = rows[0];
-    const item =
-      this.angularGrid?.gridService?.getDataItemByRowIndex(rowIndex) ||
-      this.dataView?.getItem(rowIndex) ||
-      this.angularGrid?.dataView?.getItem(rowIndex) ||
-      args?.grid?.getDataItem?.(rowIndex);
+    const item = args?.grid?.getDataItem?.(rowIndex);
 
     this.ProductID = item?.Id ?? 0;
     this.ProductData = item || null;

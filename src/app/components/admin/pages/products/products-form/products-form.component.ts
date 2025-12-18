@@ -61,6 +61,8 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
   dataInput: any = null;
   formGroup: FormGroup;
 
+
+
   constructor(
     @Inject(NZ_MODAL_DATA)
     public data: { ProductID: number; isEditMode: boolean; dataInput: any },
@@ -77,7 +79,7 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
     }
     this.formGroup = this.fb.group({
       Name: [null, [Validators.required, Validators.maxLength(100)]],
-      Code: ['', [Validators.required, Validators.maxLength(100)]],
+      Code: ['', [Validators.required, Validators.maxLength(20)]],
       Description: ['', [Validators.maxLength(500)]],
     });
   }
@@ -115,7 +117,7 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
 
     const formValue = this.formGroup.value;
     const payload = {
-      ID: this.dataInput?.Id || 0,
+      d: this.isEditMode ? this.dataInput?.Id || 0 : 0,
       Name: formValue.Name,
       Code: formValue.Code,
       Description: formValue.Description
