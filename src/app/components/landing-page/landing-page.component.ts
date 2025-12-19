@@ -52,12 +52,15 @@ import {
   Filters,
   Formatters,
   GridOption,
+  OnEventArgs,
 } from 'angular-slickgrid';
 import { WarrantyClaim } from '../../models/warranty-claim.model';
 import { LandingPageService } from '../../services/landing-page.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../app.config';
 import { APIResponse } from '../../models/api-response.interface';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { TrackingModalComponent } from './tracking-modal/tracking-modal.component';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -67,6 +70,7 @@ declare let grecaptcha: any;
     AngularSlickgridModule,
     FormsModule,
     KeyValuePipe,
+    NzModalModule,
     TuiAppearance,
     TuiButton,
     TuiDataList,
@@ -189,8 +193,7 @@ export class LandingPageComponent
     private formBuilder: FormBuilder,
     private landingPageService: LandingPageService,
     private notification: NzNotificationService,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private modal: NzModalService
   ) {
     super();
     this.newWarrantyClaimForm = this.formBuilder.group({
@@ -278,6 +281,7 @@ export class LandingPageComponent
         id: 'StatusText',
         name: 'Trạng thái',
         field: 'StatusText',
+        cssClass: 'cell-center',
         filterable: true,
         filter: {
           model: Filters['compoundInputText'],
@@ -286,7 +290,49 @@ export class LandingPageComponent
           const s = this.statusMap[item.Status];
           return s ? `<span class="${s.cls}">${s.text}</span>` : '';
         },
-        width: 200,
+      },
+      {
+        id: 'Tracking',
+        name: 'Theo dõi',
+        field: '_',
+        cssClass: 'cell-center',
+        sortable: false,
+        filterable: false,
+        excludeFromColumnPicker: true,
+        formatter: (_row, _cell, _value, _colDef, dataContext) => {
+          if (dataContext?.Status !== 6) {
+            return '';
+          }
+          return `
+            <button class="btn btn-sm btn-outline view-tracking-btn">
+              🚛 Xem Tracking
+            </button>
+          `;
+        },
+        onCellClick: (e: Event, args: OnEventArgs) => {
+          const target = e.target as HTMLElement;
+          if (!target.closest('.view-tracking-btn')) {
+            return;
+          }
+          e.stopImmediatePropagation();
+          const rowData = args.dataContext;
+          const modalRef = this.modal.create({
+            nzTitle: 'Lịch trình vận chuyển',
+            nzContent: TrackingModalComponent,
+            nzFooter: null,
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzData: {
+              warrantyClaim: rowData
+            },
+          });
+
+          modalRef.afterClose.subscribe((result) => {
+            if (result === true) {
+
+            }
+          });
+        },
       },
     ];
 
@@ -301,7 +347,7 @@ export class LandingPageComponent
       enableFiltering: true,
       forceFitColumns: true,
       enableCellNavigation: true,
-      rowHeight: 62.75
+      rowHeight: 62.75,
     };
     // this.dataset = [
     //   {

@@ -1,0 +1,11 @@
+<tui-stepper orientation="vertical" tuiConnected [activeItemIndex]="activeIndex">
+  @for(step of trackings; track step.Id){
+  <button tuiStep [stepState]="step.IsActive? 'pass':'normal'">
+    <div class="timeline-content">
+      <h4>{{step.StatusText}}</h4>
+      <p>{{step.Note}}</p>
+      <div class="timeline-time">{{step.CreatedDate}}</div>
+    </div>
+  </button>
+  }
+</tui-stepper>

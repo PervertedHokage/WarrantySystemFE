@@ -4,6 +4,7 @@ import { environment } from '../environments/environment';
 import { WarrantyClaim } from '../models/warranty-claim.model';
 import { APIResponse } from '../models/api-response.interface';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { WarrantyClaimTracking } from '../models/warranty-claim-tracking.model';
 
 @Injectable({
   providedIn: 'root',
@@ -26,5 +27,10 @@ export class LandingPageService {
   }
   createWarrantyClaim(data: WarrantyClaim) {
     return this.http.post<APIResponse<WarrantyClaim>>(this.apiUrl, data);
+  }
+  getWarrantyClaimTrackings(claimId: number) {
+    return this.http.get<APIResponse<WarrantyClaimTracking[]>>(
+      environment.host + `api/warrantyclaimtracking?claim-id=${claimId}`
+    );
   }
 }
