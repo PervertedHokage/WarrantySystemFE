@@ -1,9 +1,10 @@
 export class WarrantyClaim {
   Id = 0;
+  ClaimNo: string | null = '';
   CustomerName = '';
-  CustomerEmail = '';
+  CustomerEmail: string | null = '';
   CustomerPhoneNumber = '';
-  CustomerAddress = '';
+  CustomerAddress: string | null = '';
   ProductName = '';
   ProductId: number | null = null;
   IssueId: number | null = null;
@@ -16,16 +17,17 @@ export class WarrantyClaim {
   HasCollision: boolean | null = null;
   OperationEnvironment: number | null = null;
   Status: number | null = null;
+  StatusText: string | null = null;
   Type: number | null = null;
-  FileAddress = '';
-  Transporter = '';
-  LadingNumber = '';
+  FileAddress: string | null = '';
+  Transporter: string | null = '';
+  LadingNumber: string | null = '';
   Note = '';
-  RecipientAddress = '';
+  RecipientAddress: string | null = '';
   CreatedDate: Date | null = null;
-  CreatedBy = '';
+  CreatedBy: string | null = '';
   UpdatedDate: Date | null = null;
-  UpdatedBy = '';
+  UpdatedBy: string | null = '';
 
   constructor(init?: Partial<WarrantyClaim>) {
     Object.assign(this, init);

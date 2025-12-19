@@ -75,9 +75,9 @@
                 </div>
                 <div class="form-col">
                   <div class="form-group">
-                    <label for="contact-person">Người liên hệ</label>
+                    <label for="customer-email">Email <span style="color:red">*</span></label>
                     <tui-textfield>
-                      <input tuiTextfield />
+                      <input tuiTextfield formControlName="CustomerEmail" />
                     </tui-textfield>
                   </div>
                 </div>
@@ -105,15 +105,7 @@
               <div class="form-row">
                 <div class="form-col">
                   <div class="form-group">
-                    <label for="location">Vị trí định vị</label>
-                    <tui-textfield>
-                      <input tuiTextfield />
-                    </tui-textfield>
-                  </div>
-                </div>
-                <div class="form-col">
-                  <div class="form-group">
-                    <label for="area">Vui lòng chọn khu vực</label>
+                    <label for="area">Khu vực</label>
                     <tui-textfield tuiChevron [stringify]="areaStringify">
                       <input placeholder="Vui lòng chọn" tuiComboBox [matcher]="areaMatcher" formControlName="_dummy" />
                       <tui-data-list *tuiTextfieldDropdown>
@@ -126,20 +118,9 @@
                     </tui-textfield>
                   </div>
                 </div>
-              </div>
-
-              <div class="form-row">
                 <div class="form-col">
                   <div class="form-group">
                     <label for="detail-address">Địa chỉ chi tiết</label>
-                    <tui-textfield>
-                      <textarea tuiTextarea></textarea>
-                    </tui-textfield>
-                  </div>
-                </div>
-                <div class="form-col">
-                  <div class="form-group">
-                    <label for="smart-address">Nhận diện địa chỉ thông minh</label>
                     <tui-textfield>
                       <textarea tuiTextarea></textarea>
                     </tui-textfield>
@@ -312,7 +293,8 @@
 
               <div class="form-group">
                 <label for="attachments">Đính kèm hình ảnh hay file</label>
-                <input type="file" id="attachments" name="attachments" multiple>
+                <input type="file" id="attachments" name="attachments" multiple
+                  accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
               </div>
             </div>
 
@@ -362,9 +344,9 @@
 
               <div class="form-group mb-1">
                 <label for="notes">Ghi chú</label>
-                  <tui-textfield>
-                    <textarea tuiTextarea></textarea>
-                  </tui-textfield>
+                <tui-textfield>
+                  <textarea tuiTextarea formControlName="Note"></textarea>
+                </tui-textfield>
               </div>
             </div>
             <div #captchaHolder class="d-flex justify-content-center mb-1"></div>
@@ -386,43 +368,53 @@
             <form id="search-form" class="search-form">
               <div class="form-group">
                 <label for="search-phone">Số điện thoại</label>
-                <input type="tel" id="search-phone" name="search-phone" placeholder="Nhập số điện thoại">
+                <input type="tel" id="search-phone" name="search-phone" placeholder="Nhập số điện thoại"
+                  [(ngModel)]="phoneNumberSearch">
               </div>
               <div class="form-group">
                 <label for="search-email">Email</label>
-                <input type="email" id="search-email" name="search-email" placeholder="Nhập địa chỉ email">
+                <input type="email" id="search-email" name="search-email" placeholder="Nhập địa chỉ email"
+                  [(ngModel)]="emailSearch">
               </div>
-              <div class="form-group" style="display: flex; align-items: flex-end;">
-                <button type="submit" class="btn">Tìm kiếm</button>
+              <div class="form-group">
+                <label for="search-claim-no">Số phiếu bảo hành</label>
+                <input type="text" id="search-claim-no" name="claim-no" placeholder="Nhập địa số phiếu bảo hành"
+                  [(ngModel)]="claimNoSearch">
+              </div>
+              <div class="form-group button-group" style="display:flex; align-items:flex-end;">
+                <button type="submit" class="btn" (click)="loadData()">🔍 Tìm kiếm</button>
               </div>
             </form>
           </div>
 
           <div class="tab-container">
             <div class="tabs">
-              <div class="tab active" data-tab="tab1">
-                <span class="tab-badge">3</span> Tiếp nhận thông tin
+              <div class="tab" [class.active]="currentFilter == 0" data-tab="tab1" (click)="filterStatus(0)">
+                <span class="tab-badge">{{dataset.length}}</span> Tất cả
               </div>
-              <div class="tab" data-tab="tab2">
-                <span class="tab-badge">2</span> Xác minh thông tin
+              <div class="tab" [class.active]="currentFilter == 1" data-tab="tab1" (click)="filterStatus(1)">
+                <span class="tab-badge">{{getStatusCount(1)}}</span> Tiếp nhận thông tin
               </div>
-              <div class="tab" data-tab="tab3">
-                <span class="tab-badge">5</span> Chẩn đoán sơ bộ
+              <div class="tab" [class.active]="currentFilter == 2" data-tab="tab2" (click)="filterStatus(2)">
+                <span class="tab-badge">{{getStatusCount(2)}}</span> Xác minh thông tin
               </div>
-              <div class="tab" data-tab="tab4">
-                <span class="tab-badge">1</span> Báo giá
+              <div class="tab" [class.active]="currentFilter == 3" data-tab="tab3" (click)="filterStatus(3)">
+                <span class="tab-badge">{{getStatusCount(3)}}</span> Chẩn đoán sơ bộ
               </div>
-              <div class="tab" data-tab="tab5">
-                <span class="tab-badge">4</span> Sửa chữa/Bảo hành
+              <div class="tab" [class.active]="currentFilter == 4" data-tab="tab4" (click)="filterStatus(4)">
+                <span class="tab-badge">{{getStatusCount(4)}}</span> Báo giá
               </div>
-              <div class="tab" data-tab="tab6">
-                <span class="tab-badge">2</span> Hoàn trả
+              <div class="tab" [class.active]="currentFilter == 5" data-tab="tab5" (click)="filterStatus(5)">
+                <span class="tab-badge">{{getStatusCount(5)}}</span> Sửa chữa/Bảo hành
+              </div>
+              <div class="tab" [class.active]="currentFilter == 6" data-tab="tab6" (click)="filterStatus(6)">
+                <span class="tab-badge">{{getStatusCount(6)}}</span> Hoàn trả
               </div>
             </div>
 
             <div class="tab-content">
-              <angular-slickgrid gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions"
-                [dataset]="dataset">
+              <angular-slickgrid #asg gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions"
+                [dataset]="dataset" (onAngularGridCreated)="angularGridReady($event.detail)">
               </angular-slickgrid>
             </div>
           </div>

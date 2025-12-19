@@ -1,9 +1,12 @@
 import { KeyValuePipe } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
+  NgZone,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -42,8 +45,10 @@ import {
 } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
 import {
+  AngularGridInstance,
   AngularSlickgridModule,
   Column,
+  DOMMouseOrTouchEvent,
   Filters,
   Formatters,
   GridOption,
@@ -79,10 +84,13 @@ declare let grecaptcha: any;
     TranslateModule,
     ReactiveFormsModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
 })
-export class LandingPageComponent extends TuiPortals implements OnInit {
+export class LandingPageComponent
+  extends TuiPortals
+  implements OnInit, AfterViewInit
+{
   private router = inject(Router);
   private _currentTab = 0;
   get currentTab() {
@@ -93,13 +101,23 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
     if (this._currentTab == 1) {
       this.newWarrantyClaimForm.reset();
       setTimeout(() => this.initCaptcha());
-    } else this.destroyCaptcha();
+    } else {
+      this.destroyCaptcha();
+    }
   }
+  currentFilter = 0;
   protected expanded = false;
   protected open = false;
   protected switch = false;
   protected readonly routes: any = {};
-
+  statusMap: Record<number, { text: string; cls: string }> = {
+    1: { text: 'Tiếp nhận thông tin', cls: 'status-badge status-1' },
+    2: { text: 'Xác minh thông tin', cls: 'status-badge status-2' },
+    3: { text: 'Chẩn đoán sơ bộ', cls: 'status-badge status-3' },
+    4: { text: 'Báo giá', cls: 'status-badge status-4' },
+    5: { text: 'Sửa chữa/bảo hành', cls: 'status-badge status-5' },
+    6: { text: 'Hoàn trả', cls: 'status-badge status-6' },
+  };
   protected readonly drawer = {
     Components: [{ name: 'Thu gọn', icon: '@tui.chevron-left', tabIndex: 0 }],
     Essentials: [
@@ -110,9 +128,10 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
   };
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
-  dataset: any[] = [];
+  dataset: WarrantyClaim[] = [];
   @ViewChild('captchaHolder')
   captchaHolder?: ElementRef<HTMLDivElement>;
+  angularGrid!: AngularGridInstance;
   private widgetId?: number;
   private newWarrantyClaim = new WarrantyClaim();
   newWarrantyClaimForm: FormGroup;
@@ -163,17 +182,24 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
     this.stringifyFrom(this.yesNoList);
   protected readonly environmentMatcher: TuiStringMatcher<number> =
     this.matcherFrom(this.yesNoList);
-
+  phoneNumberSearch: string = '';
+  emailSearch: string = '';
+  claimNoSearch: string = '';
   constructor(
     private formBuilder: FormBuilder,
     private landingPageService: LandingPageService,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {
     super();
     this.newWarrantyClaimForm = this.formBuilder.group({
       Id: [0],
       CustomerName: [this.newWarrantyClaim.CustomerName, [Validators.required]],
-      CustomerEmail: [this.newWarrantyClaim.CustomerEmail],
+      CustomerEmail: [
+        this.newWarrantyClaim.CustomerEmail,
+        [Validators.required],
+      ],
       CustomerPhoneNumber: [
         this.newWarrantyClaim.CustomerPhoneNumber,
         [Validators.required],
@@ -203,26 +229,30 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
       UpdatedBy: [this.newWarrantyClaim.UpdatedBy],
       _dummy: [null],
     });
-    this.prepareGrid();
   }
   ngOnInit(): void {
     this.currentTab = 1;
+    this.prepareGrid();
+  }
+  ngAfterViewInit(): void {}
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
   }
   prepareGrid() {
     this.columnDefinitions = [
       {
-        id: 'requestCode',
-        name: 'Mã yêu cầu',
-        field: 'requestCode',
+        id: 'ClaimNo',
+        name: 'Mã phiếu',
+        field: 'ClaimNo',
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
       {
-        id: 'createdDate',
+        id: 'CreatedDate',
         name: 'Ngày tạo',
-        field: 'createdDate',
+        field: 'CreatedDate',
         sortable: true,
         type: 'dateUtc',
         formatter: Formatters.dateTimeIsoAmPm,
@@ -230,236 +260,157 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
         filter: { model: Filters['compoundDate'] },
       },
       {
-        id: 'customer',
+        id: 'CustomerName',
         name: 'Khách hàng',
-        field: 'customer',
+        field: 'CustomerName',
         sortable: true,
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
       {
-        id: 'product',
+        id: 'ProductName',
         name: 'Sản phẩm',
-        field: 'product',
+        field: 'ProductName',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
       {
-        id: 'status',
+        id: 'StatusText',
         name: 'Trạng thái',
-        field: 'status',
+        field: 'StatusText',
         filterable: true,
-        filter: { model: Filters['compoundInputText'] },
+        filter: {
+          model: Filters['compoundInputText'],
+        },
+        formatter: (_row, _cell, value, _col, item) => {
+          const s = this.statusMap[item.Status];
+          return s ? `<span class="${s.cls}">${s.text}</span>` : '';
+        },
+        width: 200,
       },
     ];
 
     this.gridOptions = {
+      datasetIdPropertyName: 'Id',
       enableAutoResize: true,
       autoResize: {
         container: '.tab-content',
         resizeDetection: 'container',
       },
-      enableFiltering: true,
       enableSorting: true,
+      enableFiltering: true,
       forceFitColumns: true,
-      enableAutoResizeColumnsByCellContent: false,
+      enableCellNavigation: true,
+      rowHeight: 62.75
     };
-
-    // fill the dataset with your data (or read it from the DB)
-    this.dataset = [
-      {
-        id: 'MD-7800',
-        requestCode: 'MD-7800',
-        createdDate: '2025-12-06',
-        customer: 'Hoàng Văn E',
-        product: 'MobyData Sensor Hub',
-        status: 1,
-      },
-      {
-        id: 'MD-6844',
-        requestCode: 'MD-6844',
-        createdDate: '2025-11-19',
-        customer: 'Hoàng Văn E',
-        product: 'MobyData Smart Device 1',
-        status: 1,
-      },
-      {
-        id: 'MD-7506',
-        requestCode: 'MD-7506',
-        createdDate: '2025-11-30',
-        customer: 'Trần Thị B',
-        product: 'MobyData IoT Gateway',
-        status: 1,
-      },
-      {
-        id: 'MD-1931',
-        requestCode: 'MD-1931',
-        createdDate: '2025-12-05',
-        customer: 'Phạm Thị D',
-        product: 'MobyData IoT Gateway',
-        status: 1,
-      },
-      {
-        id: 'MD-4262',
-        requestCode: 'MD-4262',
-        createdDate: '2025-11-19',
-        customer: 'Nguyễn Văn A',
-        product: 'MobyData IoT Gateway',
-        status: 1,
-      },
-      {
-        id: 'MD-8201',
-        requestCode: 'MD-8201',
-        createdDate: '2025-12-02',
-        customer: 'Lê Quốc H',
-        product: 'MobyData Sensor Hub',
-        status: 2,
-      },
-      {
-        id: 'MD-5520',
-        requestCode: 'MD-5520',
-        createdDate: '2025-12-04',
-        customer: 'Trần Văn T',
-        product: 'MobyData Smart Device 1',
-        status: 3,
-      },
-      {
-        id: 'MD-6612',
-        requestCode: 'MD-6612',
-        createdDate: '2025-11-28',
-        customer: 'Đỗ Minh K',
-        product: 'MobyData IoT Gateway',
-        status: 1,
-      },
-      {
-        id: 'MD-9981',
-        requestCode: 'MD-9981',
-        createdDate: '2025-12-01',
-        customer: 'Phạm Mỹ N',
-        product: 'MobyData Sensor Hub',
-        status: 4,
-      },
-      {
-        id: 'MD-4410',
-        requestCode: 'MD-4410',
-        createdDate: '2025-11-15',
-        customer: 'Ngô Tấn P',
-        product: 'MobyData Smart Device 1',
-        status: 2,
-      },
-      {
-        id: 'MD-7322',
-        requestCode: 'MD-7322',
-        createdDate: '2025-11-25',
-        customer: 'Hoàng Anh Q',
-        product: 'MobyData IoT Gateway',
-        status: 3,
-      },
-      {
-        id: 'MD-8840',
-        requestCode: 'MD-8840',
-        createdDate: '2025-12-03',
-        customer: 'Võ Trúc L',
-        product: 'MobyData Sensor Hub',
-        status: 2,
-      },
-      {
-        id: 'MD-2201',
-        requestCode: 'MD-2201',
-        createdDate: '2025-11-10',
-        customer: 'Bùi Gia M',
-        product: 'MobyData Smart Device 1',
-        status: 1,
-      },
-      {
-        id: 'MD-9903',
-        requestCode: 'MD-9903',
-        createdDate: '2025-12-07',
-        customer: 'Huỳnh Nhật C',
-        product: 'MobyData IoT Gateway',
-        status: 4,
-      },
-      {
-        id: 'MD-7744',
-        requestCode: 'MD-7744',
-        createdDate: '2025-11-21',
-        customer: 'Trịnh Văn U',
-        product: 'MobyData Smart Device 1',
-        status: 2,
-      },
-      {
-        id: 'MD-2332',
-        requestCode: 'MD-2332',
-        createdDate: '2025-11-18',
-        customer: 'Dương Thị H',
-        product: 'MobyData Sensor Hub',
-        status: 3,
-      },
-      {
-        id: 'MD-5129',
-        requestCode: 'MD-5129',
-        createdDate: '2025-12-05',
-        customer: 'Lý Thanh V',
-        product: 'MobyData IoT Gateway',
-        status: 4,
-      },
-      {
-        id: 'MD-6600',
-        requestCode: 'MD-6600',
-        createdDate: '2025-11-29',
-        customer: 'Phan Gia B',
-        product: 'MobyData Smart Device 1',
-        status: 2,
-      },
-      {
-        id: 'MD-3891',
-        requestCode: 'MD-3891',
-        createdDate: '2025-12-06',
-        customer: 'Tạ Minh D',
-        product: 'MobyData Sensor Hub',
-        status: 1,
-      },
-      {
-        id: 'MD-2718',
-        requestCode: 'MD-2718',
-        createdDate: '2025-11-27',
-        customer: 'Nguyễn Ngọc F',
-        product: 'MobyData IoT Gateway',
-        status: 4,
-      },
-      {
-        id: 'MD-6644',
-        requestCode: 'MD-6644',
-        createdDate: '2025-11-26',
-        customer: 'Hoàng Trọng Y',
-        product: 'MobyData Smart Device 1',
-        status: 3,
-      },
-      {
-        id: 'MD-5568',
-        requestCode: 'MD-5568',
-        createdDate: '2025-12-03',
-        customer: 'Mai Thị Z',
-        product: 'MobyData IoT Gateway',
-        status: 2,
-      },
-      {
-        id: 'MD-8123',
-        requestCode: 'MD-8123',
-        createdDate: '2025-11-14',
-        customer: 'Trương Quốc O',
-        product: 'MobyData Sensor Hub',
-        status: 3,
-      },
-      {
-        id: 'MD-9400',
-        requestCode: 'MD-9400',
-        createdDate: '2025-11-30',
-        customer: 'Đặng Thái J',
-        product: 'MobyData Smart Device 1',
-        status: 1,
-      },
-    ];
+    // this.dataset = [
+    //   {
+    //     Id: 3,
+    //     ClaimNo: 'PBH-20251218162353',
+    //     CustomerName: 'Khách hàng 3',
+    //     CustomerEmail: null,
+    //     CustomerPhoneNumber: '0987654321',
+    //     CustomerAddress: null,
+    //     ProductName: 'MobyData Smart Device 2',
+    //     ProductId: null,
+    //     IssueId: 2,
+    //     SerialNumber: 'PDA12345',
+    //     HasProtection: null,
+    //     HasAdapter: null,
+    //     HasCable: null,
+    //     HasBattery: null,
+    //     HasIssueWhenOpenBox: null,
+    //     HasCollision: null,
+    //     OperationEnvironment: null,
+    //     Status: 3,
+    //     Type: null,
+    //     FileAddress: null,
+    //     Transporter: null,
+    //     LadingNumber: null,
+    //     Note: 'aw fuck off',
+    //     RecipientAddress: null,
+    //     CreatedDate: new Date('2025-12-18T16:23:53'),
+    //     CreatedBy: 'Khách hàng 3',
+    //     UpdatedDate: null,
+    //     UpdatedBy: null,
+    //   },
+    //   {
+    //     Id: 2,
+    //     ClaimNo: 'PBH-20251218162320',
+    //     CustomerName: 'Khách hàng 2',
+    //     CustomerEmail: null,
+    //     CustomerPhoneNumber: '0987654321',
+    //     CustomerAddress: null,
+    //     ProductName: 'MobyData Smart Device 2',
+    //     ProductId: null,
+    //     IssueId: 2,
+    //     SerialNumber: 'PDA12345',
+    //     HasProtection: null,
+    //     HasAdapter: null,
+    //     HasCable: null,
+    //     HasBattery: null,
+    //     HasIssueWhenOpenBox: null,
+    //     HasCollision: null,
+    //     OperationEnvironment: null,
+    //     Status: 2,
+    //     Type: null,
+    //     FileAddress: null,
+    //     Transporter: null,
+    //     LadingNumber: null,
+    //     Note: 'shiet',
+    //     RecipientAddress: null,
+    //     CreatedDate: new Date('2025-12-18T16:23:20'),
+    //     CreatedBy: 'Khách hàng 2',
+    //     UpdatedDate: null,
+    //     UpdatedBy: null,
+    //   },
+    //   {
+    //     Id: 1,
+    //     ClaimNo: 'PBH-20251218161530',
+    //     CustomerName: 'Khách hàng',
+    //     CustomerEmail: null,
+    //     CustomerPhoneNumber: '1234567890',
+    //     CustomerAddress: null,
+    //     ProductName: 'MobyData Smart Device 1',
+    //     ProductId: null,
+    //     IssueId: 1,
+    //     SerialNumber: 'PDA12345',
+    //     HasProtection: null,
+    //     HasAdapter: null,
+    //     HasCable: null,
+    //     HasBattery: null,
+    //     HasIssueWhenOpenBox: null,
+    //     HasCollision: null,
+    //     OperationEnvironment: null,
+    //     Status: 1,
+    //     Type: null,
+    //     FileAddress: null,
+    //     Transporter: null,
+    //     LadingNumber: null,
+    //     Note: 'bruh',
+    //     RecipientAddress: null,
+    //     CreatedDate: new Date('2025-12-18T16:15:30'),
+    //     CreatedBy: 'Khách hàng',
+    //     UpdatedDate: null,
+    //     UpdatedBy: null,
+    //   },
+    // ];
+  }
+  loadData() {
+    this.landingPageService
+      .getWarrantyClaim(
+        this.phoneNumberSearch,
+        this.emailSearch,
+        this.claimNoSearch
+      )
+      .subscribe({
+        next: (result) => {
+          this.dataset = result.data.map((d) => ({
+            ...d,
+            StatusText: this.getStatusText(d.Status ?? 0),
+          }));
+        },
+      });
   }
   private async initCaptcha() {
     if (!this.captchaHolder || this.widgetId !== undefined) return;
@@ -545,6 +496,30 @@ export class LandingPageComponent extends TuiPortals implements OnInit {
       },
     });
     //this.service.createWarrantyClaim(payload).subscribe();
+  }
+  filterStatus(status: number) {
+    this.currentFilter = status;
+    if (status == 0) {
+      this.angularGrid.filterService.clearFilterByColumnId(
+        {} as DOMMouseOrTouchEvent<HTMLDivElement>,
+        'StatusText'
+      );
+    } else {
+      const searchText = [this.statusMap[status].text];
+      this.angularGrid.filterService.updateFilters([
+        {
+          columnId: 'StatusText',
+          searchTerms: [this.statusMap[status].text],
+          operator: '==',
+        },
+      ]);
+    }
+  }
+  getStatusText(status: number) {
+    return this.statusMap[status].text;
+  }
+  getStatusCount(status: number) {
+    return this.dataset.filter((d) => d.Status == status).length;
   }
   private stringifyFrom<T extends IdName, K>(
     list: readonly T[]

@@ -14,6 +14,16 @@ export class LandingPageService {
     private http: HttpClient,
     private notification: NzNotificationService
   ) {}
+  getWarrantyClaim(phoneNumber: string, email: string, claimNo: string) {
+    return this.http.get<APIResponse<WarrantyClaim[]>>(
+      this.apiUrl +
+        `?phone-number=${encodeURIComponent(
+          phoneNumber
+        )}&email=${encodeURIComponent(email)}&claim-no=${encodeURIComponent(
+          claimNo
+        )}`
+    );
+  }
   createWarrantyClaim(data: WarrantyClaim) {
     return this.http.post<APIResponse<WarrantyClaim>>(this.apiUrl, data);
   }

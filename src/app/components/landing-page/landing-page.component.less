@@ -1,3 +1,47 @@
+:host ::ng-deep {
+  .status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .status-1 {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .status-2 {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .status-3 {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+
+  .status-4 {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .status-5 {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .status-6 {
+    background-color: #e2e3e5;
+    color: #383d41;
+  }
+
+  .slick-cell {
+    padding: 15px !important;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -632,6 +676,11 @@ textarea:focus {
   margin-bottom: 0;
 }
 
+.search-form .form-group.button-group {
+  flex: 0 0 auto;
+  min-width: auto;
+}
+
 .ng-invalid.ng-touched {
   border-color: #dc3545 !important;
   padding-right: calc(1.5em + .75rem);
@@ -712,44 +761,6 @@ textarea:focus {
 
 .requests-table tr:hover {
   background-color: #f9f9f9;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.status-1 {
-  background-color: #d1ecf1;
-  color: #0c5460;
-}
-
-.status-2 {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.status-3 {
-  background-color: #cce5ff;
-  color: #004085;
-}
-
-.status-4 {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-5 {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.status-6 {
-  background-color: #e2e3e5;
-  color: #383d41;
 }
 
 /* Action Buttons */
