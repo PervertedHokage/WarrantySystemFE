@@ -1,4 +1,4 @@
-<div >
+<div class="card" >
   <div class="card-header bg-white p-1">
     <div class="d-flex gap-1">
       <button
@@ -32,7 +32,7 @@
   </div>
   <div class="grid-container">
     <nz-splitter nzLayout="horizontal" style="height: 90vh !important;">
-      <nz-splitter-panel nzDefaultSize="50%">
+      <nz-splitter-panel nzDefaultSize="50%" style="overflow: hidden !important;">
         <div class="grid-master-container">
           <angular-slickgrid
             gridId="issuesGroupGrid"
@@ -46,7 +46,7 @@
           </angular-slickgrid>
         </div>
       </nz-splitter-panel>
-      <nz-splitter-panel nzDefaultSize="50%">
+      <nz-splitter-panel nzDefaultSize="50%" style="overflow: hidden !important;">
         <div class="grid-detail-container">
           <angular-slickgrid
             gridId="issuesGrid"

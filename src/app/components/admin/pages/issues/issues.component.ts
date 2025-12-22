@@ -114,19 +114,29 @@ export class IssuesComponent implements OnInit, AfterViewInit {
 
   defineGrid() {
     this.columnIssuesGroup = [
-      // {
-      //   id: 'Id',
-      //   name: 'ID',
-      //   field: 'Id',
-      //   width: 100,
-      //   minWidth: 100,
-      //   maxWidth: 100,
-      //   resizable: false,
-      //   sortable: true,
-      //   type: 'number',
-      //   filterable: true,
-      //   filter: { model: Filters['compoundInputText'] },
-      // },
+        {
+        id: 'stt',
+        name: 'STT',
+        field: 'stt',
+        width: 60,
+        sortable: false,
+        filterable: false,
+        formatter: (row) => {
+          // STT động dựa trên số thứ tự dòng (bắt đầu từ 1)
+          return row !== undefined && row !== null ? (row + 1).toString() : '';
+        },
+        type: 'string',
+        filter: { model: Filters['compoundInputText'] },
+      },
+       {
+        id: 'Code',
+        name: 'Mã lỗi',
+        field: 'Code',
+        sortable: true,
+        type: 'string',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
       {
         id: 'Name',
         name: 'Tên lỗi hiện tượng hỏng hóc',
@@ -158,6 +168,27 @@ export class IssuesComponent implements OnInit, AfterViewInit {
 
   defineIssuesGrid() {
     this.columnIssues = [
+        {
+        id: 'stt',
+        name: 'STT',
+        field: 'stt',
+        width: 60,
+        sortable: false,
+        filterable: false,
+        formatter: (row) => {
+          // STT động dựa trên số thứ tự dòng (bắt đầu từ 1)
+          return row !== undefined && row !== null ? (row + 1).toString() : '';
+        },
+      },
+      {
+        id: 'Code',
+        name: 'Mã lỗi',
+        field: 'Code',
+        sortable: true,
+        type: 'string',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
       {
         id: 'Name',
         name: 'Chi tiết lỗi hiện tượng hỏng hóc',

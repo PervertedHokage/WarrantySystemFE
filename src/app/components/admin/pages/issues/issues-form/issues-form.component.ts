@@ -72,7 +72,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
 
 
   ngOnInit(): void {
-    // Load master data vào form khi edit mode
     if (this.isEditMode && this.dataInput) {
       this.formGroup.patchValue({
         Name: this.dataInput.Name || '',
@@ -81,11 +80,9 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    // Delay để modal render xong trước khi vẽ table
     setTimeout(() => {
       this.draw_IssuesTable();
       
-      // Load detail data sau khi table đã được vẽ (edit mode)
       if (this.isEditMode && this.IssuesGroupID) {
         this.loadIssuesDetailData();
       }
@@ -112,7 +109,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
       });
     }
 
-  // Load detail issues theo IssuesGroupID
   loadIssuesDetailData() {
     if (!this.IssuesGroupID) {
       return;
@@ -128,7 +124,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
           Name: item.Name || '',
         }));
 
-        // Update table data
         if (this.IssuesTable) {
           this.IssuesTable.setData(this.IssuesData);
         }
@@ -140,7 +135,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
     });
   }
 
-  // Trim tất cả string trong form
   private trimAllStringControls() {
     Object.keys(this.formGroup.controls).forEach((k) => {
       const c = this.formGroup.get(k);
