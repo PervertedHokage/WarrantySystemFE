@@ -1,0 +1,40 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .card-header {
+    flex-shrink: 0;
+  }
+  
+  .grid-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.grid-sale-container{
+  height: 100%;
+  width: 100%;
+  // display: flex;
+}
+
+angular-slickgrid,
+.angular-slickgrid-container {
+  height: 100% !important;
+  width: 100%;
+  display: flex;
+}
+
+:host ::ng-deep .slickgrid-container {
+  height: 100% !important;
+}
+

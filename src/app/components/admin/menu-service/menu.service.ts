@@ -15,6 +15,7 @@ import { IssuesComponent } from '../pages/issues/issues.component';
 
 import { OrganizationComponent } from '../pages/organization/organization.component';
 import { WarrantyManagementComponent } from '../pages/warranty-management/warranty-management.component';
+import { SalesOrderComponent } from '../pages/sales-order/sales-order.component';
 
 @Injectable({
   providedIn: 'root',
@@ -117,6 +118,15 @@ export class MenuService {
               isOpen: true,
               isPermission: true,
               comp: IssuesComponent,
+              icon: 'assets/icon/menu_crm.svg',
+          },
+           {
+              kind: 'leaf',
+              key: 'SalesOrderComponent',
+              title: 'Đơn hàng ',
+              isOpen: true,
+              isPermission: true,
+              comp: SalesOrderComponent,
               icon: 'assets/icon/menu_crm.svg',
           },
         ];
