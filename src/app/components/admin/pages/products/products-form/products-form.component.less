@@ -1,0 +1,318 @@
+.table-container {
+    width: 100%;
+    min-height: 250px;
+    height: 250px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+}
+
+/* HCNS-style table for spare part descriptions */
+.hcns-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #fafafa;
+}
+
+.hcns-table-container {
+  width: 100%;
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.hcns-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #d9d9d9;
+  font-size: 0.75rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: #fff;
+  margin: 0;
+  table-layout: auto;
+  min-width: max-content;
+}
+
+.hcns-table thead {
+  background-color: #fafafa;
+  border-bottom: 2px solid #d9d9d9;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: table-header-group;
+}
+
+.hcns-table thead th {
+  background-color: #3066c5;
+  border-right: 1px solid #d9d9d9;
+  font-weight: 600;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: #fff;
+  padding: 8px 10px;
+  text-align: center;
+  vertical-align: middle;
+  position: sticky;
+  top: 0;
+  z-index: 101;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.hcns-table thead th:first-child {
+  border-left: none;
+}
+
+.hcns-table thead th:last-child {
+  border-right: none;
+}
+
+.hcns-table tbody tr {
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.hcns-table tbody tr:first-child {
+  border-top: 2px solid #bfbfbf;
+}
+
+.hcns-table td {
+  padding: 0;
+  vertical-align: middle;
+  background: #fff;
+  border-right: 1px solid #d9d9d9;
+  border-top: 1px solid #d9d9d9;
+  position: relative;
+  white-space: nowrap;
+  height: auto;
+  min-height: 32px;
+}
+
+.hcns-table td:first-child {
+  border-left: none;
+}
+
+.hcns-table td:last-child {
+  border-right: none;
+}
+
+.hcns-table input,
+.hcns-table textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.75rem;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  padding: 0 5px;
+  margin: 0;
+}
+
+.hcns-table input:focus,
+.hcns-table textarea:focus {
+  outline: none;
+  border: none;
+}
+
+.hcns-table textarea {
+  overflow-y: auto;
+}
+
+.hcns-table input::placeholder,
+.hcns-table textarea::placeholder {
+  color: #bfbfbf;
+  font-size: 0.75rem;
+}
+
+.hcns-table td[style*='text-align: center'] {
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.hcns-table .delete-btn {
+  font-size: 0.875rem;
+  color: #ff4d4f;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.hcns-table .delete-btn:hover {
+  color: #d9363e;
+  background-color: rgba(255, 77, 79, 0.1);
+}
+
+.hcns-table .cursor-pointer {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hcns-table .cursor-pointer:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.hcns-table thead th .cursor-pointer {
+  font-size: 0.875rem;
+  color: #52c41a;
+}
+
+.hcns-table thead th .cursor-pointer:hover {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: #389e0d;
+}
+
+.hcns-table td > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  min-height: 32px;
+  box-sizing: border-box;
+}
+
+.hcns-table td > div > div:last-child {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.hcns-table .text-end {
+  text-align: right;
+}
+
+.hcns-table .text-end input {
+  text-align: right;
+}
+
+.hcns-table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.hcns-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.hcns-table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.hcns-table-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.hcns-table-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hcns-table td[rowspan] {
+  padding: 6px 10px;
+}
+
+@media (max-width: 1024px) {
+  .hcns-table {
+    font-size: 0.7rem;
+  }
+
+  .hcns-table thead th {
+    padding: 6px 8px;
+  }
+
+  .hcns-table input,
+  .hcns-table textarea {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+
+  .hcns-table td > div {
+    padding: 4px 8px;
+  }
+
+  .hcns-table td[rowspan],
+  .hcns-table td[style*='text-align: center'] {
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hcns-table-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hcns-table {
+    min-width: 800px;
+    font-size: 0.65rem;
+  }
+
+  .hcns-table thead th {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+    white-space: nowrap;
+  }
+
+  .hcns-table td {
+    padding: 0;
+  }
+
+  .hcns-table input,
+  .hcns-table textarea {
+    padding: 2px 4px;
+    font-size: 0.65rem;
+  }
+
+  .hcns-table td > div {
+    padding: 2px 4px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hcns-table {
+    min-width: 700px;
+    font-size: 0.6rem;
+  }
+
+  .hcns-table thead th {
+    padding: 3px 4px;
+    font-size: 0.6rem;
+  }
+
+  .hcns-table input,
+  .hcns-table textarea {
+    padding: 2px 3px;
+    font-size: 0.6rem;
+  }
+
+  .hcns-table td > div {
+    padding: 2px 3px;
+    gap: 2px;
+  }
+
+  .hcns-table .cursor-pointer {
+    padding: 2px;
+    font-size: 0.7rem;
+  }
+
+  .hcns-table .delete-btn {
+    font-size: 0.75rem;
+    padding: 1px 2px;
+  }
+}

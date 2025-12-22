@@ -76,6 +76,115 @@
         </nz-form-item>
       </nz-col>
     </nz-row>
+  </form>
+      <div class="card-body hcns-table-wrapper" style="height: 100%;">
+        <div class="hcns-table-container">
+          <table class="hcns-table">
+            <thead>
+              <tr>
+                <th
+                  colspan="5"
+                  style="text-align: center; border-bottom: 1px solid #d9d9d9"
+                >
+                  LINH KIỆN &amp; MÔ TẢ
+                </th>
+              </tr>
+              <tr>
+                <th style="width: 80px; text-align: center;">
+                  <span
+                    class="text-success cursor-pointer"
+                    (click)="addPartGroup()"
+                    title="Thêm linh kiện"
+                  >+</span>
+                </th>
+                <th>Tên linh kiện</th>
+                <th>Mã linh kiện mô tả</th>
+                <th>Mô tả</th>
+                <th>Đơn vị tính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let part of partGroups">
+                <ng-container
+                  *ngFor="
+                    let detail of part.Details || [];
+                    let detailIndex = index
+                  "
+                >
+                  <tr>
+                    <!-- Cột action: chỉ hiển thị ở dòng đầu tiên của mỗi linh kiện -->
+                    <td
+                      *ngIf="detailIndex === 0"
+                      [attr.rowspan]="(part.Details || []).length || 1"
+                      style="text-align: center;"
+                    >
+                      <span
+                        class="text-danger cursor-pointer delete-btn"
+                        title="Xóa linh kiện"
+                        (click)="removePartGroup(part.rowID)"
+                      >x</span>
+                    </td>
+
+                    <!-- Tên linh kiện: chỉ hiển thị ở dòng đầu tiên, rowspan theo số dòng con -->
+                    <td
+                      *ngIf="detailIndex === 0"
+                      [attr.rowspan]="(part.Details || []).length || 1"
+                    >
+                      <input
+                        type="text"
+                        placeholder="Nhập tên linh kiện"
+                        [(ngModel)]="part.Name"
+                      />
+                    </td>
+
+                    <!-- Mã linh kiện mô tả + nút thêm/xóa dòng con -->
+                    <td>
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Nhập mã linh kiện mô tả"
+                          [(ngModel)]="detail.SparePartNumber"
+                        />
+                        <div>
+                          <span
+                            class="text-success cursor-pointer me-1"
+                            title="Thêm dòng mô tả"
+                            (click)="addDetailRow(part.rowID)"
+                          >+</span>
+                          <span
+                            class="text-danger cursor-pointer delete-btn"
+                            title="Xóa dòng mô tả"
+                            (click)="removeDetailRow(part.rowID, detailIndex)"
+                          >x</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Mô tả linh kiện -->
+                    <td>
+                      <textarea
+                        rows="2"
+                        placeholder="Mô tả linh kiện"
+                        [(ngModel)]="detail.Description"
+                      ></textarea>
+                    </td>
+
+                    <!-- Đơn vị tính -->
+                    <td>
+                      <input
+                        type="text"
+                        placeholder="Đơn vị tính"
+                        [(ngModel)]="detail.Unit"
+                      />
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+</div>
 
     <div class="modal-footer mt-3 gap-3">
       <button nz-button nzDanger nzType="default" (click)="close()">
@@ -85,5 +194,3 @@
         Lưu
       </button>
     </div>
-  </form>
-</div>

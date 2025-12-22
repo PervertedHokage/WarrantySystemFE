@@ -1,17 +1,51 @@
-.grid-container {
-  width: 100%;
+:host {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  overflow: auto;
-  
-  ::ng-deep angular-slickgrid {
-    width: 100% !important;
-    max-width: 100%;
-    
-    .slickgrid-container {
-      width: 100% !important;
-      max-width: 100%;
-      overflow-x: auto;
-    }
-  }
+  width: 100%;
 }
 
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .card-header {
+    flex-shrink: 0;
+  }
+  
+  .grid-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+}
+
+.grid-sparepartgroup-container,
+.grid-sparepart-container {
+  height: 100%;
+  width: 100%;
+}
+
+angular-slickgrid,
+.angular-slickgrid-container {
+  height: 100% !important;
+  width: 100%;
+  display: flex;
+}
+
+:host ::ng-deep .slickgrid-container {
+  height: 100% !important;
+}
+
+:host ::ng-deep .ant-splitter-panel {
+  overflow-y: hidden !important;
+}
+
+:host ::ng-deep .cell-wrap {
+  white-space: normal !important;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+}

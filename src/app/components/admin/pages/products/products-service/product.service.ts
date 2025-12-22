@@ -15,8 +15,25 @@ export class ProductService {
     return this.http.get<any>(environment.host + `api/products/get-products`);
   }
 
+     getSparePart(
+    ProductId: number,
+  ): Observable<any> {
+    const asset: any = {
+      ProductId: ProductId || 0
+    };
+    return this.http.post<any>(
+      environment.host + `api/products/get-spare-parts`,
+      asset
+    );
+  }
+
+//    saveDataProduct(data:any):Observable<any>
+//  {
+//   return this.http.post(environment.host + `api/products/save-product`, data)
+//  }
+
    saveDataProduct(data:any):Observable<any>
  {
-  return this.http.post(environment.host + `api/products/save-product`, data)
+  return this.http.post(environment.host + `api/products/save-data-product`, data)
  }
 }
