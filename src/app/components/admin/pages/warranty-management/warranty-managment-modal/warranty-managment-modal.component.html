@@ -1,0 +1,538 @@
+<div class="tab-container">
+  <div class="tabs">
+    <div class="tab" [class.active]="currentTab == 1" data-tab="tab1" (click)="changeTab(1)">
+      Thông tin phiếu
+    </div>
+    <div class="tab" [class.active]="currentTab == 2" data-tab="tab2" (click)="changeTab(2)">
+      Thông tin chi tiết
+    </div>
+    <div class="tab" [class.active]="currentTab == 3" data-tab="tab3" (click)="changeTab(3)">
+      Báo giá
+    </div>
+    <div class="tab" [class.active]="currentTab == 4" data-tab="tab4" (click)="changeTab(4)">
+      Work Order
+    </div>
+    <div class="tab" [class.active]="currentTab == 5" data-tab="tab5" (click)="changeTab(5)">
+      Tài liệu đính kèm
+    </div>
+  </div>
+
+  <div class="tab-content">
+    <!-- Tab Thông tin master -->
+    <div class="modal-tab-content" [class.active]="currentTab == 1" id="master-tab">
+      <form nz-form nzLayout="vertical">
+
+        <!-- Thông tin khách hàng -->
+        <div class="form-section">
+          <h3>Thông tin khách hàng</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Khách hàng</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="Nguyễn Văn A" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Người liên hệ</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="Nguyễn Văn A" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Điện thoại di động</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="0912345678" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Email</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="nguyenvana@email.com" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <nz-form-item>
+                <nz-form-label>Địa chỉ</nz-form-label>
+                <nz-form-control>
+                  <textarea nz-input rows="2" readonly>123 Đường ABC, Quận 1, TP.HCM</textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="form-section">
+          <h3>Thông tin sản phẩm</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Sản phẩm</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="M52 - Smart Device" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Serial Number</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="SN-M52-2024-001" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Hiện tượng hỏng hóc</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="Không lên nguồn" readonly />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Trạng thái</nz-form-label>
+                <nz-form-control>
+                  <nz-select nzValue="Tiếp nhận thông tin">
+                    <nz-option nzLabel="Tiếp nhận thông tin" nzValue="Tiếp nhận thông tin"></nz-option>
+                    <nz-option nzLabel="Xác minh thông tin" nzValue="Xác minh thông tin"></nz-option>
+                    <nz-option nzLabel="Chẩn đoán sơ bộ" nzValue="Chẩn đoán sơ bộ"></nz-option>
+                    <nz-option nzLabel="Báo giá" nzValue="Báo giá"></nz-option>
+                    <nz-option nzLabel="Sửa chữa/Bảo hành" nzValue="Sửa chữa/Bảo hành"></nz-option>
+                    <nz-option nzLabel="Hoàn trả" nzValue="Hoàn trả"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Tab Thông tin chi tiết -->
+    <div class="modal-tab-content" [class.active]="currentTab == 2" id="detail-tab">
+      <form nz-form nzLayout="vertical">
+
+        <!-- Chi tiết hỏng hóc -->
+        <div class="form-section">
+          <h3>Chi tiết hỏng hóc</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Ngày tiếp nhận</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker nzFormat="yyyy-MM-dd" nzValue="2024-12-15" class="w-100">
+                  </nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Người tiếp nhận</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="NV001 - Trần Nhân Viên" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <nz-form-item>
+                <nz-form-label>Mô tả chi tiết lỗi</nz-form-label>
+                <nz-form-control>
+                  <textarea nz-input
+                    rows="3">Thiết bị không lên nguồn sau khi sạc đầy. Không có đèn báo nguồn.</textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Có bao silicon</nz-form-label>
+                <nz-form-control>
+                  <nz-select nzValue="Có">
+                    <nz-option nzLabel="Có" nzValue="Có"></nz-option>
+                    <nz-option nzLabel="Không" nzValue="Không"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Có adapter</nz-form-label>
+                <nz-form-control>
+                  <nz-select nzValue="Có">
+                    <nz-option nzLabel="Có" nzValue="Có"></nz-option>
+                    <nz-option nzLabel="Không" nzValue="Không"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chẩn đoán ban đầu -->
+        <div class="form-section">
+          <h3>Chẩn đoán ban đầu</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Kỹ thuật viên chẩn đoán</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="KT001 - Nguyễn Kỹ Thuật" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Ngày chẩn đoán</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker nzFormat="yyyy-MM-dd" nzValue="2024-12-16" class="w-100">
+                  </nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <nz-form-item>
+                <nz-form-label>Kết quả chẩn đoán</nz-form-label>
+                <nz-form-control>
+                  <textarea nz-input rows="4">- Kiểm tra nguồn: OK
+- Kiểm tra pin: Pin phồng, cần thay thế
+- Kiểm tra mainboard: Cổng sạc bị oxy hóa
+- Kiểm tra màn hình: Bình thường</textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Tab Báo giá -->
+    <div class="modal-tab-content" [class.active]="currentTab == 3" id="quote-tab">
+      <form nz-form nzLayout="vertical">
+
+        <!-- Báo giá sửa chữa -->
+        <div class="form-section">
+          <h3>Báo giá sửa chữa</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Ngày báo giá</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker nzFormat="yyyy-MM-dd" nzValue="2024-12-17" class="w-100">
+                  </nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Người báo giá</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="NV002 - Lê Báo Giá" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- Chi tiết vật tư -->
+          <div class="form-section">
+            <h4>Chi tiết vật tư</h4>
+
+            <nz-table nzBordered [nzData]="[]" [nzShowPagination]="false" style="margin-top: 15px;">
+              <thead>
+                <tr>
+                  <th>Tên vật tư</th>
+                  <th>Số lượng</th>
+                  <th>Đơn giá</th>
+                  <th>Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Pin M52 2700mAh</td>
+                  <td>1</td>
+                  <td>450,000</td>
+                  <td>450,000</td>
+                </tr>
+                <tr>
+                  <td>Cổng sạc M52</td>
+                  <td>1</td>
+                  <td>200,000</td>
+                  <td>200,000</td>
+                </tr>
+                <tr>
+                  <td>Phí sửa chữa</td>
+                  <td>1</td>
+                  <td>300,000</td>
+                  <td>300,000</td>
+                </tr>
+                <tr>
+                  <td colspan="3"><strong>Tổng cộng</strong></td>
+                  <td><strong>950,000</strong></td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Khách hàng đồng ý</nz-form-label>
+                <nz-form-control>
+                  <nz-select nzValue="Chờ phản hồi">
+                    <nz-option nzLabel="Chờ phản hồi" nzValue="Chờ phản hồi"></nz-option>
+                    <nz-option nzLabel="Đồng ý" nzValue="Đồng ý"></nz-option>
+                    <nz-option nzLabel="Từ chối" nzValue="Từ chối"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Tab Work Order -->
+    <div class="modal-tab-content" [class.active]="currentTab == 4" id="workorder-tab">
+      <form nz-form nzLayout="vertical">
+
+        <!-- Work Order -->
+        <div class="form-section">
+          <h3>Work Order - Phiếu sửa chữa</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Mã Work Order</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="WO-2024-001" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Ngày bắt đầu</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker nzFormat="yyyy-MM-dd" nzValue="2024-12-18" class="w-100">
+                  </nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Kỹ thuật viên phụ trách</nz-form-label>
+                <nz-form-control>
+                  <input nz-input value="KT002 - Phạm Sửa Chữa" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label>Dự kiến hoàn thành</nz-form-label>
+                <nz-form-control>
+                  <nz-date-picker nzFormat="yyyy-MM-dd" nzValue="2024-12-20" class="w-100">
+                  </nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- Tiến độ sửa chữa -->
+          <div class="form-section">
+            <h4>Tiến độ sửa chữa</h4>
+
+            <div nz-row [nzGutter]="16">
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>Trạng thái Work Order</nz-form-label>
+                  <nz-form-control>
+                    <nz-select nzValue="Đang sửa chữa">
+                      <nz-option nzLabel="Đang sửa chữa" nzValue="Đang sửa chữa"></nz-option>
+                      <nz-option nzLabel="Chờ vật tư" nzValue="Chờ vật tư"></nz-option>
+                      <nz-option nzLabel="Đã hoàn thành" nzValue="Đã hoàn thành"></nz-option>
+                      <nz-option nzLabel="Đã nghiệm thu" nzValue="Đã nghiệm thu"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div nz-col nzSpan="12">
+                <nz-form-item>
+                  <nz-form-label>% Hoàn thành</nz-form-label>
+                  <nz-form-control>
+                    <nz-slider nzMin="0" nzMax="100" [ngModel]="60" name="progress-value">
+                    </nz-slider>
+                    <span style="font-size: 12px; color: #666;">60%</span>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <div nz-row>
+              <div nz-col nzSpan="24">
+                <nz-form-item>
+                  <nz-form-label>Ghi chú quá trình sửa chữa</nz-form-label>
+                  <nz-form-control>
+                    <textarea nz-input rows="4">- Đã thay thế pin mới
+- Đang chờ linh kiện cổng sạc về
+- Đã vệ sinh mainboard
+- Kiểm tra các linh kiện khác: OK</textarea>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Tab Tài liệu đính kèm -->
+    <div class="modal-tab-content" [class.active]="currentTab == 5" id="documents-tab">
+      <form nz-form nzLayout="vertical">
+
+        <!-- Tài liệu đính kèm -->
+        <div class="form-section">
+          <h3>Tài liệu đính kèm</h3>
+
+          <!-- Upload -->
+          <div nz-row>
+            <div nz-col nzSpan="24">
+              <nz-form-item>
+                <nz-form-label>Tải lên tài liệu mới</nz-form-label>
+                <nz-form-control>
+                  <nz-upload nzMultiple nzType="select" [nzShowUploadList]="true">
+                    <button nz-button nzType="default">
+                      <span nz-icon nzType="upload"></span>
+                      Chọn file
+                    </button>
+                  </nz-upload>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- Danh sách tài liệu -->
+          <div class="form-section">
+            <h4>Danh sách tài liệu</h4>
+
+            <nz-table nzBordered [nzShowPagination]="false" [nzData]="[]" style="margin-top: 15px;">
+              <thead>
+                <tr>
+                  <th>Tên file</th>
+                  <th>Loại</th>
+                  <th>Kích thước</th>
+                  <th>Người upload</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>hinh_anh_loi_1.jpg</td>
+                  <td>Hình ảnh</td>
+                  <td>2.4 MB</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>
+                    <button nz-button nzType="primary" nzSize="small" nzShape="circle">
+                      <span nz-icon nzType="download"></span>
+                    </button>
+
+                    <button nz-button nzType="default" nzDanger nzSize="small" nzShape="circle"
+                      style="margin-left: 6px;">
+                      <span nz-icon nzType="delete"></span>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>bao_gia.pdf</td>
+                  <td>PDF</td>
+                  <td>1.2 MB</td>
+                  <td>NV002</td>
+                  <td>
+                    <button nz-button nzType="primary" nzSize="small" nzShape="circle">
+                      <span nz-icon nzType="download"></span>
+                    </button>
+
+                    <button nz-button nzType="default" nzDanger nzSize="small" nzShape="circle"
+                      style="margin-left: 6px;">
+                      <span nz-icon nzType="delete"></span>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>work_order.docx</td>
+                  <td>Word</td>
+                  <td>580 KB</td>
+                  <td>KT001</td>
+                  <td>
+                    <button nz-button nzType="primary" nzSize="small" nzShape="circle">
+                      <span nz-icon nzType="download"></span>
+                    </button>
+
+                    <button nz-button nzType="default" nzDanger nzSize="small" nzShape="circle"
+                      style="margin-left: 6px;">
+                      <span nz-icon nzType="delete"></span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>

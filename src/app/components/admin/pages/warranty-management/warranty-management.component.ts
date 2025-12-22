@@ -5,32 +5,37 @@ import {
   ElementRef,
   TemplateRef,
 } from '@angular/core';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule, NgIf } from '@angular/common';
-import { NzModalModule } from 'ng-zorro-antd/modal';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzSelectModule } from 'ng-zorro-antd/select';
-import { NzTreeSelectModule } from 'ng-zorro-antd/tree-select';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
-  FormsModule
+  FormsModule,
 } from '@angular/forms';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { HasPermissionDirective } from '../../../../directives/has-permission.directive';
 import { NOTIFICATION_TITLE } from '../../../../app.config';
 import { forkJoin } from 'rxjs';
-import {TabulatorFull as Tabulator} from 'tabulator-tables';
+import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import 'tabulator-tables/dist/css/tabulator_simple.min.css';
 import { OrganizationService } from '../organization/organization.service';
+import {
+  AngularGridInstance,
+  AngularSlickgridModule,
+  Column,
+  DOMMouseOrTouchEvent,
+  Filters,
+  Formatters,
+  GridOption,
+  OnEventArgs,
+} from 'angular-slickgrid';
+import { WarrantyClaim } from '../../../../models/warranty-claim.model';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { WarrantyClaimManagementService } from '../../../../services/warranty-claim-management.service';
+import { WarrantyManagmentModalComponent } from './warranty-managment-modal/warranty-managment-modal.component';
 
 @Component({
   selector: 'app-warranty-management',
@@ -38,276 +43,368 @@ import { OrganizationService } from '../organization/organization.service';
   styleUrls: ['./warranty-management.component.less'],
   imports: [
     CommonModule,
-    NzModalModule,
-    NzIconModule,
-    NzButtonModule,
-    NzTabsModule,
-    NzTableModule,
-    NzSelectModule,
-    NzFormModule,
-    NzInputModule,
-    ReactiveFormsModule,
-    NzSpinModule,
     FormsModule,
-    NzTreeSelectModule,
+    AngularSlickgridModule,
+    NzModalModule,
+    NzButtonModule,
   ],
 })
 export class WarrantyManagementComponent implements OnInit {
-  @ViewChild('tb_organization', { static: false })
-    tb_organizationContainer!: ElementRef;
-    tb_organization: any;
-    lstOrganization: any[] = [];
-    organizationForm!: FormGroup;
-    isVisible = false;
-    isSubmitting = false;
-    searchText: string = '';
-    isLoading = false;
-    isEditMode = false;
-
-    organizationId: number = 0;
-
-    parentId:number = 0
-
-    constructor(
-      private organizationService: OrganizationService,
-      private fb: FormBuilder,
-      private modal: NzModalService,
-      private notification: NzNotificationService
-    ) {
-      this.initForm();
-    }
-    ngAfterViewInit(): void {
-      this.drawTbOrganization(this.tb_organizationContainer.nativeElement);
-      this.loadOrganization();
-    }
-    ngOnInit() {
-
-    }
-
-    private initForm() {
-      this.organizationForm = this.fb.group({
-        Id: [0],
-        OrganizationCode: ['', [Validators.required]],
-        OrganizationName: ['', [Validators.required]],
-        ParentId: [0],
-      });
-    }
-
-    loadOrganization() {
-      this.organizationService.getOrganizations().subscribe({
-        next: (res: any) => {
-          const data = this.organizationService.setDataTree(res.data, 'Id'); // tùy response của bạn
-          this.tb_organization.setData(data);
-          this.lstOrganization = this.organizationService.buildOrgTree(res.data);
+  angularGrid!: AngularGridInstance;
+  columnDefinitions: Column[] = [];
+  gridOptions: GridOption = {};
+  dataset: WarrantyClaim[] = [];
+  statusMap: Record<number, { text: string; cls: string }> = {
+    1: { text: 'Tiếp nhận thông tin', cls: 'status-badge status-1' },
+    2: { text: 'Xác minh thông tin', cls: 'status-badge status-2' },
+    3: { text: 'Chẩn đoán sơ bộ', cls: 'status-badge status-3' },
+    4: { text: 'Báo giá', cls: 'status-badge status-4' },
+    5: { text: 'Sửa chữa/bảo hành', cls: 'status-badge status-5' },
+    6: { text: 'Hoàn trả', cls: 'status-badge status-6' },
+  };
+  currentFilter = 0;
+  constructor(
+    private fb: FormBuilder,
+    private modal: NzModalService,
+    private notification: NzNotificationService,
+    private warrantyService: WarrantyClaimManagementService
+  ) {}
+  ngOnInit() {
+    this.initGrid();
+  }
+  ngAfterViewInit(): void {}
+  angularGridReady(angularGrid: AngularGridInstance) {
+    this.angularGrid = angularGrid;
+  }
+  initGrid() {
+    this.columnDefinitions = [
+      {
+        id: 'ClaimNo',
+        name: 'Mã phiếu',
+        field: 'ClaimNo',
+        sortable: true,
+        type: 'string',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
+      {
+        id: 'CreatedDate',
+        name: 'Ngày tạo',
+        field: 'CreatedDate',
+        sortable: true,
+        type: 'dateUtc',
+        formatter: Formatters.dateTimeIsoAmPm,
+        filterable: true,
+        filter: { model: Filters['compoundDate'] },
+      },
+      {
+        id: 'CustomerName',
+        name: 'Khách hàng',
+        field: 'CustomerName',
+        sortable: true,
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
+      {
+        id: 'ProductName',
+        name: 'Sản phẩm',
+        field: 'ProductName',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
+      {
+        id: 'StatusText',
+        name: 'Trạng thái',
+        field: 'StatusText',
+        cssClass: 'cell-center',
+        filterable: true,
+        filter: {
+          model: Filters['compoundInputText'],
         },
-        error: (e) => {
-          this.notification.error(NOTIFICATION_TITLE.error, e.message);
+        formatter: (_row, _cell, value, _col, item) => {
+          const s = this.statusMap[item.Status];
+          return s ? `<span class="${s.cls}">${s.text}</span>` : '';
         },
-      });
-    }
-
-    drawTbOrganization(container: HTMLElement) {
-      if (!this.tb_organization) {
-        // Khởi tạo bảng chỉ 1 lần
-        this.tb_organization = new Tabulator(container, {
-          dataTree: true,
-          dataTreeStartExpanded: true,
-          layout: 'fitDataStretch',
-          locale: 'vi',
-          selectableRows: 1,
-          reactiveData: false, // Giúp kiểm soát thay đổi dữ liệu rõ ràng hơn
-          columns: [
-            {
-              title: '',
-              field: 'Selected',
-              headerHozAlign: 'center',
-              hozAlign: 'center',
-              width: 70,
-            },
-            {
-              title: 'Mã cơ cấu tổ chức',
-              field: 'OrganizationCode',
-              headerHozAlign: 'center',
-            },
-            {
-              title: 'Tên cơ cấu tổ chức',
-              field: 'OrganizationName',
-              headerHozAlign: 'left',
-            },
-          ],
-        });
-
-        // Gắn event click chọn kiểu dự án
-        this.tb_organization.on('rowClick', (e: any, row: any) => {
-          // Bỏ chọn các dòng khác trước
-          this.tb_organization.deselectRow();
-          // Chọn dòng hiện tại
-          row.select();
-          const rowData = row.getData();
-          this.organizationId = rowData.Id;
-        });
-      }
-    }
-
-    openAddModal() {
-      this.isEditMode = false;
-      let parentId= 0;
-      const selectedRows = this.tb_organization.getSelectedRows();
-      if (selectedRows.length == 1) {
-        parentId = selectedRows[0].getData().Id
-      }
-
-      this.organizationForm.patchValue({
-        Id: 0,
-        OrganizationCode: '',
-        OrganizationName: '',
-        ParentId: parentId,
-      });
-      this.isVisible = true;
-    }
-
-
-    openEditModal() {
-      const selectedRows = this.tb_organization.getSelectedRows();
-      if (selectedRows.length != 1) {
-        this.notification.warning(NOTIFICATION_TITLE.warning, "Vui lòng chọn 1 phòng ban cần sửa!");
-        return;
-      }
-      this.isEditMode = true;
-      const selectedDepartment = selectedRows[0].getData();
-
-      // Reset form before setting new values
-      this.organizationForm.reset();
-
-      // Set form values with proper type conversion
-      this.organizationForm.patchValue({
-        Id: selectedDepartment.Id,
-        OrganizationCode: selectedDepartment.OrganizationCode,
-        OrganizationName: selectedDepartment.OrganizationName,
-        ParentId: selectedDepartment.ParentId
-      });
-
-      console.log('Form values after patch:', this.organizationForm.value); // Debug log
-      this.isVisible = true;
-    }
-
-    openDeleteModal() {
-      const selectedRows = this.tb_organization.getSelectedRows();
-      if (selectedRows.length === 0) {
-        this.notification.warning(NOTIFICATION_TITLE.warning, 'Vui lòng chọn phòng ban cần xóa');
-        return;
-      }
-      this.modal.confirm({
-        nzTitle: 'Xác nhận xóa',
-        nzContent: `Bạn có chắc chắn muốn xóa phòng ban đã chọn không?`,
-        nzOkText: 'Xóa',
-        nzOkType: 'primary',
-        nzOkDanger: true,
-        nzOnOk: () => {
-          this.deleteOrganization();
+      },
+      {
+        id: 'Tracking',
+        name: 'Thao tác',
+        field: '_',
+        cssClass: 'cell-center',
+        sortable: false,
+        filterable: false,
+        excludeFromColumnPicker: true,
+        formatter: (_row, _cell, _value, _colDef, dataContext) => {
+          return `
+            <button class="btn btn-sm btn-outline open-modal-btn">
+              📋 Chi tiết
+            </button>
+          `;
         },
-        nzCancelText: 'Hủy',
-      });
-    }
-
-    deleteOrganization() {
-      const selectedRows = this.tb_organization.getSelectedRows();
-
-      // Lấy data thực tế từ row
-      const deleteRequests = selectedRows
-        .map((row: any) => row.getData()) // row.getData() trả về object dữ liệu
-        .filter((data: any) => data.Id > 0)
-        .map((data: any) => this.organizationService.deleteOrganization(data.Id));
-
-
-
-      if (deleteRequests.length === 0) return;
-
-      forkJoin(deleteRequests).subscribe({
-        next: () => {
-          this.notification.success(NOTIFICATION_TITLE.success, 'Xóa phòng ban thành công');
-          this.loadOrganization();
-        },
-        error: (error) => {
-          this.notification.error(NOTIFICATION_TITLE.error, error.error.message);
-        },
-      });
-    }
-
-    onSubmit() {
-      if (this.organizationForm.invalid) {
-        Object.values(this.organizationForm.controls).forEach((control) => {
-          if (control.invalid) {
-            control.markAsTouched();
-            control.updateValueAndValidity({ onlySelf: true });
+        onCellClick: (e: Event, args: OnEventArgs) => {
+          const target = e.target as HTMLElement;
+          if (!target.closest('.open-modal-btn')) {
+            return;
           }
-        });
-        this.notification.warning(
-          NOTIFICATION_TITLE.warning,
-          'Vui lòng điền đầy đủ thông tin bắt buộc'
-        );
-        return;
+          e.stopImmediatePropagation();
+          const rowIndex = args.row;
+          this.angularGrid.slickGrid.setSelectedRows([rowIndex]);
+          this.angularGrid.slickGrid.setActiveCell(rowIndex, args.cell);
+          this.openEditModal();
+        },
+      },
+    ];
+    this.gridOptions = {
+      datasetIdPropertyName: 'Id',
+      enableAutoResize: true,
+      autoResize: {
+        container: '.tab-content',
+        resizeDetection: 'container',
+      },
+      enableSorting: true,
+      enableFiltering: true,
+      forceFitColumns: true,
+      enableCellNavigation: true,
+      rowHeight: 62.75,
+      enableRowSelection: true,
+      enableCheckboxSelector: true,
+      multiSelect: false,
+      rowSelectionOptions: { selectActiveRow: true },
+    };
+    this.dataset = [
+      new WarrantyClaim({
+        Id: 1,
+        ClaimNo: 'WC-0001',
+        CustomerName: 'Nguyen Van A',
+        CustomerEmail: 'a@example.com',
+        CustomerPhoneNumber: '0901000001',
+        CustomerAddress: 'Hanoi',
+        ProductName: 'Laptop X1',
+        ProductId: 101,
+        IssueId: 1,
+        SerialNumber: 'SN-X1-0001',
+        HasProtection: true,
+        HasAdapter: true,
+        HasCable: true,
+        HasBattery: true,
+        HasIssueWhenOpenBox: false,
+        HasCollision: false,
+        OperationEnvironment: 1,
+        Status: 1,
+        StatusText: this.getStatusText(1),
+        Type: 1,
+        FileAddress: null,
+        Transporter: 'DHL',
+        LadingNumber: 'LD0001',
+        Note: '',
+        RecipientAddress: 'Hanoi Service Center',
+        CreatedDate: new Date('2025-01-01'),
+        CreatedBy: 'admin',
+      }),
+
+      new WarrantyClaim({
+        Id: 2,
+        ClaimNo: 'WC-0002',
+        CustomerName: 'Tran Thi B',
+        CustomerEmail: 'b@example.com',
+        CustomerPhoneNumber: '0901000002',
+        CustomerAddress: 'Ho Chi Minh City',
+        ProductName: 'Phone Z',
+        ProductId: 102,
+        IssueId: 2,
+        SerialNumber: 'SN-Z-0002',
+        HasProtection: false,
+        HasAdapter: true,
+        HasCable: true,
+        HasBattery: true,
+        HasIssueWhenOpenBox: true,
+        HasCollision: false,
+        OperationEnvironment: 2,
+        Status: 5,
+        StatusText: this.getStatusText(5),
+        Type: 1,
+        Transporter: 'VNPost',
+        LadingNumber: 'LD0002',
+        Note: 'Screen issue',
+        RecipientAddress: 'HCM Service Center',
+        CreatedDate: new Date('2025-01-02'),
+        CreatedBy: 'admin',
+      }),
+
+      new WarrantyClaim({
+        Id: 3,
+        ClaimNo: 'WC-0003',
+        CustomerName: 'Le Van C',
+        CustomerPhoneNumber: '0901000003',
+        ProductName: 'Tablet T',
+        ProductId: 103,
+        IssueId: 3,
+        SerialNumber: 'SN-T-0003',
+        HasProtection: true,
+        HasAdapter: false,
+        HasCable: false,
+        HasBattery: true,
+        HasIssueWhenOpenBox: false,
+        HasCollision: true,
+        OperationEnvironment: 1,
+        Status: 3,
+        StatusText: this.getStatusText(3),
+        Type: 2,
+        Note: 'Physical damage',
+        CreatedDate: new Date('2025-01-03'),
+        CreatedBy: 'staff01',
+      }),
+
+      new WarrantyClaim({
+        Id: 4,
+        ClaimNo: 'WC-0004',
+        CustomerName: 'Pham Thi D',
+        CustomerEmail: 'd@example.com',
+        CustomerPhoneNumber: '0901000004',
+        ProductName: 'Monitor M24',
+        ProductId: 104,
+        IssueId: 1,
+        SerialNumber: 'SN-M24-0004',
+        HasProtection: true,
+        HasAdapter: true,
+        HasCable: true,
+        HasBattery: null,
+        HasIssueWhenOpenBox: false,
+        HasCollision: false,
+        OperationEnvironment: 3,
+        Status: 1,
+        StatusText: this.getStatusText(1),
+        Type: 1,
+        CreatedDate: new Date('2025-01-04'),
+        CreatedBy: 'staff02',
+      }),
+
+      new WarrantyClaim({
+        Id: 5,
+        ClaimNo: 'WC-0005',
+        CustomerName: 'Hoang Van E',
+        CustomerPhoneNumber: '0901000005',
+        CustomerAddress: 'Da Nang',
+        ProductName: 'Printer P',
+        ProductId: 105,
+        IssueId: 4,
+        SerialNumber: 'SN-P-0005',
+        HasProtection: false,
+        HasAdapter: true,
+        HasCable: true,
+        HasBattery: null,
+        HasIssueWhenOpenBox: false,
+        HasCollision: false,
+        OperationEnvironment: 2,
+        Status: 6,
+        StatusText: this.getStatusText(6),
+        Type: 2,
+        Note: 'Paper jam',
+        CreatedDate: new Date('2025-01-05'),
+        CreatedBy: 'admin',
+      }),
+      ...Array.from({ length: 15 }).map(
+        (_, i) =>
+          new WarrantyClaim({
+            Id: 6 + i,
+            ClaimNo: `WC-00${6 + i}`,
+            CustomerName: `Customer ${6 + i}`,
+            CustomerPhoneNumber: `09010000${6 + i}`,
+            ProductName: `Product ${i + 1}`,
+            ProductId: 200 + i,
+            IssueId: (i % 5) + 1,
+            SerialNumber: `SN-${i + 1}`,
+            HasProtection: i % 2 === 0,
+            HasAdapter: true,
+            HasCable: true,
+            HasBattery: i % 3 === 0,
+            HasIssueWhenOpenBox: false,
+            HasCollision: false,
+            OperationEnvironment: (i % 3) + 1,
+            Status: (i % 6) + 1,
+            StatusText: this.getStatusText((i % 6) + 1),
+            Type: (i % 2) + 1,
+            CreatedDate: new Date(2025, 0, 6 + i),
+            CreatedBy: 'system',
+          })
+      ),
+    ];
+  }
+  filterStatus(status: number) {
+    this.currentFilter = status;
+    if (status == 0) {
+      this.angularGrid.filterService.clearFilterByColumnId(
+        {} as DOMMouseOrTouchEvent<HTMLDivElement>,
+        'StatusText'
+      );
+    } else {
+      const searchText = [this.statusMap[status].text];
+      this.angularGrid.filterService.updateFilters([
+        {
+          columnId: 'StatusText',
+          searchTerms: [this.statusMap[status].text],
+          operator: '==',
+        },
+      ]);
+    }
+  }
+  getStatusText(status: number) {
+    return this.statusMap[status].text;
+  }
+  getStatusCount(status: number) {
+    return this.dataset.filter((d) => d.Status == status).length;
+  }
+  openAddModal() {
+    const modalRef = this.modal.create({
+      nzTitle: 'Thêm mới phiếu bảo hành',
+      nzContent: WarrantyManagmentModalComponent,
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {},
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '80vh',
+        'overflow-y': 'auto',
+      },
+      nzCentered: true,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
       }
+    });
+  }
+  openEditModal() {
+    const selectedData = this.angularGrid.gridService.getSelectedRowsDataItem();
+    if (!selectedData.length) {
+      this.notification.warning(
+        'Thông báo',
+        'Vui lòng chọn 1 phiếu bảo hành'
+      );
+      return;
+    }
 
-      this.isSubmitting = true;
-      const formData = this.organizationForm.value;
+    const modalRef = this.modal.create({
+      nzTitle: 'Chỉnh sửa phiếu bảo hành',
+      nzContent: WarrantyManagmentModalComponent,
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {
+        warrantyClaim: selectedData[0],
+      },
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '80vh',
+        'overflow-y': 'auto',
+      },
+      nzCentered: true,
+    });
 
-      if (this.isEditMode) {
-        this.organizationService.updateOrganization(formData.Id,formData).subscribe({
-          next: () => {
-            this.notification.success(
-              NOTIFICATION_TITLE.success,
-              'Cập nhật phòng ban thành công'
-            );
-            this.closeModal();
-            this.loadOrganization();
-          },
-          error: (error) => {
-
-            this.notification.error(
-              NOTIFICATION_TITLE.error,
-              'Cập nhật phòng ban thất bại: ' + error.error.message
-            );
-            this.isSubmitting = false;
-          },
-          complete: () => {
-            this.isSubmitting = false;
-          },
-        });
-      } else {
-        this.organizationService.createOrganization(formData).subscribe({
-          next: () => {
-            this.notification.success(NOTIFICATION_TITLE.success, 'Thêm phòng ban thành công');
-            this.closeModal();
-            this.loadOrganization();
-          },
-          error: (response) => {
-            this.notification.error(
-              'Lỗi',
-              'Thêm phòng ban thất bại: ' + response.error.message
-            );
-            this.isSubmitting = false;
-          },
-          complete: () => {
-            this.isSubmitting = false;
-          },
-        });
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
       }
-    }
-
-    closeModal() {
-      this.isVisible = false;
-      this.organizationForm.reset();
-      this.isSubmitting = false;
-    }
-
-    handleCancel() {
-      this.closeModal();
-    }
-
-    handleOk() {
-      this.onSubmit();
-    }
-
-
+    });
+  }
 }

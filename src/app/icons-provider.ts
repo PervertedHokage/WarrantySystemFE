@@ -5,6 +5,9 @@ import {
   DashboardOutline,
   CaretRightOutline,
   PoweroffOutline,
+  DownloadOutline,
+  DeleteOutline,
+  UploadOutline,
 } from '@ant-design/icons-angular/icons';
 
 export const icons = [
@@ -14,4 +17,7 @@ export const icons = [
   FormOutline,
   CaretRightOutline,
   PoweroffOutline,
+  DownloadOutline,
+  DeleteOutline,
+  UploadOutline,
 ];
