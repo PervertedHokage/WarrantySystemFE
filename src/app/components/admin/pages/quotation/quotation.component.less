@@ -5,7 +5,6 @@
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
-    width: 155px;
   }
 
   .status-1 {
@@ -31,11 +30,6 @@
   .status-5 {
     background-color: #f8d7da;
     color: #721c24;
-  }
-
-  .status-6 {
-    background-color: #e2e3e5;
-    color: #383d41;
   }
 
   .slick-cell {
@@ -76,61 +70,4 @@
   --border-radius: 8px;
   --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
-}
-
-.tab-container {
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  overflow: hidden;
-  overflow-x: auto;
-
-  @media (max-width: 768px) {
-    & {
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-}
-
-.tabs {
-  display: flex;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #ddd;
-  overflow-x: auto;
-}
-
-.tab {
-  padding: 15px 25px;
-  cursor: pointer;
-  font-weight: 600;
-  color: #666;
-  border-bottom: 3px solid transparent;
-  white-space: nowrap;
-  transition: var(--transition);
-  position: relative;
-}
-
-.tab:hover {
-  background-color: #e9ecef;
-}
-
-.tab.active {
-  color: var(--secondary-color);
-  border-bottom-color: var(--secondary-color);
-  background-color: white;
-}
-
-.tab-badge {
-  display: inline-block;
-  background-color: var(--accent-color);
-  color: white;
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  margin-left: 8px;
-}
-
-.tab-content {
-  width: 100%;
-  padding: 0;
 }

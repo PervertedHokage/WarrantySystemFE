@@ -15,13 +15,6 @@ import {
   Validators,
   FormsModule,
 } from '@angular/forms';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { HasPermissionDirective } from '../../../../directives/has-permission.directive';
-import { NOTIFICATION_TITLE } from '../../../../app.config';
-import { forkJoin } from 'rxjs';
-import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import 'tabulator-tables/dist/css/tabulator_simple.min.css';
-import { OrganizationService } from '../organization/organization.service';
 import {
   AngularGridInstance,
   AngularSlickgridModule,
@@ -148,6 +141,8 @@ export class WarrantyManagementComponent implements OnInit {
           }
           e.stopImmediatePropagation();
           const rowIndex = args.row;
+          console.log(rowIndex);
+
           this.angularGrid.slickGrid.setSelectedRows([rowIndex]);
           this.angularGrid.slickGrid.setActiveCell(rowIndex, args.cell);
           this.openEditModal();
@@ -158,12 +153,11 @@ export class WarrantyManagementComponent implements OnInit {
       datasetIdPropertyName: 'Id',
       enableAutoResize: true,
       autoResize: {
-        container: '.tab-content',
+        container: '#grid_warranty_container',
         resizeDetection: 'container',
       },
       enableSorting: true,
       enableFiltering: true,
-      forceFitColumns: true,
       enableCellNavigation: true,
       rowHeight: 62.75,
       enableRowSelection: true,

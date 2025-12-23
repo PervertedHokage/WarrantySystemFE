@@ -44,8 +44,8 @@
         </div>
       </div>
 
-      <div class="tab-content">
-        <angular-slickgrid #asg gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset"
+      <div id="grid_warranty_container" class="tab-content">
+        <angular-slickgrid #asg gridId="grid-warranty" [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset"
           (onAngularGridCreated)="angularGridReady($event.detail)">
         </angular-slickgrid>
       </div>
