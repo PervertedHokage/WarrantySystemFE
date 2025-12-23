@@ -77,13 +77,29 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
 
   DeletedOrder: any[] = [];
 
+  private parseDateInput(value: any): Date | null {
+    if (!value) return null;
+    if (value instanceof Date && !isNaN(value.getTime())) return value;
+    const s = String(value).trim();
+    if (!s) return null;
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  private validateRowDates(rowData: any): boolean {
+    const start = this.parseDateInput(rowData?.DateStart);
+    const end = this.parseDateInput(rowData?.DateEnd);
+    if (!start || !end) return true;
+    return start.getTime() < end.getTime();
+  }
+
   ngOnInit(): void {
     if (this.isEditMode && this.dataInput) {
       this.formGroup.patchValue({
         CustomerName: this.dataInput.CustomerName || '',
         CustomerPhoneNumber: this.dataInput.CustomerPhoneNumber || '',
         CustomerAddress: this.dataInput.CustomerAddress || '',
-        Code: this.dataInput.Code || '',
+        CustomerEmail: this.dataInput.CustomerEmail || '',
       });
     }
     this.loadOptionProduct();
@@ -123,7 +139,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
         [Validators.required, Validators.maxLength(20)],
       ],
       CustomerAddress: ['', [Validators.required, Validators.maxLength(100)]],
-      Code: ['', [Validators.required, Validators.maxLength(20)]],
+      CustomerEmail: ['', [Validators.required, Validators.maxLength(50)]],
     });
   }
   close(reload: boolean = false) {
@@ -142,6 +158,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
           Id: item.Id || 0,
           OrderId: item.OrderId || 0,
           OrderDetailId: item.OrderDetailId || 0,
+          OrderDetailInfoId: item.OrderDetailInfoId || 0,
           ProductId: item.ProductId || 0,
           SerialId: item.SerialId || 0,
           Code: item.Code || '',
@@ -203,76 +220,22 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       },
     });
   }
+  
     dateEditor(cell: CellComponent, onRendered: any, success: any, cancel: any) {
     const input = document.createElement('input');
-    input.type = 'datetime-local'; // hiển thị lịch dropdown với giờ
-    const cellValue = cell.getValue();
-    
-    // Format giá trị để hiển thị trong input datetime-local (YYYY-MM-DDTHH:mm)
-    if (cellValue) {
-      const date = new Date(cellValue);
-      if (!isNaN(date.getTime())) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        input.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-      }
-    }
+    input.type = 'date'; // hiển thị lịch dropdown
+    input.value = cell.getValue() || '';
 
     onRendered(() => input.focus());
 
-    input.addEventListener('change', () => {
-      const value = input.value;
-      if (value) {
-        // Chuyển đổi từ datetime-local format sang ISO string
-        const date = new Date(value);
-        success(date.toISOString());
-      } else {
-        success('');
-      }
-    });
-    input.addEventListener('blur', () => {
-      const value = input.value;
-      if (value) {
-        const date = new Date(value);
-        success(date.toISOString());
-      } else {
-        success('');
-      }
-    });
+    input.addEventListener('change', () => success(input.value));
+    input.addEventListener('blur', () => success(input.value));
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const value = input.value;
-        if (value) {
-          const date = new Date(value);
-          success(date.toISOString());
-        } else {
-          success('');
-        }
-      }
+      if (e.key === 'Enter') success(input.value);
       if (e.key === 'Escape') cancel();
     });
 
     return input;
-  }
-
-  dateTimeFormatter(cell: CellComponent): string {
-    const value = cell.getValue();
-    if (!value) return '';
-    
-    const date = new Date(value);
-    if (isNaN(date.getTime())) return value;
-    
-    // Format: DD/MM/YYYY HH:mm
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
   }
 
    private trimAllStringControls() {
@@ -305,35 +268,41 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     if(this.isEditMode) {
       
     }
+   
     const payload = {
-      Order: {
-      Id: this.isEditMode ? this.dataInput?.OrderId || 0 : 0,
-      CustomerName: formValue.CustomerName,
-      CustomerPhoneNumber: formValue.CustomerPhoneNumber,
-      CustomerAddress: formValue.CustomerAddress,
-      Code: formValue.Code,
-      },
- 
-      OrderDetails: tableData.map((item: any, index: number) => ({
-        Id: this.isEditMode ? item.OrderDetailId  :  0,
-        OrderId: item.OrderId || 0,
-        STT: item.STT || index + 1,
-        ProductId: item.ProductId || 0,
-        Quantity: item.Quantity || 0,
-        DateStart: item.DateStart || '',
-        DateEnd: item.DateEnd || ''
-      })),
+  Order: {
+    Id: this.isEditMode ? this.dataInput?.OrderId || 0 : 0,
+    CustomerName: formValue.CustomerName,
+    CustomerPhoneNumber: formValue.CustomerPhoneNumber,
+    CustomerAddress: formValue.CustomerAddress,
+    CustomerEmail: formValue.CustomerEmail,
+  },
 
-      OrderDetailInfo: tableData.map((item: any, index: number) => ({
-        Id: this.isEditMode ? item.Id : 0,
-        SerialId: item.SerialId || 0,
-        OrderDetailId: item.OrderDetailId || 0,
-        ProductSerial: item.ProductSerial || ''
-      })),
-      
-      DeletedOrder: this.DeletedOrder,
+  SaleOrderDetailDTO: tableData.map((item: any, index: number) => ({
+    OrderDetails: {
+      Id: this.isEditMode ? item.Id || 0 : 0,
+      OrderId: this.isEditMode ? this.dataInput?.OrderId || 0 : 0,
+      STT: index + 1,
+      ProductId: item.ProductId,
+      Quantity: item.Quantity,
+      Code: item.Code,
+      DateStart: item.DateStart,
+      DateEnd: item.DateEnd
+    },
 
-    };
+    OrderDetailInfo: [
+      {
+        Id: this.isEditMode ? item.OrderDetailInfoId || 0 : 0,
+        SerialId: item.SerialId,
+        ProductSerial: item.ProductSerial
+      }
+    ]
+    
+  })),
+
+  DeletedOrder: this.DeletedOrder || []
+};
+
 
     this.salesOrderService.saveDataSaleOder(payload).subscribe({
       next: (res) => {
@@ -343,6 +312,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
             : 'Thêm mới thành công!';
           this.notification.success('Thông báo', message);
           this.close(true);
+          console.log('Saved payload:', payload);
         } else {
           this.notification.warning(
             'Thông báo',
@@ -417,6 +387,13 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
             field: 'STT',
             minWidth: 60,
           },
+           {
+            title: 'SO Code',
+            field: 'Code',
+            headerHozAlign: 'center',
+            minWidth: 100,
+            editor: 'input',
+          },
          
           {
             title: 'Sản phẩm',
@@ -486,7 +463,18 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
               width: 200,
               headerHozAlign: 'center',
               editor: this.dateEditor.bind(this),
-              formatter: this.dateTimeFormatter.bind(this),
+              cellEdited: (cell) => {
+                const row = cell.getRow();
+                const rowData = row.getData();
+                if (!this.validateRowDates(rowData)) {
+                  this.notification.warning(
+                    'Thông báo',
+                    'Ngày kích hoạt phải nhỏ hơn hạn bảo hành!'
+                  );
+                  const oldValue = (cell as any).getOldValue?.();
+                  row.update({ DateStart: oldValue ?? '' });
+                }
+              },
             },
              {
               title: 'Ngày bảo hành',
@@ -495,7 +483,18 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
               width: 200,
               headerHozAlign: 'center',
               editor: this.dateEditor.bind(this),
-              formatter: this.dateTimeFormatter.bind(this),
+              cellEdited: (cell) => {
+                const row = cell.getRow();
+                const rowData = row.getData();
+                if (!this.validateRowDates(rowData)) {
+                  this.notification.warning(
+                    'Thông báo',
+                    'Hạn bảo hành phải lớn hơn ngày kích hoạt!'
+                  );
+                  const oldValue = (cell as any).getOldValue?.();
+                  row.update({ DateEnd: oldValue ?? '' });
+                }
+              },
             },
         ],
       });
@@ -506,6 +505,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       this.OrderTable.addRow({
         ProductId: 0,
         SerialId: 0,
+        Code: '',
         OrderDetailId: 0,
         ProductSerial: '',
         Quantity: 0,

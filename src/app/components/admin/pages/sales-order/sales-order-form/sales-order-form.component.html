@@ -31,28 +31,28 @@
       </nz-col>
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="CodeInput" class="form-label p-0"
-            >SO Code<span class="text-danger ps-1"
+          <nz-form-label for="EmailInput" class="form-label p-0"
+            >Email<span class="text-danger ps-1"
               >(*)
             </span></nz-form-label
           >
           <nz-form-control
             [nzSpan]="24"
             [nzErrorTip]="
-              formGroup.get('Code')?.hasError('required') &&
-              (formGroup.get('Code')?.dirty || formGroup.get('Code')?.touched)
-                ? 'Vui lòng nhập SO Code!'
-                : formGroup.get('Code')?.hasError('maxlength')
-                ? 'SO Code tối đa 20 ký tự!'
+              formGroup.get('CustomerEmail')?.hasError('required') &&
+              (formGroup.get('CustomerEmail')?.dirty || formGroup.get('CustomerEmail')?.touched)
+                ? 'Vui lòng nhập email!'
+                : formGroup.get('CustomerEmail')?.hasError('maxlength')
+                ? 'Email tối đa 50 ký tự!'
                 : undefined
             "
           >
             <input
-              id="CodeInput"
+              id="EmailInput"
               nz-input
-              name="Code"
-              placeholder="Nhập SO Code"
-              formControlName="Code"
+              name="CustomerEmail"
+              placeholder="Nhập email"
+              formControlName="CustomerEmail"
             />
           </nz-form-control>
         </nz-form-item>

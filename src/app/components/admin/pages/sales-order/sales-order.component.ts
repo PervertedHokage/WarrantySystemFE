@@ -44,6 +44,7 @@ import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 import { SalesOrderService } from './sales-order-service/sales-order.service';
 import { SalesOrderFormComponent } from './sales-order-form/sales-order-form.component';
 
+
 @Component({
   selector: 'app-sales-order',
   standalone: true,
@@ -71,10 +72,9 @@ import { SalesOrderFormComponent } from './sales-order-form/sales-order-form.com
     NzInputNumberModule,
   ],
   templateUrl: './sales-order.component.html',
-  styleUrl: './sales-order.component.less'
+  styleUrl: './sales-order.component.less',
 })
-export class SalesOrderComponent implements OnInit, AfterViewInit{
-
+export class SalesOrderComponent implements OnInit, AfterViewInit {
   columnSaleOrderGroup: Column[] = [];
   gridOptionSaleOrderGroup: GridOption = {};
   datasetSaleOrderGroup: any[] = [];
@@ -84,27 +84,23 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
 
   isCheckmode: boolean = false;
 
-
   ngOnInit(): void {
     this.defineGrid();
     this.getSaleOrder();
-      
   }
 
-  ngAfterViewInit(): void {
-      
-  }
+  ngAfterViewInit(): void {}
 
-    constructor(
-      private notification: NzNotificationService,
-      private salesOrderService: SalesOrderService,
-      private modal: NzModalService,
-      private message: NzMessageService
-    ) {}
+  constructor(
+    private notification: NzNotificationService,
+    private salesOrderService: SalesOrderService,
+    private modal: NzModalService,
+    private message: NzMessageService
+  ) {}
 
-   defineGrid() {
+  defineGrid() {
     this.columnSaleOrderGroup = [
-        {
+      {
         id: 'stt',
         name: 'STT',
         field: 'stt',
@@ -118,7 +114,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
         type: 'string',
         filter: { model: Filters['compoundInputText'] },
       },
-       {
+      {
         id: 'Code',
         name: 'So Code',
         field: 'Code',
@@ -136,7 +132,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-          {
+      {
         id: 'Name',
         name: 'Model',
         field: 'Name',
@@ -145,7 +141,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-          {
+      {
         id: 'ProductSerial',
         name: 'Serial/IMEI',
         field: 'ProductSerial',
@@ -154,23 +150,31 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-          {
+      {
         id: 'DateStart',
         name: 'Ngày kích hoạt',
         field: 'DateStart',
         sortable: true,
         type: 'dateUtc',
-        formatter: Formatters.dateTimeIsoAmPm,
+        formatter: (_row, _cell, value) => {
+          if (!value) return '';
+          const d = new Date(value);
+          return d.toLocaleDateString('vi-VN');
+        },
         filterable: true,
         filter: { model: Filters['compoundDate'] },
       },
-           {
+      {
         id: 'DateEnd',
         name: 'Hạn bảo hành',
         field: 'DateEnd',
         sortable: true,
         type: 'dateUtc',
-        formatter: Formatters.dateTimeIsoAmPm,
+        formatter: (_row, _cell, value) => {
+          if (!value) return '';
+          const d = new Date(value);
+          return d.toLocaleDateString('vi-VN');
+        },
         filterable: true,
         filter: { model: Filters['compoundDate'] },
       },
@@ -194,7 +198,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
     };
   }
 
-   onActiveCellChanged(e: any) {
+  onActiveCellChanged(e: any) {
     const args = e?.detail?.args;
     const row = args?.row;
 
@@ -229,48 +233,88 @@ export class SalesOrderComponent implements OnInit, AfterViewInit{
     this.SaleOrderData = item || null;
   }
 
-   getSaleOrder() {
-    this.salesOrderService
-      .getSaleOrder(0)
-      .subscribe((response: any) => {
-        this.datasetSaleOrderGroup = response?.data?.asset || response?.data || [];
-      });
-      console.log('SaleOrderData', this.datasetSaleOrderGroup);
+  getSaleOrder() {
+    this.salesOrderService.getSaleOrder(0).subscribe((response: any) => {
+      this.datasetSaleOrderGroup =
+        response?.data?.asset || response?.data || [];
+    });
+    console.log('SaleOrderData', this.datasetSaleOrderGroup);
   }
 
   onDeleteSaleOrder() {
+    if (!this.SaleOrderID) {
+      this.notification.warning(
+        'Thông báo',
+        'Vui lòng chọn 1 đơn hàng để xóa!'
+      );
+      return;
+    }
 
+    const order = this.SaleOrderData || {};
+    const payload = {
+      Order: {
+        ...order,
+        IsDeleted: true,
+      },
+      OrderDetails: [],
+      OrderDetailInfo: [],
+      DeletedOrder: [],
+    };
+
+    const productName = this.SaleOrderData?.Name || 'lỗi này';
+    this.modal.confirm({
+      nzTitle: 'Xác nhận xóa',
+      nzContent: `Bạn có chắc chắn muốn xóa đơn hàng ${productName}?`,
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOnOk: () => {
+        this.salesOrderService.saveDataSaleOder(payload).subscribe({
+          next: (res) => {
+            if (res.status === 1) {
+              this.notification.success('Thông báo', 'Đã xóa thành công!');
+              this.getSaleOrder();
+            } else {
+              this.notification.warning(
+                'Thông báo',
+                res.message || 'Không thể xóa bản ghi này!'
+              );
+            }
+          },
+          error: () => {
+            this.notification.error('Thông báo', 'Có lỗi xảy ra khi xóa!');
+          },
+        });
+      },
+    });
   }
 
-   onAddSaleOrder(isEditmode: boolean): void {
-      this.isCheckmode = isEditmode;
-      if (this.isCheckmode == true && this.SaleOrderID === 0) {
-        this.notification.warning(
-          NOTIFICATION_TITLE.warning,
-          'Vui lòng chọn 1 bản ghi để sửa!'
-        );
-        return;
-      }
-      const modalRef = this.modal.create({
-        nzTitle: this.isCheckmode ? 'Sửa đơn hàng' : 'Thêm đơn hàng',
-        nzContent: SalesOrderFormComponent,
-      nzWidth: '50vw',
-        nzFooter: null,
-        nzMaskClosable: false,
-        nzKeyboard: false,
-        nzData: {
-          SaleOrderID: this.SaleOrderID,
-          isEditMode: this.isCheckmode,
-          dataInput: this.SaleOrderData,
-        },
-      });
-  
-      modalRef.afterClose.subscribe((result) => {
-        if (result === true) {
-          this.getSaleOrder();
-        }
-      });
+  onAddSaleOrder(isEditmode: boolean): void {
+    this.isCheckmode = isEditmode;
+    if (this.isCheckmode == true && this.SaleOrderID === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn 1 bản ghi để sửa!'
+      );
+      return;
     }
-  
+    const modalRef = this.modal.create({
+      nzTitle: this.isCheckmode ? 'Sửa đơn hàng' : 'Thêm đơn hàng',
+      nzContent: SalesOrderFormComponent,
+      nzWidth: '50vw',
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {
+        SaleOrderID: this.SaleOrderID,
+        isEditMode: this.isCheckmode,
+        dataInput: this.SaleOrderData,
+      },
+    });
 
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+        this.getSaleOrder();
+      }
+    });
+  }
 }
