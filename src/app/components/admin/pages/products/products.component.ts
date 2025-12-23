@@ -117,7 +117,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 60,
+        width: 30,
         sortable: false,
         filterable: false,
         formatter: (row) => {
@@ -130,6 +130,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         id: 'Code',
         name: 'Mã sản phẩm',
         field: 'Code',
+        width: 100,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -139,6 +140,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         id: 'Name',
         name: 'Tên sản phẩm',
         field: 'Name',
+        width: 100,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -234,6 +236,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
     this.gridOptionsSparePart = {
       enableAutoResize: true,
+      rowHeight: 56,
       autoResize: {
         container: '.grid-sparepart-container',
         resizeDetection: 'container',
