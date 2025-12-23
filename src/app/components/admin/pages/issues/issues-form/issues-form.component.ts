@@ -105,7 +105,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
       }
       this.formGroup = this.fb.group({
         Name: [null, [Validators.required, Validators.maxLength(50)]],
-        // Code: ['', [Validators.required, Validators.maxLength(20)]],
+        Code: ['', [Validators.required, Validators.maxLength(20)]],
       });
     }
 
@@ -122,7 +122,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
           Id: item.Id || 0,
           Code: item.Code || '',
           Name: item.Name || '',
-        }));
+        })); 
 
         if (this.IssuesTable) {
           this.IssuesTable.setData(this.IssuesData);
@@ -175,6 +175,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
       IssuesGroup: {
       Id: this.isEditMode ? this.dataInput?.Id || 0 : 0,
       Name: formValue.Name,
+      Code: formValue.Code
       },
  
       Issues: tableData.map((item: any, index: number) => ({

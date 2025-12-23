@@ -1,9 +1,35 @@
 <div class="modal-body">
   <form nz-form [formGroup]="formGroup" nzLayout="vertical" class="fs-7 mt-2">
     <nz-row [nzGutter]="16">
-      <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="12" [nzLg]="12">
+      <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
+            <nz-form-item>
+          <nz-form-label for="CodeInput" class="form-label p-0"
+            >Mã lỗi lỗi<span class="text-danger ps-1"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
+              formGroup.get('Code')?.hasError('required') &&
+              (formGroup.get('Code')?.dirty || formGroup.get('Code')?.touched)
+                ? 'Vui lòng nhập mã lỗi hỏng hóc!'
+                : formGroup.get('Code')?.hasError('maxlength')
+                ? 'Mã lỗi tối đa 20 ký tự!'
+                : undefined
+            "
+          >
+            <input
+              id="CodeInput"
+              nz-input
+              name="Code"
+              placeholder="Nhập tên mã lỗi"
+              formControlName="Code"
+            />
+          </nz-form-control>
+        </nz-form-item>
       </nz-col>
-      <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24">
+      <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
           <nz-form-label for="unitNameInput" class="form-label p-0"
             >Tên lỗi<span class="text-danger ps-1"
