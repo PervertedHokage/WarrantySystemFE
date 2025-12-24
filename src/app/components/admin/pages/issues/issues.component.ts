@@ -41,7 +41,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
-import { IssuesService } from './issues-service/issues.service';
+import { IssuesService } from '../../../../services/issues-service/issues.service';
 import { IssuesFormComponent } from './issues-form/issues-form.component';
 
 @Component({
@@ -118,7 +118,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 60,
+        width: 50,
+        minWidth: 50,
+        maxWidth: 60,
         sortable: false,
         filterable: false,
         formatter: (row) => {
@@ -132,6 +134,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         id: 'Code',
         name: 'Mã lỗi',
         field: 'Code',
+        width: 100,
+        minWidth: 90,
+        maxWidth: 140,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -141,6 +146,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         id: 'Name',
         name: 'Tên lỗi hiện tượng hỏng hóc',
         field: 'Name',
+        width: 250,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -172,7 +178,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 60,
+        width: 50,
+        minWidth: 50,
+        maxWidth: 60,
         sortable: false,
         filterable: false,
         formatter: (row) => {
@@ -184,6 +192,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         id: 'Code',
         name: 'Mã lỗi',
         field: 'Code',
+        width: 120,
+        minWidth: 90,
+        maxWidth: 160,
         sortable: true,
         type: 'string',
         filterable: true,

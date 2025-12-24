@@ -36,7 +36,7 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { forkJoin } from 'rxjs';
 import { NOTIFICATION_TITLE } from '../../../../../../app/app.config';
-import { IssuesService } from '../issues-service/issues.service';
+import { IssuesService } from '../../../../../services/issues-service/issues.service';
 
 @Component({
   selector: 'app-issues-form',
