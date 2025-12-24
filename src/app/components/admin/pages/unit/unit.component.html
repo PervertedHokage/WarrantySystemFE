@@ -8,7 +8,7 @@
         nzSize="small"
         (click)="onAddUnit(false)"
       >
-        Thêm
+         <img src="assets/icon/action_add_item_16.png" />Thêm
       </button>
       <button
         class="btn-edit"
@@ -17,7 +17,7 @@
         nzSize="small"
         (click)="onAddUnit(true)"
       >
-        Sửa
+        <img src="assets/icon/action_edit_item_16.png" />Sửa
       </button>
          <button
           class="btn-delete"
@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <div class="grid-master-container">
+  <div class="grid-unit-container">
     <angular-slickgrid
       gridId="unitGrid"
       [columns]="columnUnit"

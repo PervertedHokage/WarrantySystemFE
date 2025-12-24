@@ -42,7 +42,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
-import { UnitService } from './unit-service/unit.service';
+import { UnitService } from '../../../../services/unit-service/unit.service';
 
 import {
   ReactiveFormsModule,
@@ -131,7 +131,9 @@ export class UnitComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 60,
+          width: 50,
+        minWidth: 50,
+        maxWidth: 60,
         sortable: false,
         filterable: false,
         formatter: (row) => {
@@ -164,7 +166,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
     this.gridOptionUnit = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-master-container',
+        container: '.grid-unit-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
