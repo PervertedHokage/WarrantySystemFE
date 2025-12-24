@@ -1,0 +1,119 @@
+<div class="card" >
+  <div class="card-header bg-white p-1">
+    <div class="d-flex gap-1">
+      <button
+        class="btn-add"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onAddSerial(false)"
+      >
+        <img src="assets/icon/action_add_item_16.png" /> Thêm
+      </button>
+      <button
+        class="btn-edit"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onAddSerial(true)"
+      >
+        <img src="assets/icon/action_edit_item_16.png" /> Sửa
+      </button>
+      <button
+        class="btn-delete"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onDeleteSerial()"
+      >
+        <img src="assets/icon/action_delete_item_16.png" /> Xóa
+      </button>
+    </div>
+  </div>
+  <div class="grid-container" style="height: 90vh !important;">
+        <div class="grid-serial-container">
+          <angular-slickgrid
+            gridId="SerialGrid"
+            [columns]="columnSerial"
+            [options]="gridOptionsSerial"
+            [dataset]="datasetSerial" 
+            (onAngularGridCreated)="gridReady($event)"  
+            (onActiveCellChanged)="onActiveCellChanged($event)"
+            (selectedRowsChanged)="onSelectedRowsChanged($event)"
+          >
+          </angular-slickgrid>
+        </div>
+  </div>
+</div>
+
+
+<ng-template #unitFormTpl>
+  <form nz-form [formGroup]="formGroup">
+    <nz-row [nzGutter]="16">
+           <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24">
+        <nz-form-item>
+          <nz-form-label for="Product" class="form-label p-0"
+            >Sản phẩm<span class="text-danger ps-1">(*) </span></nz-form-label
+          >
+                 <nz-form-control [nzSpan]="24"
+          [nzErrorTip]="
+              formGroup.get('ProductId')?.invalid &&
+              (formGroup.get('ProductId')?.dirty ||
+                formGroup.get('ProductId')?.touched)
+                ? 'Vui lòng chọn sản phẩm !'
+                : undefined
+            ">
+            <nz-select
+              formControlName="ProductId"
+              nzPlaceHolder="Chọn sản phẩm"
+              nzShowSearch
+              nzAllowClear
+              [nzFilterOption]="filterOption"
+              class="fs-12 w-100"
+            >
+              <nz-option
+                *ngFor="let item of dataProducts"
+                [nzValue]="item.Id"
+                [nzLabel]="item.Code + ' - ' + item.Name"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24">
+        <nz-form-item>
+          <nz-form-label for="unitNameInput" class="form-label p-0"
+            >Tên serial<span class="text-danger ps-1"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
+              formGroup.get('ProductSerial')?.hasError('required') &&
+              (formGroup.get('ProductSerial')?.dirty || formGroup.get('ProductSerial')?.touched)
+                ? 'Vui lòng nhập mã serial!'
+                : formGroup.get('ProductSerial')?.hasError('maxlength')
+                ? 'Mã serial tối đa 50 ký tự!'
+                : undefined
+            "
+          >
+            <input
+              id="unitNameInput"
+              nz-input
+              name="ProductSerial"
+              placeholder="Nhập mã serial"
+              formControlName="ProductSerial"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+
+    <div class="d-flex justify-content-end gap-1">
+      <button nz-button nzType="default" type="button" (click)="onCancelUnit($event)">Hủy</button>
+      <button nz-button nzType="primary" type="button" (click)="saveData()">Lưu</button>
+    </div>
+  </form>
+</ng-template>
