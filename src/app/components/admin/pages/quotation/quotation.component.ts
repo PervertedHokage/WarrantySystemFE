@@ -35,6 +35,8 @@ import { WarrantyClaim } from '../../../../models/warranty-claim.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { QuotationDTO } from '../../../../models/quotation-dto.model';
 import { QuotationModalComponent } from './quotation-modal/quotation-modal.component';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-quotation',
@@ -46,6 +48,8 @@ import { QuotationModalComponent } from './quotation-modal/quotation-modal.compo
     AngularSlickgridModule,
     NzModalModule,
     NzButtonModule,
+    NzDatePickerModule,
+    NzIconModule,
   ],
 })
 export class QuotationComponent implements OnInit {
@@ -59,6 +63,11 @@ export class QuotationComponent implements OnInit {
     3: { text: 'Đã duyệt', cls: 'status-badge status-3' },
     4: { text: 'Đã từ chối', cls: 'status-badge status-4' },
     5: { text: 'Hết hạn', cls: 'status-badge status-5' },
+  };
+  showFilter = false;
+  filter = {
+    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    toDate: new Date(),
   };
   constructor(
     private modal: NzModalService,
@@ -453,5 +462,12 @@ export class QuotationComponent implements OnInit {
       if (result === true) {
       }
     });
+  }
+  applyFilter() {}
+  resetFilter() {
+    this.filter = {
+      fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
+      toDate: new Date(),
+    };
   }
 }

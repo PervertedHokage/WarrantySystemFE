@@ -8,6 +8,7 @@ import {
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule, NgIf } from '@angular/common';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -29,7 +30,10 @@ import { WarrantyClaim } from '../../../../models/warranty-claim.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { WarrantyClaimManagementService } from '../../../../services/warranty-claim-management.service';
 import { WarrantyManagmentModalComponent } from './warranty-managment-modal/warranty-managment-modal.component';
-
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 @Component({
   selector: 'app-warranty-management',
   templateUrl: './warranty-management.component.html',
@@ -40,6 +44,11 @@ import { WarrantyManagmentModalComponent } from './warranty-managment-modal/warr
     AngularSlickgridModule,
     NzModalModule,
     NzButtonModule,
+    NzIconModule,
+    NzSelectModule,
+    NzInputModule,
+    NzDatePickerModule,
+    NzCollapseModule,
   ],
 })
 export class WarrantyManagementComponent implements OnInit {
@@ -54,6 +63,15 @@ export class WarrantyManagementComponent implements OnInit {
     4: { text: 'Báo giá', cls: 'status-badge status-4' },
     5: { text: 'Sửa chữa/bảo hành', cls: 'status-badge status-5' },
     6: { text: 'Hoàn trả', cls: 'status-badge status-6' },
+  };
+  showFilter = false;
+  filter = {
+    status: 0,
+    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
+    toDate: new Date(),
+    email: '',
+    phoneNumber: '',
+    claimNo: '',
   };
   currentFilter = 0;
   constructor(
@@ -389,10 +407,7 @@ export class WarrantyManagementComponent implements OnInit {
   openEditModal() {
     const selectedData = this.angularGrid.gridService.getSelectedRowsDataItem();
     if (!selectedData.length) {
-      this.notification.warning(
-        'Thông báo',
-        'Vui lòng chọn 1 phiếu bảo hành'
-      );
+      this.notification.warning('Thông báo', 'Vui lòng chọn 1 phiếu bảo hành');
       return;
     }
 
@@ -432,5 +447,16 @@ export class WarrantyManagementComponent implements OnInit {
       if (result === true) {
       }
     });
+  }
+  applyFilter() {}
+  resetFilter() {
+    this.filter = {
+      status: 0,
+      fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
+      toDate: new Date(),
+      email: '',
+      phoneNumber: '',
+      claimNo: '',
+    };
   }
 }

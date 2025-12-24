@@ -107,6 +107,17 @@ button.ant-btn.btn-delete{
   display:flex; align-items:center; justify-content:center;
 }
  */
+.btn-apply-filter{
+  background-color: #385df1 !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+.btn-reset-filter {
+  background-color: #ee3434 !important;
+  color: #fff !important;
+  border: none !important;
+}
 
 .btn-add {
   background-color: #28a745 !important;
