@@ -347,7 +347,7 @@ export class LandingPageComponent
       enableFiltering: true,
       forceFitColumns: true,
       enableCellNavigation: true,
-      rowHeight: 62.75,
+      rowHeight: 63,
     };
     // this.dataset = [
     //   {

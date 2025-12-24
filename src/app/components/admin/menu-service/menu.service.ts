@@ -16,6 +16,7 @@ import { IssuesComponent } from '../pages/issues/issues.component';
 import { OrganizationComponent } from '../pages/organization/organization.component';
 import { WarrantyManagementComponent } from '../pages/warranty-management/warranty-management.component';
 import { SalesOrderComponent } from '../pages/sales-order/sales-order.component';
+import { QuotationComponent } from '../pages/quotation/quotation.component';
 import { UnitComponent } from '../pages/unit/unit.component';
 import { WorkOrderComponent } from '../pages/work-order/work-order.component';
 import { SerialComponent } from '../pages/serial/serial.component';
@@ -66,71 +67,80 @@ export class MenuService {
         const menus: MenuItem[] = [
           //#region menu CRM
           {
-              kind: 'group',
-              key: 'crm',
-              stt: 1,
-              title: 'Organization',
-              isOpen: true,
-              isPermission: true,
-              icon: 'assets/icon/menu_crm.svg',
-              children: [
-                  {
-                      kind: 'leaf',
-                      key: 'OrganizationComponent',
-                      title: 'User',
-                      isOpen: true,
-                      isPermission: true,
-                      comp: OrganizationComponent,
-                      // icon: 'assets/icon/menu_crm.svg',
-                  },
-              ],
-          },
-                {
-        kind: 'group',
-        key: 'management',
-        stt: 2,
-        title: 'Nghiệp vụ',
-        isOpen: false,
-        isPermission: true,
-        icon: 'assets/icon/hr_asset_management_24.svg',
-        children: [
-          {
-            kind: 'leaf',
-            key: 'WarrantyManagementComponent',
-            title: 'Quản lý yêu cầu bảo hành',
+            kind: 'group',
+            key: 'crm',
+            stt: 1,
+            title: 'Organization',
             isOpen: true,
             isPermission: true,
-            comp: WarrantyManagementComponent,
-            // icon: 'assets/icon/menu_crm.svg',
+            icon: 'assets/icon/menu_crm.svg',
+            children: [
+              {
+                kind: 'leaf',
+                key: 'OrganizationComponent',
+                title: 'User',
+                isOpen: true,
+                isPermission: true,
+                comp: OrganizationComponent,
+                // icon: 'assets/icon/menu_crm.svg',
+              },
+            ],
           },
-        ],
-      },
           {
-              kind: 'leaf',
-              key: 'ProductsComponent',
-              title: 'Sản phẩm',
-              isOpen: true,
-              isPermission: true,
-              comp: ProductsComponent,
-              icon: 'assets/icon/menu_crm.svg',
+            kind: 'group',
+            key: 'management',
+            stt: 2,
+            title: 'Nghiệp vụ',
+            isOpen: false,
+            isPermission: true,
+            icon: 'assets/icon/hr_asset_management_24.svg',
+            children: [
+              {
+                kind: 'leaf',
+                key: 'WarrantyManagementComponent',
+                title: 'Quản lý yêu cầu bảo hành',
+                isOpen: true,
+                isPermission: true,
+                comp: WarrantyManagementComponent,
+                // icon: 'assets/icon/menu_crm.svg',
+              },
+              {
+                kind: 'leaf',
+                key: 'QuotationComponent',
+                title: 'Báo giá',
+                isOpen: true,
+                isPermission: true,
+                comp: QuotationComponent,
+                // icon: 'assets/icon/menu_crm.svg',
+              },
+            ],
           },
-               {
-              kind: 'leaf',
-              key: 'IssuesComponent',
-              title: 'Hiện tượng hỏng ',
-              isOpen: true,
-              isPermission: true,
-              comp: IssuesComponent,
-              icon: 'assets/icon/menu_crm.svg',
+          {
+            kind: 'leaf',
+            key: 'ProductsComponent',
+            title: 'Sản phẩm',
+            isOpen: true,
+            isPermission: true,
+            comp: ProductsComponent,
+            icon: 'assets/icon/menu_crm.svg',
           },
-           {
-              kind: 'leaf',
-              key: 'SalesOrderComponent',
-              title: 'Đơn hàng ',
-              isOpen: true,
-              isPermission: true,
-              comp: SalesOrderComponent,
-              icon: 'assets/icon/menu_crm.svg',
+          {
+            kind: 'leaf',
+            key: 'IssuesComponent',
+            title: 'Hiện tượng hỏng ',
+            isOpen: true,
+            isPermission: true,
+            comp: IssuesComponent,
+            icon: 'assets/icon/menu_crm.svg',
+          },
+          {
+            kind: 'leaf',
+            key: 'SalesOrderComponent',
+            title: 'Đơn hàng ',
+            isOpen: true,
+            isPermission: true,
+            comp: SalesOrderComponent,
+            icon: 'assets/icon/menu_crm.svg',
           },
           {
               kind: 'leaf',

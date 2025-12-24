@@ -21,6 +21,24 @@
     <!-- Tab Thông tin master -->
     <div class="modal-tab-content" [class.active]="currentTab == 1" id="master-tab">
       <form nz-form nzLayout="vertical">
+        <!-- Thông tin khách hàng -->
+        <div class="form-section">
+          <h3>Trạng thái phiếu bảo hành</h3>
+
+          <div nz-row [nzGutter]="16">
+            <div nz-col nzSpan="24">
+              <nz-steps nzType="navigation" [nzCurrent]="(warrantyClaim.Status ?? 1) - 1"
+                (nzIndexChange)="onStatusChange($event)">
+                <nz-step nzTitle="Tiếp nhận thông tin"></nz-step>
+                <nz-step nzTitle="Xác minh thông tin"></nz-step>
+                <nz-step nzTitle="Chẩn đoán sơ bộ"></nz-step>
+                <nz-step nzTitle="Báo giá"></nz-step>
+                <nz-step nzTitle="Sửa chữa/Bảo hành"></nz-step>
+                <nz-step nzTitle="Hoàn trả"></nz-step>
+              </nz-steps>
+            </div>
+          </div>
+        </div>
 
         <!-- Thông tin khách hàng -->
         <div class="form-section">
@@ -103,27 +121,11 @@
           </div>
 
           <div nz-row [nzGutter]="16">
-            <div nz-col nzSpan="12">
+            <div nz-col nzSpan="24">
               <nz-form-item>
                 <nz-form-label>Hiện tượng hỏng hóc</nz-form-label>
                 <nz-form-control>
                   <input nz-input value="Không lên nguồn" readonly />
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label>Trạng thái</nz-form-label>
-                <nz-form-control>
-                  <nz-select nzValue="Tiếp nhận thông tin">
-                    <nz-option nzLabel="Tiếp nhận thông tin" nzValue="Tiếp nhận thông tin"></nz-option>
-                    <nz-option nzLabel="Xác minh thông tin" nzValue="Xác minh thông tin"></nz-option>
-                    <nz-option nzLabel="Chẩn đoán sơ bộ" nzValue="Chẩn đoán sơ bộ"></nz-option>
-                    <nz-option nzLabel="Báo giá" nzValue="Báo giá"></nz-option>
-                    <nz-option nzLabel="Sửa chữa/Bảo hành" nzValue="Sửa chữa/Bảo hành"></nz-option>
-                    <nz-option nzLabel="Hoàn trả" nzValue="Hoàn trả"></nz-option>
-                  </nz-select>
                 </nz-form-control>
               </nz-form-item>
             </div>
