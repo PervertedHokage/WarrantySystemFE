@@ -34,6 +34,7 @@ import {
 import { WarrantyClaim } from '../../../../models/warranty-claim.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { QuotationDTO } from '../../../../models/quotation-dto.model';
+import { QuotationModalComponent } from './quotation-modal/quotation-modal.component';
 
 @Component({
   selector: 'app-quotation',
@@ -59,7 +60,10 @@ export class QuotationComponent implements OnInit {
     4: { text: 'Đã từ chối', cls: 'status-badge status-4' },
     5: { text: 'Hết hạn', cls: 'status-badge status-5' },
   };
-  constructor() {}
+  constructor(
+    private modal: NzModalService,
+    private notification: NzNotificationService
+  ) {}
 
   ngOnInit() {
     this.initGrid();
@@ -93,7 +97,7 @@ export class QuotationComponent implements OnInit {
         field: 'CreatedDate',
         sortable: true,
         type: 'dateUtc',
-        formatter: Formatters.dateTimeIsoAmPm,
+        formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters['compoundDate'] },
       },
@@ -116,21 +120,6 @@ export class QuotationComponent implements OnInit {
         filter: { model: Filters['compoundInputText'] },
       },
       {
-        id: 'TotalAmount',
-        name: 'Tổng tiền',
-        field: 'TotalAmount',
-        sortable: true,
-        filterable: true,
-        type: 'number',
-        formatter: Formatters.currency,
-        params: {
-          currency: 'VND',
-          displayNegative: false,
-          thousandSeparator: ',',
-          decimalPlaces: 0,
-        },
-      },
-      {
         id: 'StatusQuotationText',
         name: 'Trạng thái',
         field: 'StatusQuotationText',
@@ -149,7 +138,7 @@ export class QuotationComponent implements OnInit {
         field: 'DeadLine',
         sortable: true,
         type: 'dateUtc',
-        formatter: Formatters.dateTimeIsoAmPm,
+        formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters['compoundDate'] },
       },
@@ -157,14 +146,26 @@ export class QuotationComponent implements OnInit {
         id: 'Actions',
         name: 'Thao tác',
         field: '',
+        cssClass: 'cell-center',
         sortable: false,
         filterable: false,
         width: 100,
         formatter: () => `
-      <button class="btn btn-warning btn-sm">
-        <i class="fa fa-eye"></i> Xem
-      </button>
-    `,
+          <button class="btn btn-sm btn-outline open-modal-btn">
+            📋 Chi tiết
+          </button>
+        `,
+        onCellClick: (e: Event, args: OnEventArgs) => {
+          const target = e.target as HTMLElement;
+          if (!target.closest('.open-modal-btn')) {
+            return;
+          }
+          e.stopImmediatePropagation();
+          const rowIndex = args.row;
+          this.angularGrid.slickGrid.setSelectedRows([rowIndex]);
+          this.angularGrid.slickGrid.setActiveCell(rowIndex, args.cell);
+          this.openEditModal();
+        },
       },
     ];
     this.gridOptions = {
@@ -178,7 +179,7 @@ export class QuotationComponent implements OnInit {
       enableFiltering: true,
       forceFitColumns: true,
       enableCellNavigation: true,
-      rowHeight: 62.75,
+      rowHeight: 63,
       enableRowSelection: true,
       enableCheckboxSelector: true,
       multiSelect: false,
@@ -372,5 +373,85 @@ export class QuotationComponent implements OnInit {
           })
       ),
     ];
+  }
+  openAddModal() {
+    const modalRef = this.modal.create({
+      nzTitle: 'Thêm mới phiếu báo giá',
+      nzContent: QuotationModalComponent,
+      nzFooter: [
+        {
+          label: 'Đóng',
+          type: 'default',
+          onClick: () => {
+            modalRef.close();
+          },
+        },
+        {
+          label: 'Lưu thay đổi',
+          type: 'primary',
+          onClick: () => {
+            modalRef.close(true);
+          },
+        },
+      ],
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {},
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '80vh',
+        'overflow-y': 'auto',
+      },
+      nzCentered: true,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+      }
+    });
+  }
+  openEditModal() {
+    const selectedData = this.angularGrid.gridService.getSelectedRowsDataItem();
+    if (!selectedData.length) {
+      this.notification.warning('Thông báo', 'Vui lòng chọn 1 phiếu báo giá');
+      return;
+    }
+
+    const modalRef = this.modal.create({
+      nzTitle: 'Chỉnh sửa phiếu báo giá',
+      nzContent: QuotationModalComponent,
+      nzFooter: [
+        {
+          label: 'Đóng',
+          type: 'default',
+          onClick: () => {
+            modalRef.close();
+          },
+        },
+        {
+          label: 'Lưu thay đổi',
+          type: 'primary',
+          onClick: () => {
+            modalRef.close(true);
+          },
+        },
+      ],
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {
+        quotation: selectedData[0],
+      },
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '80vh',
+        'overflow-y': 'auto',
+      },
+      nzCentered: true,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+      }
+    });
   }
 }

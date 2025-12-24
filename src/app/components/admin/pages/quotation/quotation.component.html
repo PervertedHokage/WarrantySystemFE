@@ -4,11 +4,11 @@
       <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex gap-2">
           <button class="fs-12 btn-add" nz-button nzType="default" nzSize="small" nz-button nzType="default"
-            nzSize="small">
+            nzSize="small" (click)="openAddModal()">
             <img src="assets/icon/action_add_item_16.png" alt="Thêm " /> Thêm
           </button>
           <button class="fs-12 btn-edit" nz-button nzType="default" nzSize="small" nz-button nzType="default"
-            nzSize="small">
+            nzSize="small" (click)="openEditModal()">
             <img src="assets/icon/action_edit_item_16.png" alt="Sửa" />Sửa
           </button>
           <button class="fs-12 btn-delete" nz-button nzType="default" nzSize="small" nz-button nzType="default"
@@ -21,8 +21,8 @@
 
     <div id="grid_quotation_container" class="tab-container">
       <div class="tab-content">
-        <angular-slickgrid #asg gridId="grid-quotation" [columns]="columnDefinitions" [options]="gridOptions" [dataset]="dataset"
-          (onAngularGridCreated)="angularGridReady($event.detail)">
+        <angular-slickgrid #asg gridId="grid-quotation" [columns]="columnDefinitions" [options]="gridOptions"
+          [dataset]="dataset" (onAngularGridCreated)="angularGridReady($event.detail)">
         </angular-slickgrid>
       </div>
     </div>

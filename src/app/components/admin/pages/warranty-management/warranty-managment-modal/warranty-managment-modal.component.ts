@@ -9,6 +9,7 @@ import { NZ_MODAL_DATA, NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSplitterModule } from 'ng-zorro-antd/splitter';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -33,6 +34,7 @@ import { WarrantyClaim } from '../../../../../models/warranty-claim.model';
     NzCheckboxModule,
     NzSelectModule,
     NzSliderModule,
+    NzStepsModule,
     NzTableModule,
     NzUploadModule,
     NzRadioModule,
@@ -43,16 +45,18 @@ export class WarrantyManagmentModalComponent implements OnInit {
   warrantyClaim: WarrantyClaim;
   constructor(
     @Inject(NZ_MODAL_DATA)
-    public data: { warrantyClaim : WarrantyClaim }
+    public data: { warrantyClaim: WarrantyClaim }
   ) {
     this.warrantyClaim = data.warrantyClaim ?? new WarrantyClaim();
   }
 
   ngOnInit() {
     console.log(this.warrantyClaim);
-
   }
   changeTab(newTab: number) {
     this.currentTab = newTab;
+  }
+  onStatusChange(index: number): void {
+    this.warrantyClaim.Status = index + 1;
   }
 }

@@ -86,7 +86,7 @@ export class WarrantyManagementComponent implements OnInit {
         field: 'CreatedDate',
         sortable: true,
         type: 'dateUtc',
-        formatter: Formatters.dateTimeIsoAmPm,
+        formatter: Formatters.dateIso,
         filterable: true,
         filter: { model: Filters['compoundDate'] },
       },
@@ -141,8 +141,6 @@ export class WarrantyManagementComponent implements OnInit {
           }
           e.stopImmediatePropagation();
           const rowIndex = args.row;
-          console.log(rowIndex);
-
           this.angularGrid.slickGrid.setSelectedRows([rowIndex]);
           this.angularGrid.slickGrid.setActiveCell(rowIndex, args.cell);
           this.openEditModal();
@@ -159,7 +157,7 @@ export class WarrantyManagementComponent implements OnInit {
       enableSorting: true,
       enableFiltering: true,
       enableCellNavigation: true,
-      rowHeight: 62.75,
+      rowHeight: 63,
       enableRowSelection: true,
       enableCheckboxSelector: true,
       multiSelect: false,
@@ -227,50 +225,54 @@ export class WarrantyManagementComponent implements OnInit {
 
       new WarrantyClaim({
         Id: 3,
-        ClaimNo: 'WC-0003',
-        CustomerName: 'Le Van C',
-        CustomerPhoneNumber: '0901000003',
-        ProductName: 'Tablet T',
-        ProductId: 103,
-        IssueId: 3,
-        SerialNumber: 'SN-T-0003',
-        HasProtection: true,
-        HasAdapter: false,
+        ClaimNo: 'WC-0098',
+        CustomerName: 'Nguyen Minh Quan',
+        CustomerEmail: 'quan.nguyen@example.com',
+        CustomerPhoneNumber: '0912345678',
+        CustomerAddress: '12 Nguyen Trai, District 5',
+        ProductName: 'Laptop Pro 14',
+        ProductId: 501,
+        IssueId: 7,
+        SerialNumber: 'LP14-QUAN-0098',
+        HasProtection: false,
+        HasAdapter: true,
         HasCable: false,
         HasBattery: true,
-        HasIssueWhenOpenBox: false,
-        HasCollision: true,
-        OperationEnvironment: 1,
-        Status: 3,
-        StatusText: this.getStatusText(3),
-        Type: 2,
-        Note: 'Physical damage',
-        CreatedDate: new Date('2025-01-03'),
-        CreatedBy: 'staff01',
+        HasIssueWhenOpenBox: true,
+        HasCollision: false,
+        OperationEnvironment: 2,
+        Status: 5,
+        StatusText: this.getStatusText(5),
+        Type: 3,
+        Note: 'Overheating after long usage',
+        CreatedDate: new Date('2024-11-18'),
+        CreatedBy: 'tech03',
       }),
 
       new WarrantyClaim({
         Id: 4,
-        ClaimNo: 'WC-0004',
-        CustomerName: 'Pham Thi D',
-        CustomerEmail: 'd@example.com',
-        CustomerPhoneNumber: '0901000004',
-        ProductName: 'Monitor M24',
-        ProductId: 104,
-        IssueId: 1,
-        SerialNumber: 'SN-M24-0004',
+        ClaimNo: 'WC-0152',
+        CustomerName: 'Tran Hoai Nam',
+        CustomerEmail: 'nam.tran@example.org',
+        CustomerPhoneNumber: '0987654321',
+        CustomerAddress: '88 Le Loi, District 1',
+        ProductName: 'Smart Watch X',
+        ProductId: 812,
+        IssueId: 2,
+        SerialNumber: 'SWX-NAM-0152',
         HasProtection: true,
-        HasAdapter: true,
+        HasAdapter: null,
         HasCable: true,
-        HasBattery: null,
+        HasBattery: false,
         HasIssueWhenOpenBox: false,
-        HasCollision: false,
-        OperationEnvironment: 3,
-        Status: 1,
-        StatusText: this.getStatusText(1),
+        HasCollision: true,
+        OperationEnvironment: 4,
+        Status: 2,
+        StatusText: this.getStatusText(2),
         Type: 1,
-        CreatedDate: new Date('2025-01-04'),
-        CreatedBy: 'staff02',
+        Note: 'Screen cracked during transport',
+        CreatedDate: new Date('2025-03-09'),
+        CreatedBy: 'support07',
       }),
 
       new WarrantyClaim({
@@ -352,7 +354,22 @@ export class WarrantyManagementComponent implements OnInit {
     const modalRef = this.modal.create({
       nzTitle: 'Thêm mới phiếu bảo hành',
       nzContent: WarrantyManagmentModalComponent,
-      nzFooter: null,
+      nzFooter: [
+        {
+          label: 'Đóng',
+          type: 'default',
+          onClick: () => {
+            modalRef.close();
+          },
+        },
+        {
+          label: 'Lưu thay đổi',
+          type: 'primary',
+          onClick: () => {
+            modalRef.close(true);
+          },
+        },
+      ],
       nzMaskClosable: false,
       nzKeyboard: false,
       nzData: {},
@@ -382,7 +399,22 @@ export class WarrantyManagementComponent implements OnInit {
     const modalRef = this.modal.create({
       nzTitle: 'Chỉnh sửa phiếu bảo hành',
       nzContent: WarrantyManagmentModalComponent,
-      nzFooter: null,
+      nzFooter: [
+        {
+          label: 'Đóng',
+          type: 'default',
+          onClick: () => {
+            modalRef.close();
+          },
+        },
+        {
+          label: 'Lưu thay đổi',
+          type: 'primary',
+          onClick: () => {
+            modalRef.close(true);
+          },
+        },
+      ],
       nzMaskClosable: false,
       nzKeyboard: false,
       nzData: {

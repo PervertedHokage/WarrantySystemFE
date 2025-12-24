@@ -17,6 +17,8 @@ export class QuotationDTO {
 
   ProductSerialId: number | null = null;
 
+  ProductName: string | null = null;
+
   StatusQuotation: number | null = null;
 
   StatusQuotationText: string | null = null;

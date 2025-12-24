@@ -27,14 +27,15 @@
 
           <div nz-row [nzGutter]="16">
             <div nz-col nzSpan="24">
-              <nz-radio-group [(ngModel)]="warrantyClaim.Status" name="status">
-                <label nz-radio-button [nzValue]="1" class="radio-label status-1">Tiếp nhận thông tin</label>
-                <label nz-radio-button [nzValue]="2" class="radio-label status-2">Xác minh thông tin</label>
-                <label nz-radio-button [nzValue]="3" class="radio-label status-3">Chẩn đoán sơ bộ</label>
-                <label nz-radio-button [nzValue]="4" class="radio-label status-4">Báo giá</label>
-                <label nz-radio-button [nzValue]="5" class="radio-label status-5">Sửa chữa/Bảo hành</label>
-                <label nz-radio-button [nzValue]="6" class="radio-label status-6">Hoàn trả</label>
-              </nz-radio-group>
+              <nz-steps nzType="navigation" [nzCurrent]="(warrantyClaim.Status ?? 1) - 1"
+                (nzIndexChange)="onStatusChange($event)">
+                <nz-step nzTitle="Tiếp nhận thông tin"></nz-step>
+                <nz-step nzTitle="Xác minh thông tin"></nz-step>
+                <nz-step nzTitle="Chẩn đoán sơ bộ"></nz-step>
+                <nz-step nzTitle="Báo giá"></nz-step>
+                <nz-step nzTitle="Sửa chữa/Bảo hành"></nz-step>
+                <nz-step nzTitle="Hoàn trả"></nz-step>
+              </nz-steps>
             </div>
           </div>
         </div>
