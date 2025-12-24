@@ -41,7 +41,7 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { forkJoin } from 'rxjs';
 import { NOTIFICATION_TITLE } from '../../../../../../app/app.config';
-import { SalesOrderService } from '../sales-order-service/sales-order.service';
+import { SalesOrderService } from '../../../../../services/sales-order-service/sales-order.service';
 
 @Component({
   selector: 'app-sales-order-form',

@@ -41,7 +41,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
-import { SalesOrderService } from './sales-order-service/sales-order.service';
+import { SalesOrderService } from '../../../../services/sales-order-service/sales-order.service';
 import { SalesOrderFormComponent } from './sales-order-form/sales-order-form.component';
 
 
@@ -104,7 +104,8 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 60,
+        minWidth: 30,
+        maxWidth: 50,
         sortable: false,
         filterable: false,
         formatter: (row) => {
