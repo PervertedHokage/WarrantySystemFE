@@ -40,7 +40,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { ProductService } from './products-service/product.service';
+import { ProductService } from '../../../../services/products-service/product.service';
 import { ProductsFormComponent } from './products-form/products-form.component';
 
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
@@ -117,7 +117,8 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 30,
+        minWidth: 30,
+        maxWidth: 50,
         sortable: false,
         filterable: false,
         formatter: (row) => {
@@ -181,7 +182,8 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        width: 30,
+        minWidth: 30,
+        maxWidth: 50,
         sortable: false,
         filterable: false,
         formatter: (row) => {

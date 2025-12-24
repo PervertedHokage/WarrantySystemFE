@@ -36,7 +36,7 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { forkJoin } from 'rxjs';
 import { NOTIFICATION_TITLE } from '../../../../../../app/app.config';
-import { ProductService } from '../products-service/product.service';
+import { ProductService } from '../../../../../services/products-service/product.service';
 
 /**
  * Chi tiết linh kiện (Detail trong SparePartsGroup)

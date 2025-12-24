@@ -49,3 +49,42 @@ angular-slickgrid,
   word-break: break-word;
   line-height: 1.4;
 }
+
+// Custom Slickgrid Header Styling
+:host ::ng-deep .slick-header-columns {
+  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%) !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  font-weight: 600 !important;
+}
+
+:host ::ng-deep .slick-header-column {
+  background: transparent !important;
+  border-right: 1px solid #dee2e6 !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  color: #2c3e50 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
+}
+
+:host ::ng-deep .slick-header-column-sorted {
+  background: rgba(52, 152, 219, 0.1) !important;
+  font-weight: 700 !important;
+}
+
+:host ::ng-deep .slick-sort-indicator {
+  color: #3498db !important;
+  font-size: 14px !important;
+}
+
+:host ::ng-deep .slick-header-menubutton {
+  color: #7f8c8d !important;
+  
+  &:hover {
+    color: #2c3e50 !important;
+  }
+}

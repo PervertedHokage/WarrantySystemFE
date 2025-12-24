@@ -145,7 +145,8 @@
                           placeholder="Nhập mã linh kiện mô tả"
                           [(ngModel)]="detail.SparePartNumber"
                         />
-                        <div>
+                        <!-- thêm mô tả -->
+                        <!-- <div>
                           <span
                             class="text-success cursor-pointer me-1"
                             title="Thêm dòng mô tả"
@@ -156,14 +157,14 @@
                             title="Xóa dòng mô tả"
                             (click)="removeDetailRow(part.rowID, detailIndex)"
                           >x</span>
-                        </div>
+                        </div> -->
                       </div>
                     </td>
 
                     <!-- Mô tả linh kiện -->
                     <td>
                       <textarea
-                        rows="2"
+                        rows="1"
                         placeholder="Mô tả linh kiện"
                         [(ngModel)]="detail.Description"
                       ></textarea>
