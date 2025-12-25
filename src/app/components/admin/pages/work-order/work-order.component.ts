@@ -279,7 +279,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     this.gridOptionsWorkOrder = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-workorder-container',
+        container: '.grid-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -288,23 +288,28 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
       forceFitColumns: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
-      multiSelect: false,
-      rowSelectionOptions: { selectActiveRow: true },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
   }
 
     gridReady(e: any) {
-    this.angularGrid = e.detail?.angularGrid || e;
+    console.log('Grid ready event:', e);
+    this.angularGrid = e?.detail || e;
     this.dataView = this.angularGrid?.dataView;
   }
 
    getWorkOrder() {
     this.workOrderService
-      .getWorkOrder(this.WorkOrderId)
+      .getWorkOrder(0)
       .subscribe((response: any) => {
-        this.datasetWorkOrder = response?.data?.asset || response?.data || [];
+        this.datasetWorkOrder = response?.data || [];
+        console.log('Loaded work orders:', this.datasetWorkOrder);
       });
   }
 
@@ -426,9 +431,35 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
   }
 
   onDeleteMultipleWorkOrders() {
-    const selectedRows = this.angularGrid?.slickGrid?.getSelectedRows() || [];
+    if (!this.angularGrid) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
+      );
+      return;
+    }
+
+    const gridService = this.angularGrid.gridService;
+    const dataView = this.angularGrid.dataView;
     
-    if (selectedRows.length === 0) {
+    console.log('Grid service:', gridService);
+    console.log('DataView:', dataView);
+    
+    let selectedItems: any[] = [];
+    
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows = gridService.getSelectedRows();
+      console.log('Selected rows from gridService:', selectedRows);
+      selectedItems = selectedRows.map((idx: number) => dataView.getItem(idx)).filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      console.log('Selected IDs from dataView:', selectedIds);
+      selectedItems = selectedIds.map((id: any) => dataView.getItemById(id)).filter((item: any) => item);
+    }
+    
+    console.log('Selected items:', selectedItems);
+    
+    if (selectedItems.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
         'Vui lòng chọn ít nhất 1 yêu cầu để xóa!'
@@ -439,8 +470,8 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     const selectedIds: number[] = [];
     const selectedCodes: string[] = [];
 
-    selectedRows.forEach((rowIndex: number) => {
-      const item = this.angularGrid?.slickGrid?.getDataItem(rowIndex);
+    selectedItems.forEach((item: any) => {
+      console.log('Processing item:', item);
       if (item && item.Id) {
         selectedIds.push(item.Id);
         selectedCodes.push(item.Code || '');

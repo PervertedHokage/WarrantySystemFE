@@ -485,6 +485,7 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
           },
           SparePart: spareParts,
           DeletedSparePart: this.isEditMode ? (partGroup.DeletedDetailIds || []) : [],
+
         });
       }
     }

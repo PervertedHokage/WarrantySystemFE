@@ -2,38 +2,38 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
+import { Product } from '../../models/product.model';
 import { environment } from '../../environments/environment';
+import { APIResponse } from '../../models/api-response.interface';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
+  constructor(private http: HttpClient) {}
 
-    constructor(private http: HttpClient) {}
-
-    getDataProducts(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/products/get-products`);
+  getDataProducts(): Observable<APIResponse<Product[]>> {
+    return this.http.get<APIResponse<Product[]>>(environment.host + `api/products`)
   }
 
-     getSparePart(
-    ProductId: number,
-  ): Observable<any> {
+  getSparePart(ProductId: number): Observable<any> {
     const asset: any = {
-      ProductId: ProductId || 0
+      ProductId: ProductId || 0,
     };
     return this.http.post<any>(
-      environment.host + `api/products/get-spare-parts`,
+      environment.host + `api/products/spare-parts`,
       asset
     );
   }
 
-//    saveDataProduct(data:any):Observable<any>
-//  {
-//   return this.http.post(environment.host + `api/products/save-product`, data)
-//  }
+  deleteWorkOrders(ids: number[]): Observable<any> {
+    return this.http.post<any>(environment.host + `api/products/delete`, ids);
+  }
 
-   saveDataProduct(data:any):Observable<any>
- {
-  return this.http.post(environment.host + `api/products/save-data-product`, data)
- }
+  saveDataProduct(data: any): Observable<any> {
+    return this.http.post(
+      environment.host + `api/products/save-data-product`,
+      data
+    );
+  }
 }

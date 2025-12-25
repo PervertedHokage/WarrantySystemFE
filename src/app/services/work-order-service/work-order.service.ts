@@ -3,71 +3,66 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Product } from '../../models/product.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WorkOrderService {
+  constructor(private http: HttpClient) {}
 
-    constructor(private http: HttpClient) {}
-
-       getWorkOrder(
-    WorkOrderId: number,
-  ): Observable<any> {
+  getWorkOrder(WorkOrderId: number): Observable<any> {
     const asset: any = {
-      WorkOrderId: WorkOrderId || 0
+      WorkOrderId: WorkOrderId || 0,
+    };
+    return this.http.post<any>(environment.host + `api/workorder`, asset);
+  }
+
+  getWorkOrderDetail(WorkOrderId: number): Observable<any> {
+    const asset: any = {
+      WorkOrderId: WorkOrderId || 0,
     };
     return this.http.post<any>(
-      environment.host + `api/workorder/get-work-order`,
+      environment.host + `api/workorder/work-order-detail`,
       asset
     );
   }
 
-       getWorkOrderDetail(
-    WorkOrderId: number,
-  ): Observable<any> {
+  getEmployees(Status: number): Observable<any> {
     const asset: any = {
-      WorkOrderId: WorkOrderId || 0
+      Status: Status || 0,
     };
     return this.http.post<any>(
-      environment.host + `api/workorder/get-work-order-detail`,
+      environment.host + `api/workorder/employees`,
       asset
     );
   }
 
-    getEmployees(
-    Status: number,
-  ): Observable<any> {
-    const asset: any = {
-      Status: Status || 0
-    };
-    return this.http.post<any>(
-      environment.host + `api/workorder/get-employees`,
-      asset
-    );
+  getStatus(): Observable<any> {
+    return this.http.get<any>(environment.host + `api/workorder/status`);
   }
 
-   getStatus(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/workorder/get-status`);
-  }
-
-     getDataProducts(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/products/get-products`);
+    getDataProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(environment.host + `api/products`);
   }
 
   getQuotation(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/workorder/get-quotation`);
+    return this.http.get<any>(environment.host + `api/workorder/quotation`);
   }
 
-    getSparePartGroup(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/products/get-spare-parts-group`);
+  getSparePartGroup(): Observable<any> {
+    return this.http.get<any>(
+      environment.host + `api/products/spare-parts-group`
+    );
   }
 
-      getWarrantyClaims(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/workorder/get-warranty-claim`);
+  getWarrantyClaims(): Observable<any> {
+    return this.http.get<any>(
+      environment.host + `api/workorder/warranty-claim`
+    );
   }
 
-    saveDataWorkOrder(data: any): Observable<any> {
+  saveDataWorkOrder(data: any): Observable<any> {
     return this.http.post<any>(
       environment.host + `api/workorder/save-data-work-order`,
       data
@@ -75,10 +70,6 @@ export class WorkOrderService {
   }
 
   deleteWorkOrders(ids: number[]): Observable<any> {
-    return this.http.post<any>(
-      environment.host + `api/workorder/delete`,
-      ids
-    );
+    return this.http.post<any>(environment.host + `api/workorder/delete`, ids);
   }
-
 }

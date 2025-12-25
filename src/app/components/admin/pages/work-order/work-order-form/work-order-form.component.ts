@@ -106,7 +106,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     this.getdataQuotation();
     this.setupQuotationChangeListener();
     this.loadOptionSparePartGroup();
-    this.getdataWarrantyClaims();
+    this.getWarrantyClaims();
     if (!this.isEditMode) {
       this.generateWorkOrderCode();
     }
@@ -188,7 +188,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
     this.workOrderService.getWorkOrderDetail(this.WorkOrderID).subscribe({
       next: (response) => {
-        const issues = response?.data?.asset || response?.data || [];
+        const issues = response?.data || [];
 
         this.dataSparePartGroup = issues.map((item: any) => ({
           Id: item.WorkOrderSpareId || 0,
@@ -211,7 +211,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   getdataEmployee() {
     this.workOrderService.getEmployees(0).subscribe((response: any) => {
-      this.dataEmployee = response.data.asset || [];
+      this.dataEmployee = response.data || [];
     });
   }
 
@@ -228,10 +228,13 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getdataWarrantyClaims() {
-    this.workOrderService.getWarrantyClaims().subscribe((response: any) => {
-      this.dataWarrantyClaims = response.data || [];
-    });
+   getWarrantyClaims() {
+    this.workOrderService
+      .getWorkOrder(0)
+      .subscribe((response: any) => {
+        this.dataWarrantyClaims = response?.data || [];
+        console.log('Loaded work orders:', this.dataWarrantyClaims);
+      });
   }
 
   getdataQuotation() {
@@ -242,15 +245,25 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   setupQuotationChangeListener() {
     this.formGroup
-      .get('QuotationNumber')
+      .get('WarrantyClaimId')
       ?.valueChanges.subscribe((quotationId) => {
         if (quotationId) {
-          const selectedQuotation = this.dataQuotation.find(
+          const selectedQuotation = this.dataWarrantyClaims.find(
             (q) => q.Id === quotationId
           );
           if (selectedQuotation && selectedQuotation.CustomerName) {
             this.formGroup.patchValue({
               CustomerName: selectedQuotation.CustomerName,
+            });
+          }
+            if (selectedQuotation && selectedQuotation.QuotationNumber) {
+            this.formGroup.patchValue({
+              QuotationNumber: selectedQuotation.QuotationNumber,
+            });
+          }
+           if (selectedQuotation && selectedQuotation.ProductId) {
+            this.formGroup.patchValue({
+              ProductId: selectedQuotation.ProductId,
             });
           }
         }

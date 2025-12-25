@@ -236,8 +236,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
 
   getSaleOrder() {
     this.salesOrderService.getSaleOrder(0).subscribe((response: any) => {
-      this.datasetSaleOrderGroup =
-        response?.data?.asset || response?.data || [];
+      this.datasetSaleOrderGroup = response?.data || [];
     });
     console.log('SaleOrderData', this.datasetSaleOrderGroup);
   }

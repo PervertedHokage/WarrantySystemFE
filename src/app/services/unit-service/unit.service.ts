@@ -12,12 +12,12 @@ export class UnitService {
     constructor(private http: HttpClient) {}
 
       getDataUnit(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/unit/get-unit`);
+    return this.http.get<any>(environment.host + `api/unit`);
   }
 
    saveDataUnit(data: any): Observable<any> {
     return this.http.post<any>(
-      environment.host + `api/unit/save-data-unit`,
+      environment.host + `api/unit`,
       data
     );
   }

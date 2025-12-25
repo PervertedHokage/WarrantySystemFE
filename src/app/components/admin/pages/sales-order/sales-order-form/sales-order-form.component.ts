@@ -153,7 +153,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     console.log('Load Order Data for SaleOrderID:', this.SaleOrderID);
     this.salesOrderService.getSaleOrder(this.SaleOrderID).subscribe({
       next: (response) => {
-        const order = response?.data?.asset || response?.data || [];
+        const order = response?.data || [];
         this.OrderData = order.map((item: any) => ({
           Id: item.Id || 0,
           OrderId: item.OrderId || 0,
@@ -187,7 +187,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
   loadOptionProduct() {
     this.salesOrderService.getProduct(0).subscribe({
       next: (res: any) => {
-        const productData = res.data.asset;
+        const productData = res.data;
             console.log('employeeData', productData);
         if (Array.isArray(productData)) {
           this.productOptions = productData

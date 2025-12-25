@@ -26,7 +26,7 @@
           nz-button
           nzType="default"
           nzSize="small"
-          (click)="onDeleteProduct()"
+          (click)="onDeleteMultipleProducts()"
         >
           <img src="assets/icon/action_delete_item_16.png" /> Xóa
         </button>
@@ -41,7 +41,7 @@
             [columns]="columnProducts"
             [options]="gridOptionsProduct"
             [dataset]="datasetProduct"
-            (angularGridReady)="gridReady($event)"
+            (onAngularGridCreated)="gridReady($event)"
             (onActiveCellChanged)="onActiveCellChanged($event)"
             (selectedRowsChanged)="onSelectedRowsChanged($event)"
           >

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Product } from '../../models/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,13 @@ export class SerialService {
       ProductId: ProductId || 0
     };
     return this.http.post<any>(
-      environment.host + `api/serial/get-serial`,
+      environment.host + `api/serial`,
       asset
     );
   }
 
-    getDataProducts(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/products/get-products`);
+    getDataProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(environment.host + `api/products`);
   }
 
    saveDataSerial(data: any): Observable<any> {

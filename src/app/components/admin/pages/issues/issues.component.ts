@@ -236,7 +236,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.issuesService
       .getIssues(this.IssuesGroupID)
       .subscribe((response: any) => {
-        this.datasetIssues = response?.data?.asset || response?.data || [];
+        this.datasetIssues = response?.data || [];
 
         if (this.angularGridIssues) {
           // Clear filters trước

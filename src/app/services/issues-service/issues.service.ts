@@ -3,29 +3,28 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { IssuesGroup } from '../../models/issues.model';
+import { APIResponse } from '../../models/api-response.interface';
+
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class IssuesService {
-
   constructor(private http: HttpClient) {}
 
-    getIssues(
-    IssuesGroupId: number,
-  ): Observable<any> {
+  getIssues(IssuesGroupId: number): Observable<any> {
     const asset: any = {
-      IssuesGroupId: IssuesGroupId || 0
+      IssuesGroupId: IssuesGroupId || 0,
     };
-    return this.http.post<any>(
-      environment.host + `api/issues/get-issues`,
-      asset
-    );
+    return this.http.post<any>(environment.host + `api/issues/issues`, asset);
   }
 
-  getDataIssuesGroup(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/issues/get-issues-group`);
-  }
+  getDataIssuesGroup(): Observable<APIResponse<IssuesGroup[]>> {
+  return this.http.get<APIResponse<IssuesGroup[]>>(
+    environment.host + `api/issues`
+  )
+}
 
   saveDataIssuesGroup(data: any): Observable<any> {
     return this.http.post<any>(

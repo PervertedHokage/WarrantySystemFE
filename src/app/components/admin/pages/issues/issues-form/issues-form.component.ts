@@ -116,7 +116,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
 
     this.issuesService.getIssues(this.IssuesGroupID).subscribe({
       next: (response) => {
-        const issues = response?.data?.asset || response?.data || [];
+        const issues =  response?.data || [];
         
         this.IssuesData = issues.map((item: any) => ({
           Id: item.Id || 0,

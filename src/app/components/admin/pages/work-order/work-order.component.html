@@ -24,14 +24,14 @@
         nz-button
         nzType="default"
         nzSize="small"
-        (click)="onDeleteIWorkOrder()"
+        (click)="onDeleteMultipleWorkOrders()"
       >
         <img src="assets/icon/action_delete_item_16.png" /> Xóa
       </button>
     </div>
   </div>
-  <div class="grid-container" style="height: 90vh !important;">
-        <div class="grid-workorder-container">
+  <div class="grid-container">
+        <!-- <div class="grid-workorder-container"> -->
           <angular-slickgrid
             gridId="workOrderGrid"
             [columns]="columnWorkOrder"
@@ -42,6 +42,6 @@
             (selectedRowsChanged)="onSelectedRowsChanged($event)"
           >
           </angular-slickgrid>
-        </div>
+        <!-- </div> -->
   </div>
 </div>

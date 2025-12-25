@@ -226,7 +226,7 @@ export class SerialComponent implements OnInit, AfterViewInit {
 
   getSerial() {
     this.serialService.getSerial(this.SerialID).subscribe((response: any) => {
-      this.datasetSerial = response?.data?.asset || response?.data || [];
+      this.datasetSerial = response?.data || [];
     });
   }
   getdataProducts() {

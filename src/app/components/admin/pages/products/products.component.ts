@@ -88,6 +88,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
   slickGrid: any;
   angularGridSparePart: any;
+  dataViewSparePart: any;
 
 
   // slickgrid refs
@@ -169,8 +170,11 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       forceFitColumns: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
-      multiSelect: false,
-      rowSelectionOptions: { selectActiveRow: true },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
@@ -259,16 +263,128 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onDeleteMultipleProducts() {
+    if (!this.angularGrid) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
+      );
+      return;
+    }
+
+    const gridService = this.angularGrid.gridService;
+    const dataView = this.angularGrid.dataView;
+
+    let selectedItems: any[] = [];
+
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows = gridService.getSelectedRows();
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
+    }
+
+    if (selectedItems.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn ít nhất 1 sản phẩm để xóa!'
+      );
+      return;
+    }
+
+    const selectedIds: number[] = [];
+    const selectedNames: string[] = [];
+
+    selectedItems.forEach((item: any) => {
+      if (item && item.Id) {
+        selectedIds.push(item.Id);
+        selectedNames.push(item.Name || item.Code || '');
+      }
+    });
+
+    if (selectedIds.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Không tìm thấy sản phẩm hợp lệ để xóa!'
+      );
+      return;
+    }
+
+    const confirmMessage = selectedIds.length === 1
+      ? `Bạn có chắc chắn muốn xóa sản phẩm ${selectedNames[0]}?`
+      : `Bạn có chắc chắn muốn xóa ${selectedIds.length} sản phẩm đã chọn?`;
+
+    this.modal.confirm({
+      nzTitle: 'Xác nhận xóa',
+      nzContent: confirmMessage,
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.productService.deleteWorkOrders(selectedIds).subscribe({
+          next: (res: any) => {
+            if (res?.status === 1) {
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res?.message || 'Đã xóa thành công!'
+              );
+              this.getProducts();
+              this.ProductID = 0;
+              this.ProductData = null;
+              this.datasetSparePart = [];
+            } else {
+              this.notification.warning(
+                NOTIFICATION_TITLE.warning,
+                res?.message || 'Không thể xóa các bản ghi này!'
+              );
+            }
+          },
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
+          },
+        });
+      },
+    });
+  }
+
     getSparePart() {
     this.productService
       .getSparePart(this.ProductID)
       .subscribe((response: any) => {
-        this.datasetSparePart = response?.data?.asset || [];
+        this.datasetSparePart = response?.data || [];
         
         if (this.angularGridSparePart) {
           this.angularGridSparePart.filterService?.clearFilters();
-          
-          this.angularGridSparePart.gridService.updateDataset(this.datasetSparePart);
+
+          const gs = this.angularGridSparePart.gridService;
+          if (gs && typeof gs.updateDataset === 'function') {
+            gs.updateDataset(this.datasetSparePart);
+          } else {
+            const dv = this.angularGridSparePart.dataView;
+            const sg = this.angularGridSparePart.slickGrid;
+
+            if (dv && typeof dv.setItems === 'function') {
+              dv.setItems(this.datasetSparePart, 'Id');
+              if (sg && typeof sg.invalidate === 'function') {
+                sg.invalidate();
+                sg.render();
+              }
+            } else if (sg && typeof sg.setData === 'function') {
+              sg.setData(this.datasetSparePart);
+              if (typeof sg.invalidate === 'function') {
+                sg.invalidate();
+                sg.render();
+              }
+            }
+          }
         }
          console.log("datasetSparePart", this.datasetSparePart) 
       });
@@ -316,13 +432,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const product = this.ProductData || {};
-    const payload = {
-      ...product,
-      Id: product?.Id ?? this.ProductID,
-      IsDeleted: true,
-    };
-
     const productName = this.ProductData?.Name || 'sản phẩm này';
     this.modal.confirm({
       nzTitle: 'Xác nhận xóa',
@@ -330,20 +439,30 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       nzOkText: 'Đồng ý',
       nzCancelText: 'Hủy',
       nzOnOk: () => {
-        this.productService.saveDataProduct(payload).subscribe({
-          next: (res) => {
-            if (res.status === 1) {
-              this.notification.success('Thông báo', 'Đã xóa thành công!');
+        const id = this.ProductData?.Id ?? this.ProductID;
+        this.productService.deleteWorkOrders([id]).subscribe({
+          next: (res: any) => {
+            if (res?.status === 1) {
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res?.message || 'Đã xóa thành công!'
+              );
               this.getProducts();
+              this.ProductID = 0;
+              this.ProductData = null;
+              this.datasetSparePart = [];
             } else {
               this.notification.warning(
-                'Thông báo',
-                res.message || 'Không thể xóa bản ghi này!'
+                NOTIFICATION_TITLE.warning,
+                res?.message || 'Không thể xóa bản ghi này!'
               );
             }
           },
-          error: () => {
-            this.notification.error('Thông báo', 'Có lỗi xảy ra khi xóa!');
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
           },
         });
       },
@@ -351,13 +470,13 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   }
 
   gridReady(e: any) {
-    this.angularGrid = e.detail.angularGrid;
-    this.dataView = e.detail.angularGrid.dataView;
+    this.angularGrid = e?.detail?.angularGrid || e?.detail || e;
+    this.dataView = this.angularGrid?.dataView;
   }
 
     gridSparePartReady(e: any) {
-    this.angularGridSparePart = e.detail?.angularGrid || e;
-    this.angularGridSparePart = this.angularGridSparePart?.dataView;
+    this.angularGridSparePart = e?.detail?.angularGrid || e?.detail || e;
+    this.dataViewSparePart = this.angularGridSparePart?.dataView;
   }
 
   onActiveCellChanged(e: any) {
