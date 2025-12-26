@@ -42,6 +42,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ProductService } from '../../../../services/products-service/product.service';
 import { ProductsFormComponent } from './products-form/products-form.component';
+import { ProductsFormV2Component } from './products-form-v2/products-form-v2.component';
 
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 
@@ -133,6 +134,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         name: 'Mã sản phẩm',
         field: 'Code',
         width: 100,
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -143,6 +145,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         name: 'Tên sản phẩm',
         field: 'Name',
         width: 100,
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -152,6 +155,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         id: 'Description',
         name: 'Mô tả',
         field: 'Description',
+        minWidth: 200,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -205,6 +209,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
         maxWidth: 200,
+        minWidth: 150,
         cssClass: 'cell-wrap'
       },
       {
@@ -216,6 +221,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
         maxWidth: 300,
+        minWidth: 250,
         cssClass: 'cell-wrap'
       },
       {
@@ -223,6 +229,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         name: 'Mô tả',
         field: 'Description',
         sortable: true,
+        minWidth: 300,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -233,7 +240,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         name: 'Đơn vị',
         field: 'UnitName',
         sortable: true,
-        // minWidth: 50,
+        minWidth: 50,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -386,7 +393,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
             }
           }
         }
-         console.log("datasetSparePart", this.datasetSparePart) 
       });
 
   }
@@ -402,8 +408,12 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     }
     const modalRef = this.modal.create({
       nzTitle: this.isCheckmode ? 'Sửa sản phẩm' : 'Thêm sản phẩm',
-      nzContent: ProductsFormComponent,
+      nzContent: ProductsFormV2Component,
       nzWidth: '50vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        'overflow': 'auto',
+      },
       nzFooter: null,
       nzMaskClosable: false,
       nzKeyboard: false,
@@ -493,7 +503,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
     this.ProductID = dataContext?.Id ?? 0;
     this.ProductData = dataContext || null;
-     console.log('ProductID', this.ProductID);
     this.getSparePart();
   }
 

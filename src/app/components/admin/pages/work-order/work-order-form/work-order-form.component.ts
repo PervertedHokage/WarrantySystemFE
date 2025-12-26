@@ -7,6 +7,8 @@ import {
   ElementRef,
   Inject,
   DestroyRef,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -15,6 +17,8 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import {
   EnvironmentInjector,
@@ -72,6 +76,8 @@ import { SelectControlComponent } from '../../select-control/select-control.comp
 export class WorkOrderFormComponent implements OnInit, AfterViewInit {
   @ViewChild('SparePartTable') tableRef1!: ElementRef;
 
+  @Output() codeGenerated = new EventEmitter<string>();
+
   WorkOrderID: number = 0;
   isEditMode: boolean = false;
   dataInput: any = null;
@@ -89,7 +95,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   DeletedOrder: any[] = [];
 
-  DeletedSpareSpart: any;
+  DeletedSpareSpart: any[] = [];
 
   sliderMarks: any = {
     0: '0%',
@@ -114,7 +120,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       this.formGroup.patchValue({
         Code: this.dataInput.Code || '',
         WarrantyClaimId: this.dataInput.WarrantyClaimId || '',
-        QuotationNumber: this.dataInput.QuotationId || '',
+        QuotationId: this.dataInput.QuotationId || '',
         CustomerName: this.dataInput.CustomerName || '',
         DateStart: this.formatDateForInput(this.dataInput.DateStart),
         CompletedDate: this.formatDateForInput(this.dataInput.CompletedDate),
@@ -126,7 +132,6 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
         Description: this.dataInput.Description || '',
       });
     }
-    console.log('data: ', this.dataInput);
   }
 
   ngAfterViewInit(): void {
@@ -158,20 +163,55 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     this.formGroup = this.fb.group({
       Code: [null, [Validators.maxLength(50)]],
       WarrantyClaimId: [null, [Validators.required, Validators.maxLength(50)]],
-      QuotationNumber: ['', [Validators.required, Validators.maxLength(50)]],
-      CustomerName: ['', [Validators.required, Validators.maxLength(50)]],
+      QuotationId: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(50)]],
+      CustomerName: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(50)]],
       DateStart: ['', [Validators.required, Validators.maxLength(50)]],
-      CompletedDate: ['', [Validators.required, Validators.maxLength(50)]],
+      CompletedDate: ['', [Validators.required, Validators.maxLength(50), this.completedDateValidator.bind(this)]],
       UserId: ['', [Validators.required, Validators.maxLength(100)]],
-      Status: ['', [Validators.required, Validators.maxLength(50)]],
-      ProductId: ['', [Validators.required, Validators.maxLength(50)]],
-      DateEnd: ['', [Validators.required, Validators.maxLength(50)]],
-      ProgressComplete: [0, [Validators.required, Validators.maxLength(50)]],
-      Description: ['', [Validators.required, Validators.maxLength(500)]],
+      ProductId: [{ value: '', disabled: true }, [Validators.required]],
+      Description: ['', [Validators.maxLength(1000)]],
+      Status: ['New', [Validators.required]],
+      ProgressComplete: [0, [Validators.required]],
+      DateEnd: ['', [Validators.required, this.dateEndValidator.bind(this)]],
     });
   }
+
   close(reload: boolean = false) {
     this.modalRef.close(reload);
+  }
+
+  private dateEndValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const dateEnd = new Date(control.value);
+    const dateStart = this.formGroup?.get('DateStart')?.value;
+    
+    if (!dateStart) return null;
+    
+    const startDate = new Date(dateStart);
+    
+    if (dateEnd <= startDate) {
+      return { dateEndInvalid: true };
+    }
+    
+    return null;
+  }
+
+  private completedDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const completedDate = new Date(control.value);
+    const dateStart = this.formGroup?.get('DateStart')?.value;
+    
+    if (!dateStart) return null;
+    
+    const startDate = new Date(dateStart);
+    
+    if (completedDate <= startDate) {
+      return { completedDateInvalid: true };
+    }
+    
+    return null;
   }
 
   filterOption = (input: string, option: any): boolean => {
@@ -218,7 +258,6 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
   getStatus() {
     this.workOrderService.getStatus().subscribe((response: any) => {
       this.dataStatus = response.data || [];
-      console.log('dataStatus:', this.dataStatus);
     });
   }
 
@@ -230,10 +269,9 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
    getWarrantyClaims() {
     this.workOrderService
-      .getWorkOrder(0)
+      .getWarrantyClaim(0)
       .subscribe((response: any) => {
         this.dataWarrantyClaims = response?.data || [];
-        console.log('Loaded work orders:', this.dataWarrantyClaims);
       });
   }
 
@@ -256,9 +294,9 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
               CustomerName: selectedQuotation.CustomerName,
             });
           }
-            if (selectedQuotation && selectedQuotation.QuotationNumber) {
+            if (selectedQuotation && selectedQuotation.QuotationId) {
             this.formGroup.patchValue({
-              QuotationNumber: selectedQuotation.QuotationNumber,
+              QuotationId: selectedQuotation.QuotationId,
             });
           }
            if (selectedQuotation && selectedQuotation.ProductId) {
@@ -289,15 +327,12 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
   generateWorkOrderCode() {
     this.workOrderService.getWorkOrder(0).subscribe({
       next: (res: any) => {
-        console.log('Work Order Response:', res);
         const currentYear = new Date().getFullYear();
         const workOrders = res.data?.asset || res.data || [];
-        console.log('Work Orders:', workOrders);
 
         const currentYearOrders = workOrders.filter((wo: any) => {
           return wo.Code && wo.Code.startsWith(`WO-${currentYear}`);
         });
-        console.log('Current Year Orders:', currentYearOrders);
 
         let maxNumber = 0;
         currentYearOrders.forEach((wo: any) => {
@@ -314,15 +349,15 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
         const paddedNumber = nextNumber.toString().padStart(3, '0');
         const newCode = `WO-${currentYear}-${paddedNumber}`;
 
-        console.log('Generated Code:', newCode);
         this.formGroup.patchValue({ Code: newCode });
+        this.codeGenerated.emit(newCode);
         this.cdr.detectChanges();
       },
       error: (err) => {
         const currentYear = new Date().getFullYear();
         const defaultCode = `WO-${currentYear}-001`;
-        console.log('Using default code:', defaultCode);
         this.formGroup.patchValue({ Code: defaultCode });
+        this.codeGenerated.emit(defaultCode);
         this.cdr.detectChanges();
       },
     });
@@ -332,7 +367,6 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     this.workOrderService.getSparePartGroup().subscribe({
       next: (res: any) => {
         const productData = res.data;
-        console.log('employeeData', productData);
         if (Array.isArray(productData)) {
           this.SparePartGroupOptions = productData
             .filter(
@@ -345,7 +379,6 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
               // Code: data.Code,
               Name: data.Name,
             }));
-          console.log('employeeOptions', this.SparePartGroupOptions);
         } else {
           this.SparePartGroupOptions = [];
         }
@@ -393,9 +426,9 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     const payload = {
       WorkOrder: {
         Id: this.isEditMode ? this.dataInput?.Id || 0 : 0,
-        Code: formValue.Code,
+        // Code: formValue.Code,
         WarrantyClaimsId: formValue.WarrantyClaimId,
-        QuotationId: formValue.QuotationNumber,
+        QuotationId: formValue.QuotationId,
         DateStart: formValue.DateStart,
         CompletedDate: formValue.CompletedDate,
         UsersId: formValue.UserId,
@@ -412,7 +445,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
         Quantity: item.Quantity || '',
       })),
 
-      DeletedSpareSpart: this.DeletedSpareSpart,
+      DeletedSpareSpart: this.DeletedSpareSpart || [],
     };
     this.workOrderService.saveDataWorkOrder(payload).subscribe({
       next: (res) => {

@@ -6,32 +6,30 @@ import { environment } from '../../environments/environment';
 import { Product } from '../../models/product.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SerialService {
+  constructor(private http: HttpClient) {}
 
-    constructor(private http: HttpClient) {}
-
-     getSerial(
-    ProductId: number,
-  ): Observable<any> {
+  getSerial(ProductId: number): Observable<any> {
     const asset: any = {
-      ProductId: ProductId || 0
+      ProductId: ProductId || 0,
     };
-    return this.http.post<any>(
-      environment.host + `api/serial`,
-      asset
-    );
+    return this.http.post<any>(environment.host + `api/serial`, asset);
   }
 
-    getDataProducts(): Observable<Product[]> {
+  getDataProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(environment.host + `api/products`);
   }
 
-   saveDataSerial(data: any): Observable<any> {
+  saveDataSerial(data: any): Observable<any> {
     return this.http.post<any>(
       environment.host + `api/serial/save-serial`,
       data
     );
+  }
+
+  deleteSerial(ids: number[]): Observable<any> {
+    return this.http.post<any>(environment.host + `api/serial/delete`, ids);
   }
 }

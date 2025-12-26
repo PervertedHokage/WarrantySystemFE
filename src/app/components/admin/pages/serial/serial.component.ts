@@ -141,7 +141,7 @@ export class SerialComponent implements OnInit, AfterViewInit {
         name: 'Mã serial',
         field: 'ProductSerial',
         width: 200,
-        minWidth: 100,
+        minWidth: 150,
         maxWidth: 250,
         sortable: true,
         type: 'string',
@@ -152,7 +152,7 @@ export class SerialComponent implements OnInit, AfterViewInit {
         id: 'Name',
         name: 'Tên sản phẩm',
         field: 'Name',
-        width: 250,
+        minWidth: 200,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -171,14 +171,17 @@ export class SerialComponent implements OnInit, AfterViewInit {
       forceFitColumns: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
-      multiSelect: false,
-      rowSelectionOptions: { selectActiveRow: true },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
   }
   gridReady(e: any) {
-    this.angularGrid = e.detail?.angularGrid || e;
+    this.angularGrid = e.detail || e;
     this.dataView = this.angularGrid?.dataView;
   }
 
@@ -196,8 +199,6 @@ export class SerialComponent implements OnInit, AfterViewInit {
 
     this.SerialID = dataContext?.Id ?? 0;
     this.SerialData = dataContext || null;
-
-    console.log('ProductDAta', this.SerialData);
   }
 
   onSelectedRowsChanged(e: any) {
@@ -225,7 +226,7 @@ export class SerialComponent implements OnInit, AfterViewInit {
   };
 
   getSerial() {
-    this.serialService.getSerial(this.SerialID).subscribe((response: any) => {
+    this.serialService.getSerial(0).subscribe((response: any) => {
       this.datasetSerial = response?.data || [];
     });
   }
@@ -279,7 +280,7 @@ export class SerialComponent implements OnInit, AfterViewInit {
     this.unitModalRef?.destroy(false);
   }
 
-   private trimAllStringControls() {
+  private trimAllStringControls() {
     Object.keys(this.formGroup.controls).forEach((k) => {
       const c = this.formGroup.get(k);
       const v = c?.value;
@@ -287,9 +288,9 @@ export class SerialComponent implements OnInit, AfterViewInit {
     });
   }
 
-     saveData() {
+  saveData() {
     this.trimAllStringControls();
-    
+
     // Validate form master
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
@@ -298,13 +299,12 @@ export class SerialComponent implements OnInit, AfterViewInit {
     }
 
     const formValue = this.formGroup.value;
-    if(this.isCheckmode) {
-      
+    if (this.isCheckmode) {
     }
     const payload = {
       Id: this.isCheckmode ? this.SerialData?.Id || 0 : 0,
       ProductId: formValue.ProductId,
-      ProductSerial: formValue.ProductSerial
+      ProductSerial: formValue.ProductSerial,
     };
 
     this.serialService.saveDataSerial(payload).subscribe({
@@ -325,10 +325,105 @@ export class SerialComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.notification.error('Thông báo', 'Lỗi khi lưu dữ liệu!');
-        console.error(err);
       },
     });
   }
 
-  onDeleteSerial() {}
+  onDeleteMultiple() {
+    if (!this.angularGrid) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
+      );
+      return;
+    }
+
+    const gridService = this.angularGrid.gridService;
+    const dataView = this.angularGrid.dataView;
+
+    const selectedRowsFromSlickGrid =
+      this.angularGrid?.slickGrid?.getSelectedRows?.() || [];
+
+    let selectedItems: any[] = [];
+
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows =
+        gridService.getSelectedRows() || selectedRowsFromSlickGrid;
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
+    } else if (selectedRowsFromSlickGrid.length && dataView) {
+      selectedItems = selectedRowsFromSlickGrid
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    }
+
+    if (selectedItems.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn ít nhất 1 đơn vị để xóa!'
+      );
+      return;
+    }
+
+    const selectedIds: number[] = [];
+    const selectedCodes: string[] = [];
+
+    selectedItems.forEach((item: any) => {
+      if (item && item.Id) {
+        selectedIds.push(item.Id);
+        selectedCodes.push(item.Code || '');
+      }
+    });
+
+    if (selectedIds.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Không tìm thấy serial hợp lệ để xóa!'
+      );
+      return;
+    }
+
+    const confirmMessage =
+      selectedIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa serial ${selectedCodes[0]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedIds.length} serial đã chọn?`;
+
+    this.modal.confirm({
+      nzTitle: 'Xác nhận xóa',
+      nzContent: confirmMessage,
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.serialService.deleteSerial(selectedIds).subscribe({
+          next: (res) => {
+            if (res.status === 1) {
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res.message || 'Đã xóa thành công!'
+              );
+              this.getSerial();
+            } else {
+              this.notification.warning(
+                NOTIFICATION_TITLE.warning,
+                res.message || 'Không thể xóa các bản ghi này!'
+              );
+            }
+          },
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
+          },
+        });
+      },
+    });
+  }
 }

@@ -44,15 +44,13 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 import { UnitService } from '../../../../services/unit-service/unit.service';
 
-import {
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-unit',
   standalone: true,
   imports: [
-     CommonModule,
+    CommonModule,
     AngularSlickgridModule,
     NzCardModule,
     FormsModule,
@@ -73,17 +71,17 @@ import {
     NzModalModule,
     NzFormModule,
     NzInputNumberModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   templateUrl: './unit.component.html',
-  styleUrl: './unit.component.less'
+  styleUrl: './unit.component.less',
 })
 export class UnitComponent implements OnInit, AfterViewInit {
- columnUnit: Column[] = [];
+  columnUnit: Column[] = [];
   gridOptionUnit: GridOption = {};
   datasetUnit: any[] = [];
 
-    angularGridIssues: any;
+  angularGridIssues: any;
   dataViewIssues: any;
 
   UnitsID: number = 0;
@@ -93,13 +91,11 @@ export class UnitComponent implements OnInit, AfterViewInit {
   formGroup: FormGroup;
 
   private unitModalRef: NzModalRef | null = null;
-
-
   @ViewChild('unitFormTpl', { static: true }) unitFormTpl!: TemplateRef<any>;
   ngOnInit(): void {
     this.defineGrid();
     this.getUnit();
-     if (this.isCheckmode && this.UnitsData) {
+    if (this.isCheckmode && this.UnitsData) {
       this.formGroup.patchValue({
         Name: this.UnitsData.Name || '',
         Code: this.UnitsData.Code || '',
@@ -107,31 +103,28 @@ export class UnitComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-      
+  ngAfterViewInit(): void {}
+
+  constructor(
+    private notification: NzNotificationService,
+    private unitService: UnitService,
+    private modal: NzModalService,
+    private message: NzMessageService,
+    private fb: FormBuilder
+  ) {
+    this.formGroup = this.fb.group({
+      Name: [null, [Validators.required, Validators.maxLength(50)]],
+      Code: ['', [Validators.required, Validators.maxLength(50)]],
+    });
   }
 
-   constructor(
-      private notification: NzNotificationService,
-      private unitService: UnitService,
-      private modal: NzModalService,
-      private message: NzMessageService,
-      private fb: FormBuilder,
-
-    ) {
-      this.formGroup = this.fb.group({
-        Name: [null, [Validators.required, Validators.maxLength(50)]],
-        Code: ['', [Validators.required, Validators.maxLength(50)]],
-      });
-    }
-
-     defineGrid() {
+  defineGrid() {
     this.columnUnit = [
-        {
+      {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-          width: 50,
+        width: 50,
         minWidth: 50,
         maxWidth: 60,
         sortable: false,
@@ -143,11 +136,12 @@ export class UnitComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: { model: Filters['compoundInputText'] },
       },
-       {
+      {
         id: 'Code',
         name: 'Mã đơn vị',
         field: 'Code',
         sortable: true,
+        minWidth: 100,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -156,6 +150,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
         id: 'Name',
         name: 'Tên đơn vị',
         field: 'Name',
+        minWidth: 100,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -174,23 +169,27 @@ export class UnitComponent implements OnInit, AfterViewInit {
       forceFitColumns: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
-      multiSelect: false,
-      rowSelectionOptions: { selectActiveRow: true },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
   }
 
-    getUnit() {
+  getUnit() {
     this.unitService.getDataUnit().subscribe((response: any) => {
       this.datasetUnit = response?.data || [];
     });
   }
 
   gridUnitReady(e: any) {
-    this.angularGridIssues = e.detail?.angularGrid || e;
+    this.angularGridIssues = e?.detail || e;
     this.dataViewIssues = this.angularGridIssues?.dataView;
   }
+
 
   onActiveCellChanged(e: any) {
     const args = e?.detail?.args;
@@ -207,7 +206,6 @@ export class UnitComponent implements OnInit, AfterViewInit {
     this.UnitsID = dataContext?.Id ?? 0;
     this.UnitsData = dataContext || null;
 
-    console.log('ProductDAta', this.UnitsData);
   }
 
   onSelectedRowsChanged(e: any) {
@@ -227,50 +225,49 @@ export class UnitComponent implements OnInit, AfterViewInit {
     this.UnitsData = item || null;
   }
 
-    onAddUnit(isEditmode: boolean): void {
-      this.isCheckmode = isEditmode;
-      if (this.isCheckmode == true && this.UnitsID === 0) {
-        this.notification.warning(
-          NOTIFICATION_TITLE.warning,
-          'Vui lòng chọn 1 bản ghi để sửa!'
-        );
-        return;
-      }
-
-      if (this.isCheckmode) {
-        this.formGroup.reset({
-          Name: this.UnitsData?.Name || '',
-          Code: this.UnitsData?.Code || '',
-        });
-      } else {
-        this.formGroup.reset({ Name: null, Code: '' });
-      }
-
-      const modalRef = this.modal.create({
-        nzTitle: this.isCheckmode ? 'Sửa đơn vị' : 'Thêm đơn vị',
-        nzContent: this.unitFormTpl,
-        nzFooter: null,
-        nzMaskClosable: false,
-        nzKeyboard: false,
-
-      });
-
-      this.unitModalRef = modalRef;
-  
-      modalRef.afterClose.subscribe((result) => {
-        this.unitModalRef = null;
-        if (result === true) {
-          // Reload cả master và detail
-          this.getUnit();
-        }
-      });
+  onAddUnit(isEditmode: boolean): void {
+    this.isCheckmode = isEditmode;
+    if (this.isCheckmode == true && this.UnitsID === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn 1 bản ghi để sửa!'
+      );
+      return;
     }
 
-    onCancelUnit(event?: Event): void {
-      event?.preventDefault();
-      event?.stopPropagation();
-      this.unitModalRef?.destroy(false);
+    if (this.isCheckmode) {
+      this.formGroup.reset({
+        Name: this.UnitsData?.Name || '',
+        Code: this.UnitsData?.Code || '',
+      });
+    } else {
+      this.formGroup.reset({ Name: null, Code: '' });
     }
+
+    const modalRef = this.modal.create({
+      nzTitle: this.isCheckmode ? 'Sửa đơn vị' : 'Thêm đơn vị',
+      nzContent: this.unitFormTpl,
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+    });
+
+    this.unitModalRef = modalRef;
+
+    modalRef.afterClose.subscribe((result) => {
+      this.unitModalRef = null;
+      if (result === true) {
+        // Reload cả master và detail
+        this.getUnit();
+      }
+    });
+  }
+
+  onCancelUnit(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    this.unitModalRef?.destroy(false);
+  }
   private trimAllStringControls() {
     Object.keys(this.formGroup.controls).forEach((k) => {
       const c = this.formGroup.get(k);
@@ -279,9 +276,9 @@ export class UnitComponent implements OnInit, AfterViewInit {
     });
   }
 
-     saveIssuesData() {
+  saveIssuesData() {
     this.trimAllStringControls();
-    
+
     // Validate form master
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
@@ -290,13 +287,12 @@ export class UnitComponent implements OnInit, AfterViewInit {
     }
 
     const formValue = this.formGroup.value;
-    if(this.isCheckmode) {
-      
+    if (this.isCheckmode) {
     }
     const payload = {
       Id: this.isCheckmode ? this.UnitsData?.Id || 0 : 0,
       Name: formValue.Name,
-      Code: formValue.Code
+      Code: formValue.Code,
     };
 
     this.unitService.saveDataUnit(payload).subscribe({
@@ -317,48 +313,103 @@ export class UnitComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.notification.error('Thông báo', 'Lỗi khi lưu dữ liệu!');
-        console.error(err);
       },
     });
   }
 
-    onDeleteProduct() {
-    if (!this.UnitsID) {
-      this.notification.warning(
-        'Thông báo',
-        'Vui lòng chọn 1 đơn vị để xóa!'
+  onDeleteMultipleUnit() {
+    if (!this.angularGridIssues) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
       );
       return;
     }
 
-    const unit = this.UnitsData || {};
-    const payload = {
-      ...unit,
-      Id: unit?.Id ?? this.UnitsID,
-      IsDeleted: true,
-    };
+    const gridService = this.angularGridIssues.gridService;
+    const dataView = this.angularGridIssues.dataView;
 
-    const UnitName = this.UnitsData?.Name || 'đơn vị này';
+    const selectedRowsFromSlickGrid =
+      this.angularGridIssues?.slickGrid?.getSelectedRows?.() || [];
+
+    let selectedItems: any[] = [];
+
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows =
+        gridService.getSelectedRows() || selectedRowsFromSlickGrid;
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
+    } else if (selectedRowsFromSlickGrid.length && dataView) {
+      selectedItems = selectedRowsFromSlickGrid
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    }
+
+
+    if (selectedItems.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn ít nhất 1 đơn vị để xóa!'
+      );
+      return;
+    }
+
+    const selectedIds: number[] = [];
+    const selectedCodes: string[] = [];
+
+    selectedItems.forEach((item: any) => {
+      if (item && item.Id) {
+        selectedIds.push(item.Id);
+        selectedCodes.push(item.Code || '');
+      }
+    });
+
+    if (selectedIds.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Không tìm thấy yêu cầu hợp lệ để xóa!'
+      );
+      return;
+    }
+
+    const confirmMessage =
+      selectedIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa yêu cầu ${selectedCodes[0]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedIds.length} đơn vị đã chọn?`;
+
     this.modal.confirm({
       nzTitle: 'Xác nhận xóa',
-      nzContent: `Bạn có chắc chắn muốn xóa sản phẩm ${UnitName}?`,
+      nzContent: confirmMessage,
       nzOkText: 'Đồng ý',
       nzCancelText: 'Hủy',
+      nzOkDanger: true,
       nzOnOk: () => {
-        this.unitService.saveDataUnit(payload).subscribe({
+        this.unitService.deleteUnit(selectedIds).subscribe({
           next: (res) => {
             if (res.status === 1) {
-              this.notification.success('Thông báo', 'Đã xóa thành công!');
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res.message || 'Đã xóa thành công!'
+              );
               this.getUnit();
             } else {
               this.notification.warning(
-                'Thông báo',
-                res.message || 'Không thể xóa bản ghi này!'
+                NOTIFICATION_TITLE.warning,
+                res.message || 'Không thể xóa các bản ghi này!'
               );
             }
           },
-          error: () => {
-            this.notification.error('Thông báo', 'Có lỗi xảy ra khi xóa!');
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
           },
         });
       },

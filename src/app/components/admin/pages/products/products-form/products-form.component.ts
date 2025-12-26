@@ -143,7 +143,7 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
 
     this.productService.getSparePart(this.ProductID).subscribe({
       next: (response) => {
-        const sparePartData = response?.data?.asset || [];
+        const sparePartData = response?.data || [];
         
         // Load vào bảng Tabulator (nếu cần)
         this.sparePartData = sparePartData.map((item: any) => ({
@@ -159,7 +159,6 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.notification.error(NOTIFICATION_TITLE.error, 'Lỗi khi load dữ liệu chi tiết sản phẩm!');
-        console.error(err);
         // Nếu có lỗi, vẫn khởi tạo 1 dòng trống
         this.ensurePartGroupsInitialized();
       },
@@ -515,7 +514,6 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.notification.error('Thông báo', err.message || 'Có lỗi xảy ra khi lưu!');
-        console.error(err);
       },
     });
   }

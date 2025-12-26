@@ -49,15 +49,15 @@
           <nz-form-control
             [nzSpan]="24"
             [nzErrorTip]="
-              formGroup.get('QuotationNumber')?.invalid &&
-              (formGroup.get('QuotationNumber')?.dirty ||
-                formGroup.get('QuotationNumber')?.touched)
+              formGroup.get('QuotationId')?.invalid &&
+              (formGroup.get('QuotationId')?.dirty ||
+                formGroup.get('QuotationId')?.touched)
                 ? 'Vui lòng chọn mã báo giá !'
                 : undefined
             "
           >
             <nz-select
-              formControlName="QuotationNumber"
+              formControlName="QuotationId"
               nzPlaceHolder="Chọn mã báo giá"
               nzShowSearch
               nzAllowClear
@@ -174,10 +174,12 @@
           <nz-form-control
             [nzSpan]="24"
             [nzErrorTip]="
-              formGroup.get('CompletedDate')?.invalid &&
+              formGroup.get('CompletedDate')?.hasError('required') &&
               (formGroup.get('CompletedDate')?.dirty ||
                 formGroup.get('CompletedDate')?.touched)
                 ? 'Vui lòng chọn ngày dự kiến hoàn thành!'
+                : formGroup.get('CompletedDate')?.hasError('completedDateInvalid')
+                ? 'Ngày dự kiến hoàn thành phải lớn hơn ngày tạo!'
                 : undefined
             "
           >
@@ -314,10 +316,11 @@
           <nz-form-control
             [nzSpan]="24"
             [nzErrorTip]="
-              formGroup.get('DateEnd')?.invalid &&
-              (formGroup.get('DateEnd')?.dirty ||
-                formGroup.get('DateEnd')?.touched)
+              formGroup.get('DateEnd')?.hasError('required') &&
+              (formGroup.get('DateEnd')?.dirty || formGroup.get('DateEnd')?.touched)
                 ? 'Vui lòng chọn ngày cập nhật cuối!'
+                : formGroup.get('DateEnd')?.hasError('dateEndInvalid')
+                ? 'Ngày cập nhật cuối phải sau ngày tạo!'
                 : undefined
             "
           >

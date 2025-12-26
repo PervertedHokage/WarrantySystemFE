@@ -24,7 +24,7 @@
           nz-button
           nzType="default"
           nzSize="small"
-          (click)="onDeleteProduct()"
+          (click)="onDeleteMultipleUnit()"
         >
           <img src="assets/icon/action_delete_item_16.png" /> Xóa
         </button>
@@ -37,7 +37,7 @@
       [columns]="columnUnit"
       [options]="gridOptionUnit"
       [dataset]="datasetUnit"
-      (angularGridReady)="gridUnitReady($event)"
+      (onAngularGridCreated)="gridUnitReady($event)"  
       (onActiveCellChanged)="onActiveCellChanged($event)"
       (selectedRowsChanged)="onSelectedRowsChanged($event)"
     >
@@ -60,7 +60,7 @@
             [nzErrorTip]="
               formGroup.get('Code')?.hasError('required') &&
               (formGroup.get('Code')?.dirty || formGroup.get('Code')?.touched)
-                ? 'Vui lòng nhập mã lỗi hỏng hóc!'
+                ? 'Vui lòng nhập mã đơn vị!'
                 : formGroup.get('Code')?.hasError('maxlength')
                 ? 'Mã đơn vị tối đa 50 ký tự!'
                 : undefined

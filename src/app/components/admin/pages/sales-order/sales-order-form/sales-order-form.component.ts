@@ -136,10 +136,10 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       CustomerName: [null, [Validators.required, Validators.maxLength(50)]],
       CustomerPhoneNumber: [
         '',
-        [Validators.required, Validators.maxLength(20)],
+        [Validators.required, Validators.maxLength(20), Validators.pattern(/^[0-9]{10,11}$/)],
       ],
       CustomerAddress: ['', [Validators.required, Validators.maxLength(100)]],
-      CustomerEmail: ['', [Validators.required, Validators.maxLength(50)]],
+      CustomerEmail: ['', [Validators.required, Validators.maxLength(50), Validators.email]],
     });
   }
   close(reload: boolean = false) {
@@ -150,7 +150,6 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     if (!this.SaleOrderID) {
       return;
     }
-    console.log('Load Order Data for SaleOrderID:', this.SaleOrderID);
     this.salesOrderService.getSaleOrder(this.SaleOrderID).subscribe({
       next: (response) => {
         const order = response?.data || [];
@@ -161,17 +160,16 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
           OrderDetailInfoId: item.OrderDetailInfoId || 0,
           ProductId: item.ProductId || 0,
           SerialId: item.SerialId || 0,
-          Code: item.Code || '',
           Name: item.Name || '',
           ProductSerial: item.ProductSerial || '',
           Quantity: item.Quantity || 0,
           DateStart: item.DateStart || '',
           DateEnd: item.DateEnd || '',
+          Price: item.Price || 0,
         }));
 
         if (this.OrderTable) {
           this.OrderTable.setData(this.OrderData);
-          console.log('OrderData', this.OrderData);
         }
       },
       error: (err) => {
@@ -179,7 +177,6 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
           NOTIFICATION_TITLE.error,
           'Lỗi khi load dữ liệu chi tiết order!'
         );
-        console.error(err);
       },
     });
   }
@@ -188,7 +185,6 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     this.salesOrderService.getProduct(0).subscribe({
       next: (res: any) => {
         const productData = res.data;
-            console.log('employeeData', productData);
         if (Array.isArray(productData)) {
           this.productOptions = productData
             .filter(
@@ -205,13 +201,11 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
               ProductSerial: product.ProductSerial,
               SerialId: product.SerialId
             }));
-            console.log('employeeOptions', this.productOptions);
         } else {
           this.productOptions = [];
         }
       },
       error: (err: any) => {
-        console.error(err);
         this.notification.error(
           'Thông báo',
           'Có lỗi xảy ra khi lấy danh sách order'
@@ -224,7 +218,18 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     dateEditor(cell: CellComponent, onRendered: any, success: any, cancel: any) {
     const input = document.createElement('input');
     input.type = 'date'; // hiển thị lịch dropdown
-    input.value = cell.getValue() || '';
+    
+    // Handle datetime values - extract only date part
+    const cellValue = cell.getValue();
+    if (cellValue) {
+      // If it's a datetime string, extract just the date part
+      const dateOnly = cellValue instanceof Date 
+        ? cellValue.toISOString().split('T')[0]
+        : cellValue.toString().split('T')[0];
+      input.value = dateOnly;
+    } else {
+      input.value = '';
+    }
 
     onRendered(() => input.focus());
 
@@ -285,9 +290,9 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       STT: index + 1,
       ProductId: item.ProductId,
       Quantity: item.Quantity,
-      Code: item.Code,
       DateStart: item.DateStart,
-      DateEnd: item.DateEnd
+      DateEnd: item.DateEnd,
+      Price: item.Price
     },
 
     OrderDetailInfo: [
@@ -312,7 +317,6 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
             : 'Thêm mới thành công!';
           this.notification.success('Thông báo', message);
           this.close(true);
-          console.log('Saved payload:', payload);
         } else {
           this.notification.warning(
             'Thông báo',
@@ -322,11 +326,9 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.notification.error('Thông báo', 'Lỗi khi lưu dữ liệu!');
-        console.error(err);
       },
     });
   }
-
 
   draw_OrderTable() {
     if (this.OrderTable) {
@@ -367,13 +369,16 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
                   nzOnOk: () => {
                     const row = cell.getRow();
                     const rowData = row.getData();
-                    const rowIndex = this.OrderData.indexOf(rowData);
+                    
                     if (rowData['Id']) {
                       this.DeletedOrder.push(rowData['Id']);
                     }
                     row.delete();
-                    this.OrderData =
-                      this.OrderData.filter((x: any) => x !== rowData);
+                    
+                    // Update OrderData if it exists
+                    if (this.OrderData) {
+                      this.OrderData = this.OrderData.filter((x: any) => x !== rowData);
+                    }
                   },
                 });
               }
@@ -387,14 +392,6 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
             field: 'STT',
             minWidth: 60,
           },
-           {
-            title: 'SO Code',
-            field: 'Code',
-            headerHozAlign: 'center',
-            minWidth: 100,
-            editor: 'input',
-          },
-         
           {
             title: 'Sản phẩm',
             field: 'ProductId',
@@ -427,34 +424,65 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
                 const selectedProject = this.productOptions.find(
                   (p: any) => p.value === newValue
                 );
-                if (selectedProject) {
-                  row.update({
-                    ProductSerial: selectedProject.ProductSerial,
-                    SerialId: selectedProject.SerialId
-                  });
-                }
+               
               },
-          },
-            {
-            title: 'Serial ID',
-            field: 'SerialId',
-            headerHozAlign: 'center',
-            visible: false,
           },
           {
             title: 'Serial sản phẩm',
             field: 'ProductSerial',
             headerHozAlign: 'center',
             minWidth: 200,
-            editor: 'textarea',
+            editor: 'input'
           },
            {
             title: 'Số lượng',
             hozAlign: 'center',
-            editor: 'input',
+            editor: 'number',
             width: 90,
             headerHozAlign: 'center',
             field: 'Quantity',
+            cellEdited: (cell) => {
+              const value = cell.getValue();
+              const row = cell.getRow();
+              
+              if (!value || value === '' || isNaN(Number(value)) || Number(value) <= 0) {
+                this.notification.warning(
+                  'Thông báo',
+                  'Số lượng phải là số dương!'
+                );
+                const oldValue = (cell as any).getOldValue?.() || 1;
+                row.update({ Quantity: oldValue });
+              }
+            },
+          },
+             {
+            title: 'Giá bán',
+            field: 'Price',
+            headerHozAlign: 'center',
+            hozAlign: 'right',
+            minWidth: 200,
+            editor: 'number',
+            formatter: (cell) => {
+              const value = cell.getValue();
+              if (!value || value === 0) return '0';
+              return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+              }).format(value);
+            },
+            cellEdited: (cell) => {
+              const value = cell.getValue();
+              const row = cell.getRow();
+              
+              if (!value || value === '' || isNaN(Number(value)) || Number(value) < 0) {
+                this.notification.warning(
+                  'Thông báo',
+                  'Giá bán phải là số không âm!'
+                );
+                const oldValue = (cell as any).getOldValue?.() || 0;
+                row.update({ Price: oldValue });
+              }
+            },
           },
            {
               title: 'Ngày kích hoạt',
@@ -463,6 +491,12 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
               width: 200,
               headerHozAlign: 'center',
               editor: this.dateEditor.bind(this),
+              formatter: (cell) => {
+                const value = cell.getValue();
+                if (!value) return '';
+                // Extract only date part from datetime string
+                return value.toString().split('T')[0];
+              },
               cellEdited: (cell) => {
                 const row = cell.getRow();
                 const rowData = row.getData();
@@ -483,6 +517,12 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
               width: 200,
               headerHozAlign: 'center',
               editor: this.dateEditor.bind(this),
+              formatter: (cell) => {
+                const value = cell.getValue();
+                if (!value) return '';
+                // Extract only date part from datetime string
+                return value.toString().split('T')[0];
+              },
               cellEdited: (cell) => {
                 const row = cell.getRow();
                 const rowData = row.getData();
@@ -505,13 +545,14 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       this.OrderTable.addRow({
         ProductId: 0,
         SerialId: 0,
-        Code: '',
+        Code: 0,
         OrderDetailId: 0,
         ProductSerial: '',
         Quantity: 0,
         DateStart: '',
         DateEnd: '',
       });
+      
     }
   }
 

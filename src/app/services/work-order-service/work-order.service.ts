@@ -28,6 +28,16 @@ export class WorkOrderService {
     );
   }
 
+  getWarrantyClaim(WarrantyClaimId: number): Observable<any> {
+    const asset: any = {
+      WarrantyClaimId: WarrantyClaimId || 0,
+    };
+    return this.http.post<any>(
+      environment.host + `api/workorder/warranty-claim`,
+      asset
+    );
+  }
+
   getEmployees(Status: number): Observable<any> {
     const asset: any = {
       Status: Status || 0,
@@ -42,7 +52,7 @@ export class WorkOrderService {
     return this.http.get<any>(environment.host + `api/workorder/status`);
   }
 
-    getDataProducts(): Observable<Product[]> {
+  getDataProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(environment.host + `api/products`);
   }
 
