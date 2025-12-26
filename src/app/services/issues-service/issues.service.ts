@@ -5,6 +5,7 @@ import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { IssuesGroup } from '../../models/issues.model';
 import { APIResponse } from '../../models/api-response.interface';
+import { IssueFullDTO } from '../../models/issue-full-DTO.model';
 
 
 @Injectable({
@@ -17,7 +18,10 @@ export class IssuesService {
     const asset: any = {
       IssuesGroupId: IssuesGroupId || 0,
     };
-    return this.http.post<any>(environment.host + `api/issues/issues`, asset);
+    return this.http.post<APIResponse<IssueFullDTO[]>>(
+      environment.host + `api/issues/issues`,
+      asset
+    );
   }
 
   getDataIssuesGroup(): Observable<APIResponse<IssuesGroup[]>> {

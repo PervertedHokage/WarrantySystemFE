@@ -106,15 +106,10 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="area">Khu vực</label>
-                    <tui-textfield tuiChevron [stringify]="areaStringify">
-                      <input placeholder="Vui lòng chọn" tuiComboBox [matcher]="areaMatcher" formControlName="_dummy" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of areaList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input placeholder="Vui lòng chọn" tuiComboBox formControlName="_dummy" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="areaList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
@@ -136,31 +131,18 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="product-name">Tên sản phẩm <span style="color:red">*</span></label>
-                    <tui-textfield tuiChevron>
-                      <input placeholder="Vui lòng chọn" tuiComboBox formControlName="ProductName" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of productList ; track item){
-                        <button new tuiOption type="button" [value]="item">
-                          {{ item }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="productStringify" [identityMatcher]="productIdentity">
+                      <input placeholder="Vui lòng chọn" tuiComboBox formControlName="Product" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="productList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="failure-type">Hiện tượng hỏng hóc <span style="color:red">*</span></label>
-                    <tui-textfield tuiChevron [stringify]="issueStringify">
-                      <input placeholder="Vui lòng chọn" tuiComboBox [matcher]="issueMatcher"
-                        formControlName="IssueId" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of issueList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="issueStringify" [identityMatcher]="issueMatcher">
+                      <input placeholder="Vui lòng chọn" tuiComboBox formControlName="Issue" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="issueList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
@@ -175,30 +157,20 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-silicon-case">Có bao silicon bảo vệ không?</label>
-                    <tui-textfield tuiChevron [stringify]="booleanStringify">
-                      <input tuiSelect formControlName="HasProtection" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of yesNoList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input tuiSelect formControlName="HasProtectionObj" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="yesNoList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-adapter">Có bộ đối nguồn (adapter) không?</label>
-                    <tui-textfield tuiChevron [stringify]="booleanStringify">
-                      <input tuiSelect formControlName="HasAdapter" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of yesNoList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input tuiSelect formControlName="HasAdapterObj" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="yesNoList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
@@ -208,30 +180,20 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-data-cable">Có cấp dữ liệu không?</label>
-                    <tui-textfield tuiChevron [stringify]="booleanStringify">
-                      <input tuiSelect formControlName="HasCable" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of yesNoList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input tuiSelect formControlName="HasCableObj" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="yesNoList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-battery">Có pin không?</label>
-                    <tui-textfield tuiChevron [stringify]="booleanStringify">
-                      <input tuiSelect formControlName="HasBattery" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of yesNoList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input tuiSelect formControlName="HasBatteryObj" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="yesNoList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
@@ -241,30 +203,20 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-opening-error">Có lỗi khí mở hộp không?</label>
-                    <tui-textfield tuiChevron [stringify]="booleanStringify">
-                      <input tuiSelect formControlName="HasIssueWhenOpenBox" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of yesNoList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input tuiSelect formControlName="HasIssueWhenOpenBoxObj" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="yesNoList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
                 <div class="form-col">
                   <div class="form-group">
                     <label for="has-damage">Có bị rơi hoặc ép, va đập không?</label>
-                    <tui-textfield tuiChevron [stringify]="booleanStringify">
-                      <input tuiSelect formControlName="HasCollision" />
-                      <tui-data-list *tuiTextfieldDropdown>
-                        @for( item of yesNoList ; track item.value){
-                        <button new tuiOption type="button" [value]="item.value">
-                          {{ item.name }}
-                        </button>
-                        }
-                      </tui-data-list>
+                    <tui-textfield tuiChevron [stringify]="taigaDropdownStringify"
+                      [identityMatcher]="taigaDropdownMatcher">
+                      <input tuiSelect formControlName="HasCollisionObj" />
+                      <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="yesNoList | tuiFilterByInput" />
                     </tui-textfield>
                   </div>
                 </div>
@@ -272,15 +224,9 @@
 
               <div class="form-group">
                 <label for="environment">Môi trường sử dụng</label>
-                <tui-textfield tuiChevron [stringify]="booleanStringify">
-                  <input tuiSelect formControlName="OperationEnvironment" />
-                  <tui-data-list *tuiTextfieldDropdown>
-                    @for( item of environmentList ; track item.value){
-                    <button new tuiOption type="button" [value]="item.value">
-                      {{ item.name }}
-                    </button>
-                    }
-                  </tui-data-list>
+                <tui-textfield tuiChevron [stringify]="taigaDropdownStringify" [identityMatcher]="taigaDropdownMatcher">
+                  <input tuiSelect formControlName="OperationEnvironmentObj" />
+                  <tui-data-list-wrapper *tuiTextfieldDropdown new [items]="environmentList | tuiFilterByInput" />
                 </tui-textfield>
               </div>
 
@@ -305,7 +251,7 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="shipping-company">Công ty vận chuyển</label>
-                    <select id="shipping-company" name="shipping-company">
+                    <select id="shipping-company" name="shipping-company" formControlName="Transporter">
                       <option value="">Vui lòng chọn</option>
                       <option value="viettel-post">Viettel Post</option>
                       <option value="vn-post">VNPost</option>
@@ -318,7 +264,7 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="tracking-number">Số vận đơn</label>
-                    <input type="text" id="tracking-number" name="tracking-number">
+                    <input type="text" id="tracking-number" name="tracking-number" formControlName="LadingNumber">
                   </div>
                 </div>
               </div>
@@ -337,7 +283,7 @@
                 <div class="form-col">
                   <div class="form-group">
                     <label for="repair-address">Địa chỉ gửi máy để sửa chữa</label>
-                    <input type="text" id="repair-address" name="repair-address">
+                    <input type="text" id="repair-address" name="repair-address" formControlName="RecipientAddress">
                   </div>
                 </div>
               </div>
@@ -412,7 +358,7 @@
               </div>
             </div>
 
-            <div class="tab-content">
+            <div id="warranty_claim_grid" class="tab-content">
               <angular-slickgrid #asg gridId="grid1" [columns]="columnDefinitions" [options]="gridOptions"
                 [dataset]="dataset" (onAngularGridCreated)="angularGridReady($event.detail)">
               </angular-slickgrid>

@@ -6,7 +6,6 @@ import {
   Component,
   ElementRef,
   inject,
-  NgZone,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -21,6 +20,7 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   tuiAsPortal,
+  TuiIdentityMatcher,
   TuiPortals,
   TuiStringHandler,
   TuiStringMatcher,
@@ -42,6 +42,7 @@ import {
   TuiFade,
   TuiTabs,
   TuiTextarea,
+  TuiFilterByInputPipe,
 } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
 import {
@@ -61,6 +62,11 @@ import { NOTIFICATION_TITLE } from '../../app.config';
 import { APIResponse } from '../../models/api-response.interface';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { TrackingModalComponent } from './tracking-modal/tracking-modal.component';
+import { TaigaDropdownData } from '../../models/taiga-dropdown-data';
+import { IssueFullDTO } from '../../models/issue-full-DTO.model';
+import { Product } from '../../models/product.model';
+import { ProductService } from '../../services/products-service/product.service';
+import { IssuesService } from '../../services/issues-service/issues.service';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -85,6 +91,8 @@ declare let grecaptcha: any;
     TuiTextarea,
     TuiChevron,
     TuiComboBox,
+    TuiDataListWrapper,
+    TuiFilterByInputPipe,
     TranslateModule,
     ReactiveFormsModule,
   ],
@@ -95,6 +103,7 @@ export class LandingPageComponent
   extends TuiPortals
   implements OnInit, AfterViewInit
 {
+  //#region Properties
   private router = inject(Router);
   private _currentTab = 0;
   get currentTab() {
@@ -104,6 +113,8 @@ export class LandingPageComponent
     this._currentTab = value;
     if (this._currentTab == 1) {
       this.newWarrantyClaimForm.reset();
+      this.loadProducts();
+      this.loadIssues();
       setTimeout(() => this.initCaptcha());
     } else {
       this.destroyCaptcha();
@@ -112,8 +123,6 @@ export class LandingPageComponent
   currentFilter = 0;
   protected expanded = false;
   protected open = false;
-  protected switch = false;
-  protected readonly routes: any = {};
   statusMap: Record<number, { text: string; cls: string }> = {
     1: { text: 'Tiếp nhận thông tin', cls: 'status-badge status-1' },
     2: { text: 'Xác minh thông tin', cls: 'status-badge status-2' },
@@ -133,106 +142,88 @@ export class LandingPageComponent
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: WarrantyClaim[] = [];
+  angularGrid!: AngularGridInstance;
   @ViewChild('captchaHolder')
   captchaHolder?: ElementRef<HTMLDivElement>;
-  angularGrid!: AngularGridInstance;
   private widgetId?: number;
-  private newWarrantyClaim = new WarrantyClaim();
+
   newWarrantyClaimForm: FormGroup;
-  areaList = [
-    { value: 1, name: 'Miền bắc' },
-    { value: 2, name: 'Miền trung' },
-    { value: 3, name: 'Miền nam' },
+  areaList: TaigaDropdownData[] = [
+    { Value: 1, Name: 'Miền bắc' },
+    { Value: 2, Name: 'Miền trung' },
+    { Value: 3, Name: 'Miền nam' },
   ];
-  productList = [
-    'MobyData Smart Device 1',
-    'MobyData Smart Device 2',
-    'MobyData Smart Device Pro',
-    'MobyData IoT Gateway',
-    'MobyData Sensor Hub',
+  productList: Product[] = [];
+  selectedProduct: Product | null = null;
+  issueList: IssueFullDTO[] = [];
+
+  yesNoList: TaigaDropdownData[] = [
+    { Value: true, Name: 'Có' },
+    { Value: false, Name: 'Không' },
   ];
 
-  issueList = [
-    { value: 1, name: 'Lỗi 1' },
-    { value: 2, name: 'Lỗi 2' },
-    { value: 3, name: 'Lỗi 3' },
+  environmentList: TaigaDropdownData[] = [
+    { Value: 1, Name: 'Môi trường bình thường' },
+    { Value: 2, Name: 'Môi trường nóng' },
+    { Value: 3, Name: 'Môi trường kho lạnh' },
   ];
-
-  yesNoList = [
-    { value: true, name: 'Có' },
-    { value: false, name: 'Không' },
-  ];
-
-  environmentList = [
-    { value: 1, name: 'Môi trường bình thường' },
-    { value: 2, name: 'Môi trường nóng' },
-    { value: 3, name: 'Môi trường kho lạnh' },
-  ];
-  protected readonly areaStringify: TuiStringHandler<number> =
-    this.stringifyFrom(this.areaList);
-  protected readonly areaMatcher: TuiStringMatcher<number> = this.matcherFrom(
-    this.areaList
-  );
-  protected readonly issueStringify: TuiStringHandler<number> =
-    this.stringifyFrom(this.issueList);
-  protected readonly issueMatcher: TuiStringMatcher<number> = this.matcherFrom(
-    this.issueList
-  );
-  protected readonly booleanStringify: TuiStringHandler<boolean> =
-    this.stringifyFrom(this.yesNoList);
-  protected readonly booleanMatcher: TuiStringMatcher<number> =
-    this.matcherFrom(this.yesNoList);
-  protected readonly environmentStringify: TuiStringHandler<number> =
-    this.stringifyFrom(this.yesNoList);
-  protected readonly environmentMatcher: TuiStringMatcher<number> =
-    this.matcherFrom(this.yesNoList);
+  protected taigaDropdownStringify: TuiStringHandler<TaigaDropdownData> =
+    this.stringifyFrom('Name');
+  protected taigaDropdownMatcher: TuiIdentityMatcher<TaigaDropdownData> =
+    this.idMatcherFrom('Value');
+  protected productStringify: TuiStringHandler<Product> =
+    this.stringifyFrom('Name');
+  protected productIdentity: TuiIdentityMatcher<Product> =
+    this.idMatcherFrom('Id');
+  protected issueStringify: TuiStringHandler<IssueFullDTO> =
+    this.stringifyFrom('Name');
+  protected issueMatcher: TuiIdentityMatcher<IssueFullDTO> =
+    this.idMatcherFrom('Id');
   phoneNumberSearch: string = '';
   emailSearch: string = '';
   claimNoSearch: string = '';
+  //#endregion
+  //#region Constructor
   constructor(
     private formBuilder: FormBuilder,
     private landingPageService: LandingPageService,
+    private productService: ProductService,
+    private issueService: IssuesService,
     private notification: NzNotificationService,
     private modal: NzModalService
   ) {
     super();
     this.newWarrantyClaimForm = this.formBuilder.group({
       Id: [0],
-      CustomerName: [this.newWarrantyClaim.CustomerName, [Validators.required]],
-      CustomerEmail: [
-        this.newWarrantyClaim.CustomerEmail,
-        [Validators.required],
-      ],
-      CustomerPhoneNumber: [
-        this.newWarrantyClaim.CustomerPhoneNumber,
-        [Validators.required],
-      ],
-      CustomerAddress: [this.newWarrantyClaim.CustomerAddress],
-      ProductName: [this.newWarrantyClaim.ProductName, [Validators.required]],
-      ProductId: [this.newWarrantyClaim.ProductId],
-      IssueId: [this.newWarrantyClaim.IssueId, [Validators.required]],
-      SerialNumber: [this.newWarrantyClaim.SerialNumber, [Validators.required]],
-      HasProtection: [this.newWarrantyClaim.HasProtection],
-      HasAdapter: [this.newWarrantyClaim.HasAdapter],
-      HasCable: [this.newWarrantyClaim.HasCable],
-      HasBattery: [this.newWarrantyClaim.HasBattery],
-      HasIssueWhenOpenBox: [this.newWarrantyClaim.HasIssueWhenOpenBox],
-      HasCollision: [this.newWarrantyClaim.HasCollision],
-      OperationEnvironment: [this.newWarrantyClaim.OperationEnvironment],
-      Status: [this.newWarrantyClaim.Status],
-      Type: [this.newWarrantyClaim.Type],
-      FileAddress: [this.newWarrantyClaim.FileAddress],
-      Transporter: [this.newWarrantyClaim.Transporter],
-      LadingNumber: [this.newWarrantyClaim.LadingNumber],
-      Note: [this.newWarrantyClaim.Note],
-      RecipientAddress: [this.newWarrantyClaim.RecipientAddress],
-      CreatedDate: [this.newWarrantyClaim.CreatedDate],
-      CreatedBy: [this.newWarrantyClaim.CreatedBy],
-      UpdatedDate: [this.newWarrantyClaim.UpdatedDate],
-      UpdatedBy: [this.newWarrantyClaim.UpdatedBy],
+      CustomerName: ['', [Validators.required]],
+      CustomerEmail: ['', [Validators.required]],
+      CustomerPhoneNumber: ['', [Validators.required]],
+      CustomerAddress: [''],
+      Product: [null, [Validators.required]],
+      Issue: [null, [Validators.required]],
+      SerialNumber: ['', [Validators.required]],
+      HasProtectionObj: [],
+      HasAdapterObj: [],
+      HasCableObj: [],
+      HasBatteryObj: [],
+      HasIssueWhenOpenBoxObj: [],
+      HasCollisionObj: [],
+      OperationEnvironmentObj: [],
+      Status: [1],
+      Type: [1],
+      FileAddress: [''],
+      Transporter: [''],
+      LadingNumber: [''],
+      Note: [''],
+      RecipientAddress: [''],
+      CreatedDate: [new Date()],
+      CreatedBy: [''],
+      UpdatedDate: [],
+      UpdatedBy: [],
       _dummy: [null],
     });
   }
+  //#endregion
   ngOnInit(): void {
     this.currentTab = 1;
     this.prepareGrid();
@@ -323,13 +314,12 @@ export class LandingPageComponent
             nzMaskClosable: false,
             nzKeyboard: false,
             nzData: {
-              warrantyClaim: rowData
+              warrantyClaim: rowData,
             },
           });
 
           modalRef.afterClose.subscribe((result) => {
             if (result === true) {
-
             }
           });
         },
@@ -340,7 +330,7 @@ export class LandingPageComponent
       datasetIdPropertyName: 'Id',
       enableAutoResize: true,
       autoResize: {
-        container: '.tab-content',
+        container: '#warranty_claim_grid',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -458,6 +448,32 @@ export class LandingPageComponent
         },
       });
   }
+  loadProducts() {
+    this.productService.getDataProducts().subscribe({
+      next: (res) => {
+        this.productList = res.data;
+      },
+      error: (err) => {
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Load dữ liệu sản phẩm thất bại'
+        );
+      },
+    });
+  }
+  loadIssues() {
+    this.issueService.getIssues(0).subscribe({
+      next: (res) => {
+        this.issueList = res.data;
+      },
+      error: (err) => {
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Load dữ liệu hiện tượng hỏng thất bại'
+        );
+      },
+    });
+  }
   private async initCaptcha() {
     if (!this.captchaHolder || this.widgetId !== undefined) return;
 
@@ -523,25 +539,57 @@ export class LandingPageComponent
       );
       return;
     }
+    const rawData = this.newWarrantyClaimForm.getRawValue();
+    const {
+      Product,
+      Issue,
+      HasAdapterObj,
+      HasBatteryObj,
+      HasCableObj,
+      HasCollisionObj,
+      HasIssueWhenOpenBoxObj,
+      HasProtectionObj,
+      OperationEnvironmentObj,
+      _dummy,
+      ...cleanData
+    } = rawData;
 
-    const data = new WarrantyClaim(this.newWarrantyClaimForm.getRawValue());
-    data.Id = 0; // just in case
-    this.landingPageService.createWarrantyClaim(data).subscribe({
-      next: () => {
-        this.notification.success(
-          NOTIFICATION_TITLE.success,
-          'Đăng ký thành công'
-        );
-        this.newWarrantyClaimForm.reset();
-      },
-      error: (error: APIResponse<WarrantyClaim>) => {
-        this.notification.error(
-          NOTIFICATION_TITLE.error,
-          'Đăng ký thất bại: ' + error.message
-        );
-      },
+    const data = new WarrantyClaim({
+      ...cleanData,
+      ProductId: rawData.Product.Id,
+      IssueId: rawData.Issue.Id,
+      HasAdapter: rawData.HasAdapterObj?.Value,
+      HasBattery: rawData.HasBatteryObj?.Value,
+      HasCable: rawData.HasCableObj?.Value,
+      HasCollision: rawData.HasCollisionObj?.Value,
+      HasIssueWhenOpenBox: rawData.HasIssueWhenOpenBoxObj?.Value,
+      HasProtection: rawData.HasProtectionObj?.Value,
+      OperationEnvironment: rawData.OperationEnvironmentObj?.Value,
     });
-    //this.service.createWarrantyClaim(payload).subscribe();
+    data.Id = 0; // just in case
+    const token = grecaptcha.getResponse(this.widgetId);
+    if (token) {
+      this.landingPageService.createWarrantyClaim(data).subscribe({
+        next: () => {
+          this.notification.success(
+            NOTIFICATION_TITLE.success,
+            'Đăng ký thành công'
+          );
+          this.newWarrantyClaimForm.reset();
+        },
+        error: (error: APIResponse<WarrantyClaim>) => {
+          this.notification.error(
+            NOTIFICATION_TITLE.error,
+            'Đăng ký thất bại: ' + error.message
+          );
+        },
+      });
+    } else {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng nhập captcha hợp lệ'
+      );
+    }
   }
   filterStatus(status: number) {
     this.currentFilter = status;
@@ -567,25 +615,17 @@ export class LandingPageComponent
   getStatusCount(status: number) {
     return this.dataset.filter((d) => d.Status == status).length;
   }
-  private stringifyFrom<T extends IdName, K>(
-    list: readonly T[]
-  ): TuiStringHandler<K> {
-    return (value: K) => list.find((item) => item.value === value)?.name ?? '';
+  private stringifyFrom<T, K extends keyof T>(
+    searchValue: K
+  ): TuiStringHandler<T> {
+    return (value: T) => String(value[searchValue] ?? '');
   }
-  private matcherFrom<T extends IdName, K>(
-    list: readonly T[]
-  ): TuiStringMatcher<K> {
-    return (value: K, query: string) => {
-      const { name } = list.find((item) => item.value === value)!;
 
-      return (
-        String(value) === query || name.toLowerCase() === query.toLowerCase()
-      );
+  private idMatcherFrom<T, K extends keyof T>(
+    searchValue: K
+  ): TuiIdentityMatcher<T> {
+    return (value1: T, value2: T) => {
+      return value1[searchValue] === value2[searchValue];
     };
   }
-}
-
-interface IdName {
-  value: any;
-  name: string;
 }

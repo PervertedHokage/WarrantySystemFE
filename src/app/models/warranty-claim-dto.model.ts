@@ -1,4 +1,4 @@
-export class WarrantyClaim {
+export class WarrantyClaimDTO {
   Id = 0;
   ClaimNo: string | null = '';
   CustomerName = '';
@@ -6,6 +6,7 @@ export class WarrantyClaim {
   CustomerPhoneNumber = '';
   CustomerAddress: string | null = '';
   ProductId: number | null = null;
+  ProductName: string | null = null;
   IssueId: number | null = null;
   SerialNumber = '';
   HasProtection: boolean | null = null;
@@ -28,7 +29,7 @@ export class WarrantyClaim {
   UpdatedDate: Date | null = null;
   UpdatedBy: string | null = '';
 
-  constructor(init?: Partial<WarrantyClaim>) {
+  constructor(init?: Partial<WarrantyClaimDTO>) {
     Object.assign(this, init);
   }
 }

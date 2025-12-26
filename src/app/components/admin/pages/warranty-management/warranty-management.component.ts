@@ -34,6 +34,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { WarrantyClaimDTO } from '../../../../models/warranty-claim-dto.model';
 @Component({
   selector: 'app-warranty-management',
   templateUrl: './warranty-management.component.html',
@@ -182,7 +183,7 @@ export class WarrantyManagementComponent implements OnInit {
       rowSelectionOptions: { selectActiveRow: true },
     };
     this.dataset = [
-      new WarrantyClaim({
+      new WarrantyClaimDTO({
         Id: 1,
         ClaimNo: 'WC-0001',
         CustomerName: 'Nguyen Van A',
@@ -212,7 +213,7 @@ export class WarrantyManagementComponent implements OnInit {
         CreatedBy: 'admin',
       }),
 
-      new WarrantyClaim({
+      new WarrantyClaimDTO({
         Id: 2,
         ClaimNo: 'WC-0002',
         CustomerName: 'Tran Thi B',
@@ -241,7 +242,7 @@ export class WarrantyManagementComponent implements OnInit {
         CreatedBy: 'admin',
       }),
 
-      new WarrantyClaim({
+      new WarrantyClaimDTO({
         Id: 3,
         ClaimNo: 'WC-0098',
         CustomerName: 'Nguyen Minh Quan',
@@ -267,7 +268,7 @@ export class WarrantyManagementComponent implements OnInit {
         CreatedBy: 'tech03',
       }),
 
-      new WarrantyClaim({
+      new WarrantyClaimDTO({
         Id: 4,
         ClaimNo: 'WC-0152',
         CustomerName: 'Tran Hoai Nam',
@@ -293,7 +294,7 @@ export class WarrantyManagementComponent implements OnInit {
         CreatedBy: 'support07',
       }),
 
-      new WarrantyClaim({
+      new WarrantyClaimDTO({
         Id: 5,
         ClaimNo: 'WC-0005',
         CustomerName: 'Hoang Van E',
@@ -319,7 +320,7 @@ export class WarrantyManagementComponent implements OnInit {
       }),
       ...Array.from({ length: 15 }).map(
         (_, i) =>
-          new WarrantyClaim({
+          new WarrantyClaimDTO({
             Id: 6 + i,
             ClaimNo: `WC-00${6 + i}`,
             CustomerName: `Customer ${6 + i}`,

@@ -9,11 +9,10 @@ export class Issues {
   UpdatedBy: string | null = '';
   IsDeleted = false;
 
-    constructor(init?: Partial<Issues>) {
+  constructor(init?: Partial<Issues>) {
     Object.assign(this, init);
   }
 }
-
 
 export class IssuesGroup {
   Id = 0;
@@ -25,7 +24,7 @@ export class IssuesGroup {
   UpdatedBy: string | null = '';
   IsDeleted = false;
 
-    constructor(init?: Partial<IssuesGroup>) {
+  constructor(init?: Partial<IssuesGroup>) {
     Object.assign(this, init);
   }
 }

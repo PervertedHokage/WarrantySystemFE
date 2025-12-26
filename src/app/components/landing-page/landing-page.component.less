@@ -104,21 +104,25 @@ button[tuiOption].active {
 .wrapper {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, sans-serif;
-  height: 100%;
+
+  min-height: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  /* horizontal only */
+  align-items: stretch;
+  /* NOT center */
   padding: 20px;
 }
+
 
 .container {
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
-  max-width: 100% !important;
-  height: 100%;
-  animation: slideUp 0.5s ease-out;
+  max-width: 100%;
+  min-height: 100%;
+  height: auto;
 }
 
 @keyframes slideUp {
@@ -369,13 +373,12 @@ aside {
 }
 
 div[tuiNavigationMain] {
-  border: 0 !important;
-  height: 100% !important;
-  grid-auto-rows: 1fr;
-  width: 100%;
   min-height: calc(100vh - 48px);
+  height: auto;
+  width: 100%;
   background: linear-gradient(135deg, #e0f7ff 0%, #b3e5fc 50%, #4fc3f7 100%);
 }
+
 
 .custom-portal {
   position: absolute;
@@ -468,8 +471,10 @@ div[tuiNavigationMain] {
   display: none;
 
   &.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    min-height: 100%;
   }
 }
 
@@ -702,6 +707,10 @@ textarea:focus {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   overflow: hidden;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .tabs {
