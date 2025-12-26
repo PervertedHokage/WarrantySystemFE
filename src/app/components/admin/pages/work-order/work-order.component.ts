@@ -82,6 +82,11 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
   gridOptionsWorkOrder: GridOption = {};
   datasetWorkOrder: any[] = [];
 
+  countChoXuLy: number = 0;
+  countDangSuaChua: number = 0;
+  countChoVatTu: number = 0;
+  countHoanThanh: number = 0;
+
   isCheckmode: boolean = false;
   WorkOrderId: number = 0;
   WorkOrderData: any;
@@ -309,7 +314,21 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
   getWorkOrder() {
     this.workOrderService.getWorkOrder(0).subscribe((response: any) => {
       this.datasetWorkOrder = response?.data || [];
+      this.computeOverviewCounts();
     });
+  }
+
+  private computeOverviewCounts(): void {
+    const items = Array.isArray(this.datasetWorkOrder) ? this.datasetWorkOrder : [];
+
+    const countByStatus = (status: string) =>
+      items.filter((x: any) => (x?.Status || '').toString().trim() === status)
+        .length;
+
+    this.countChoXuLy = countByStatus('Chờ xử lý');
+    this.countDangSuaChua = countByStatus('Đang sửa chữa');
+    this.countChoVatTu = countByStatus('Chờ vật tư');
+    this.countHoanThanh = countByStatus('Hoàn thành');
   }
 
   onActiveCellChanged(e: any) {

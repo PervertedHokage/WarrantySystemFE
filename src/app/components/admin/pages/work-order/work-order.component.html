@@ -1,4 +1,4 @@
-<div class="card" >
+<div class="card">
   <div class="card-header bg-white p-1">
     <div class="d-flex gap-1">
       <button
@@ -30,18 +30,40 @@
       </button>
     </div>
   </div>
+  <div class="overview">
+    <div class="overview-card overview-card--blue">
+      <div class="overview-title">Chờ xử lý</div>
+      <div class="overview-value">{{ countChoXuLy }}</div>
+      <div class="overview-sub">Work Order</div>
+    </div>
+    <div class="overview-card overview-card--orange">
+      <div class="overview-title">Đang sửa chữa</div>
+      <div class="overview-value">{{ countDangSuaChua }}</div>
+      <div class="overview-sub">Work Order</div>
+    </div>
+    <div class="overview-card overview-card--cyan">
+      <div class="overview-title">Chờ vật tư</div>
+      <div class="overview-value">{{ countChoVatTu }}</div>
+      <div class="overview-sub">Work Order</div>
+    </div>
+    <div class="overview-card overview-card--green">
+      <div class="overview-title">Hoàn thành</div>
+      <div class="overview-value">{{ countHoanThanh }}</div>
+      <div class="overview-sub">Work Order</div>
+    </div>
+  </div>
   <div class="grid-container">
-        <div class="grid-workorder-container">
-          <angular-slickgrid
-            gridId="workOrderGrid"
-            [columns]="columnWorkOrder"
-            [options]="gridOptionsWorkOrder"
-            [dataset]="datasetWorkOrder" 
-            (onAngularGridCreated)="gridReady($event)"  
-            (onActiveCellChanged)="onActiveCellChanged($event)"
-            (selectedRowsChanged)="onSelectedRowsChanged($event)"
-          >
-          </angular-slickgrid>
-        </div>
+    <div class="grid-workorder-container">
+      <angular-slickgrid
+        gridId="workOrderGrid"
+        [columns]="columnWorkOrder"
+        [options]="gridOptionsWorkOrder"
+        [dataset]="datasetWorkOrder"
+        (onAngularGridCreated)="gridReady($event)"
+        (onActiveCellChanged)="onActiveCellChanged($event)"
+        (selectedRowsChanged)="onSelectedRowsChanged($event)"
+      >
+      </angular-slickgrid>
+    </div>
   </div>
 </div>

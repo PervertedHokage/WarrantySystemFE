@@ -42,6 +42,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { forkJoin } from 'rxjs';
 import { NOTIFICATION_TITLE } from '../../../../../../app/app.config';
 import { SalesOrderService } from '../../../../../services/sales-order-service/sales-order.service';
+import { ProductService } from '../../../../../services/products-service/product.service';
 
 @Component({
   selector: 'app-sales-order-form',
@@ -126,6 +127,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private injector: EnvironmentInjector,
     private appRef: ApplicationRef,
+    private productService: ProductService
   ) {
     if (data) {
       this.SaleOrderID = data.SaleOrderID || 0;
@@ -182,24 +184,22 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
   }
 
   loadOptionProduct() {
-    this.salesOrderService.getProduct(0).subscribe({
+    this.productService.getDataProducts().subscribe({
       next: (res: any) => {
         const productData = res.data;
         if (Array.isArray(productData)) {
           this.productOptions = productData
             .filter(
               (product) =>
-                product.ProductId !== null &&
-                product.ProductId !== undefined &&
-                product.ProductId !== 0
+                product.Id !== null &&
+                product.Id !== undefined &&
+                product.Id !== 0
             )
             .map((product) => ({
               label: product.Code + '-' + product.Name,
-              value: product.ProductId,
+              value: product.Id,
               Code: product.Code,
-              Name: product.Name,
-              ProductSerial: product.ProductSerial,
-              SerialId: product.SerialId
+              Name: product.Name
             }));
         } else {
           this.productOptions = [];
