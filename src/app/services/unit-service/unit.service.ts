@@ -5,20 +5,20 @@ import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UnitService {
+  constructor(private http: HttpClient) {}
 
-    constructor(private http: HttpClient) {}
-
-      getDataUnit(): Observable<any> {
+  getDataUnit(): Observable<any> {
     return this.http.get<any>(environment.host + `api/unit`);
   }
 
-   saveDataUnit(data: any): Observable<any> {
-    return this.http.post<any>(
-      environment.host + `api/unit`,
-      data
-    );
+  saveDataUnit(data: any): Observable<any> {
+    return this.http.post<any>(environment.host + `api/unit`, data);
+  }
+
+  deleteUnit(ids: number[]): Observable<any> {
+    return this.http.post<any>(environment.host + `api/unit/delete`, ids);
   }
 }

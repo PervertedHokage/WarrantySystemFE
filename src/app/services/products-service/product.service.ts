@@ -13,7 +13,9 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   getDataProducts(): Observable<APIResponse<Product[]>> {
-    return this.http.get<APIResponse<Product[]>>(environment.host + `api/products`)
+    return this.http.get<APIResponse<Product[]>>(
+      environment.host + `api/products`
+    );
   }
 
   getSparePart(ProductId: number): Observable<any> {
@@ -24,6 +26,9 @@ export class ProductService {
       environment.host + `api/products/spare-parts`,
       asset
     );
+  }
+  getDataUnit(): Observable<any> {
+    return this.http.get<any>(environment.host + `api/unit`);
   }
 
   deleteWorkOrders(ids: number[]): Observable<any> {

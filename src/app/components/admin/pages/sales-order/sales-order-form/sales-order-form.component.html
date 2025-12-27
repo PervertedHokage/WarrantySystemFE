@@ -42,6 +42,8 @@
               formGroup.get('CustomerEmail')?.hasError('required') &&
               (formGroup.get('CustomerEmail')?.dirty || formGroup.get('CustomerEmail')?.touched)
                 ? 'Vui lòng nhập email!'
+                : formGroup.get('CustomerEmail')?.hasError('email')
+                ? 'Email không hợp lệ!'
                 : formGroup.get('CustomerEmail')?.hasError('maxlength')
                 ? 'Email tối đa 50 ký tự!'
                 : undefined
@@ -72,6 +74,8 @@
               formGroup.get('CustomerPhoneNumber')?.hasError('required') &&
               (formGroup.get('CustomerPhoneNumber')?.dirty || formGroup.get('CustomerPhoneNumber')?.touched)
                 ? 'Vui lòng nhập số điện thoại!'
+                : formGroup.get('CustomerPhoneNumber')?.hasError('pattern')
+                ? 'Số điện thoại chỉ gồm 10-11 chữ số!'
                 : formGroup.get('CustomerPhoneNumber')?.hasError('maxlength')
                 ? 'Số điện thoại tối đa 20 ký tự!'
                 : undefined

@@ -96,7 +96,6 @@ export class IssuesComponent implements OnInit, AfterViewInit {
 
   Issues: any;
 
-
   ngOnInit(): void {
     this.defineGrid();
     this.defineIssuesGrid();
@@ -114,7 +113,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
 
   defineGrid() {
     this.columnIssuesGroup = [
-        {
+      {
         id: 'stt',
         name: 'STT',
         field: 'stt',
@@ -130,7 +129,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: { model: Filters['compoundInputText'] },
       },
-       {
+      {
         id: 'Code',
         name: 'Mã lỗi',
         field: 'Code',
@@ -146,7 +145,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
         id: 'Name',
         name: 'Tên lỗi hiện tượng hỏng hóc',
         field: 'Name',
-        width: 250,
+        minWidth: 250,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -165,8 +164,11 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       forceFitColumns: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
-      multiSelect: false,
-      rowSelectionOptions: { selectActiveRow: true },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
@@ -174,7 +176,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
 
   defineIssuesGrid() {
     this.columnIssues = [
-        {
+      {
         id: 'stt',
         name: 'STT',
         field: 'stt',
@@ -233,23 +235,21 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   }
 
   getIssues() {
-    this.issuesService
-      .getIssues(this.IssuesGroupID)
-      .subscribe((response: any) => {
-        this.datasetIssues = response?.data || [];
+    this.issuesService.getIssues(this.IssuesGroupID).subscribe((response: any) => {
+      this.datasetIssues = response?.data || [];
 
-        if (this.angularGridIssues) {
-          // Clear filters trước
-          this.angularGridIssues.filterService?.clearFilters();
-          
-          // Sử dụng gridService để update dataset
-          this.angularGridIssues.gridService.updateDataset(this.datasetIssues);
-        }
-      });
+      if (this.angularGridIssues) {
+        // Clear filters trước
+        this.angularGridIssues.filterService?.clearFilters();
+
+        // Sử dụng gridService để update dataset
+        this.angularGridIssues.gridService.updateDataset(this.datasetIssues);
+      }
+    });
   }
 
   gridReady(e: any) {
-    this.angularGrid = e.detail?.angularGrid || e;
+    this.angularGrid = e.detail || e;
     this.dataView = this.angularGrid?.dataView;
   }
 
@@ -273,8 +273,6 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.IssuesGroupID = dataContext?.Id ?? 0;
     this.IssuesGroupData = dataContext || null;
     this.getIssues();
-
-    console.log('ProductDAta', this.IssuesGroupData);
   }
 
   onSelectedRowsChanged(e: any) {
@@ -304,7 +302,9 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       return;
     }
     const modalRef = this.modal.create({
-      nzTitle: this.isCheckmode ? 'Sửa hiện tượng hỏng' : 'Thêm hiện tượng hỏng',
+      nzTitle: this.isCheckmode
+        ? 'Sửa hiện tượng hỏng'
+        : 'Thêm hiện tượng hỏng',
       nzContent: IssuesFormComponent,
       nzFooter: null,
       nzMaskClosable: false,
@@ -327,47 +327,103 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     });
   }
 
-   onDeleteIssues() {
-    if (!this.IssuesGroupID) {
-      this.notification.warning(
-        'Thông báo',
-        'Vui lòng chọn 1 lỗi để xóa!'
+  onDeleteIssues() {
+    if (!this.angularGrid) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
       );
       return;
     }
 
-    const issues = this.IssuesGroupData || {};
-    const payload = {
-      IssuesGroup: {
-        ...issues,
-         IsDeleted: true,
-      },
-      Issues: [],
-      DeletedIssues: [],
+    const gridService = this.angularGrid.gridService;
+    const dataView = this.angularGrid.dataView;
 
-    };
+    const selectedRowsFromSlickGrid =
+      this.angularGrid?.slickGrid?.getSelectedRows?.() || [];
 
-    const productName = this.IssuesGroupData?.Name || 'lỗi này';
+    let selectedItems: any[] = [];
+
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows =
+        gridService.getSelectedRows() || selectedRowsFromSlickGrid;
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
+    } else if (selectedRowsFromSlickGrid.length && dataView) {
+      selectedItems = selectedRowsFromSlickGrid
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    }
+
+    if (selectedItems.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn ít nhất 1 lỗi để xóa!'
+      );
+      return;
+    }
+
+    const selectedIds: number[] = [];
+    const selectedCodes: string[] = [];
+
+    selectedItems.forEach((item: any) => {
+      const id = item?.Id ?? item?.ID;
+      if (!id) return;
+
+      const code =
+        item?.Code ??
+        item?.Name ??
+        '';
+      selectedIds.push(id);
+      selectedCodes.push(code);
+    });
+
+    if (selectedIds.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Không tìm thấy lỗi hợp lệ để xóa!'
+      );
+      return;
+    }
+
+    const confirmMessage =
+      selectedIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa lỗi ${selectedCodes[0]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedIds.length} lỗi đã chọn?`;
+
     this.modal.confirm({
       nzTitle: 'Xác nhận xóa',
-      nzContent: `Bạn có chắc chắn muốn xóa sản phẩm ${productName}?`,
+      nzContent: confirmMessage,
       nzOkText: 'Đồng ý',
       nzCancelText: 'Hủy',
+      nzOkDanger: true,
       nzOnOk: () => {
-        this.issuesService.saveDataIssuesGroup(payload).subscribe({
+        this.issuesService.deleteIssues(selectedIds).subscribe({
           next: (res) => {
             if (res.status === 1) {
-              this.notification.success('Thông báo', 'Đã xóa thành công!');
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res.message || 'Đã xóa thành công!'
+              );
               this.getIssuesGroup();
             } else {
               this.notification.warning(
-                'Thông báo',
-                res.message || 'Không thể xóa bản ghi này!'
+                NOTIFICATION_TITLE.warning,
+                res.message || 'Không thể xóa các bản ghi này!'
               );
             }
           },
-          error: () => {
-            this.notification.error('Thông báo', 'Có lỗi xảy ra khi xóa!');
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
           },
         });
       },

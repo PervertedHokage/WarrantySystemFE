@@ -44,7 +44,6 @@ import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 import { SalesOrderService } from '../../../../services/sales-order-service/sales-order.service';
 import { SalesOrderFormComponent } from './sales-order-form/sales-order-form.component';
 
-
 @Component({
   selector: 'app-sales-order',
   standalone: true,
@@ -81,6 +80,9 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
 
   SaleOrderID: number = 0;
   SaleOrderData: any;
+
+  angularGrid: any;
+  dataView: any;
 
   isCheckmode: boolean = false;
 
@@ -120,6 +122,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         name: 'So Code',
         field: 'Code',
         sortable: true,
+        minWidth: 100,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -129,6 +132,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         name: 'Tên khách hàng',
         field: 'CustomerName',
         sortable: true,
+        minWidth: 200,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -137,6 +141,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         id: 'Name',
         name: 'Model',
         field: 'Name',
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
@@ -147,6 +152,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         name: 'Serial/IMEI',
         field: 'ProductSerial',
         sortable: true,
+        minWidth: 150,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -155,6 +161,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         id: 'DateStart',
         name: 'Ngày kích hoạt',
         field: 'DateStart',
+        minWidth: 120,
         sortable: true,
         type: 'dateUtc',
         formatter: (_row, _cell, value) => {
@@ -169,6 +176,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         id: 'DateEnd',
         name: 'Hạn bảo hành',
         field: 'DateEnd',
+        minWidth: 120,
         sortable: true,
         type: 'dateUtc',
         formatter: (_row, _cell, value) => {
@@ -192,11 +200,18 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
       forceFitColumns: true,
       enableRowSelection: true,
       enableCheckboxSelector: true,
-      multiSelect: false,
-      rowSelectionOptions: { selectActiveRow: true },
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
+  }
+  gridReady(e: any) {
+    this.angularGrid = e.detail || e;
+    this.dataView = this.angularGrid?.dataView;
   }
 
   onActiveCellChanged(e: any) {
@@ -213,8 +228,6 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
 
     this.SaleOrderID = dataContext?.OrderId ?? 0;
     this.SaleOrderData = dataContext || null;
-
-    console.log('ProductDAta', this.SaleOrderData);
   }
 
   onSelectedRowsChanged(e: any) {
@@ -238,54 +251,6 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     this.salesOrderService.getSaleOrder(0).subscribe((response: any) => {
       this.datasetSaleOrderGroup = response?.data || [];
     });
-    console.log('SaleOrderData', this.datasetSaleOrderGroup);
-  }
-
-  onDeleteSaleOrder() {
-    if (!this.SaleOrderID) {
-      this.notification.warning(
-        'Thông báo',
-        'Vui lòng chọn 1 đơn hàng để xóa!'
-      );
-      return;
-    }
-
-    const order = this.SaleOrderData || {};
-    const payload = {
-      Order: {
-        ...order,
-        IsDeleted: true,
-      },
-      OrderDetails: [],
-      OrderDetailInfo: [],
-      DeletedOrder: [],
-    };
-
-    const productName = this.SaleOrderData?.Name || 'lỗi này';
-    this.modal.confirm({
-      nzTitle: 'Xác nhận xóa',
-      nzContent: `Bạn có chắc chắn muốn xóa đơn hàng ${productName}?`,
-      nzOkText: 'Đồng ý',
-      nzCancelText: 'Hủy',
-      nzOnOk: () => {
-        this.salesOrderService.saveDataSaleOder(payload).subscribe({
-          next: (res) => {
-            if (res.status === 1) {
-              this.notification.success('Thông báo', 'Đã xóa thành công!');
-              this.getSaleOrder();
-            } else {
-              this.notification.warning(
-                'Thông báo',
-                res.message || 'Không thể xóa bản ghi này!'
-              );
-            }
-          },
-          error: () => {
-            this.notification.error('Thông báo', 'Có lỗi xảy ra khi xóa!');
-          },
-        });
-      },
-    });
   }
 
   onAddSaleOrder(isEditmode: boolean): void {
@@ -301,6 +266,10 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
       nzTitle: this.isCheckmode ? 'Sửa đơn hàng' : 'Thêm đơn hàng',
       nzContent: SalesOrderFormComponent,
       nzWidth: '50vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        'overflow': 'auto',
+      },
       nzFooter: null,
       nzMaskClosable: false,
       nzKeyboard: false,
@@ -315,6 +284,105 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
       if (result === true) {
         this.getSaleOrder();
       }
+    });
+  }
+
+  onDeleteMultiple() {
+    if (!this.angularGrid) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
+      );
+      return;
+    }
+
+    const gridService = this.angularGrid.gridService;
+    const dataView = this.angularGrid.dataView;
+
+    const selectedRowsFromSlickGrid =
+      this.angularGrid?.slickGrid?.getSelectedRows?.() || [];
+
+    let selectedItems: any[] = [];
+
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows =
+        gridService.getSelectedRows() || selectedRowsFromSlickGrid;
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
+    } else if (selectedRowsFromSlickGrid.length && dataView) {
+      selectedItems = selectedRowsFromSlickGrid
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    }
+
+    if (selectedItems.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn ít nhất 1 đơn vị để xóa!'
+      );
+      return;
+    }
+
+    const selectedIds: number[] = [];
+    const selectedCodes: string[] = [];
+
+    selectedItems.forEach((item: any) => {
+      if (item && item.Id) {
+        selectedIds.push(item.Id);
+        selectedCodes.push(item.Code || '');
+        selectedCodes.push(item.CustomerName || '');
+      }
+    });
+
+    if (selectedIds.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Không tìm thấy đơn hàng hợp lệ để xóa!'
+      );
+      return;
+    }
+
+    const confirmMessage =
+      selectedIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa đơn hàng của khách hàng ${selectedCodes[1]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedIds.length} đơn hàng đã chọn?`;
+
+    this.modal.confirm({
+      nzTitle: 'Xác nhận xóa',
+      nzContent: confirmMessage,
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.salesOrderService.deleteSaleOrder(selectedIds).subscribe({
+          next: (res) => {
+            if (res.status === 1) {
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res.message || 'Đã xóa thành công!'
+              );
+              this.getSaleOrder();
+            } else {
+              this.notification.warning(
+                NOTIFICATION_TITLE.warning,
+                res.message || 'Không thể xóa các bản ghi này!'
+              );
+            }
+          },
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
+          },
+        });
+      },
     });
   }
 }

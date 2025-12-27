@@ -9,6 +9,78 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  .overview {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    padding: 8px;
+  }
+
+  .overview-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #d9d9d9;
+    text-align: center;
+    min-width: 0;
+  }
+
+  .overview-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.65);
+    margin-bottom: 6px;
+  }
+
+  .overview-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: rgba(0, 0, 0, 0.88);
+  }
+
+  @media (max-width: 1200px) {
+    .overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 576px) {
+    .overview {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .overview-card {
+      padding: 10px 12px;
+    }
+
+    .overview-value {
+      font-size: 24px;
+    }
+  }
+
+  .overview-sub {
+    margin-top: 4px;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .overview-card--blue {
+    border-left-color: #1677ff;
+  }
+  .overview-card--orange {
+    border-left-color: #fa8c16;
+  }
+  .overview-card--cyan {
+    border-left-color: #13c2c2;
+  }
+  .overview-card--green {
+    border-left-color: #52c41a;
+  }
   
   .card-header {
     flex-shrink: 0;
@@ -17,7 +89,6 @@
   .grid-container {
     flex: 1;
     min-height: 0;
-    overflow: hidden;
   }
 }
 
@@ -40,86 +111,4 @@ angular-slickgrid,
 
 :host ::ng-deep .ant-splitter-panel {
   overflow: hidden !important;
-}
-
-// Custom Slickgrid Header Styling
-:host ::ng-deep .slick-header-columns {
-  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%) !important;
-  border-bottom: 2px solid #dee2e6 !important;
-  font-weight: 600 !important;
-}
-
-:host ::ng-deep .slick-header-column {
-  background: transparent !important;
-  border-right: 1px solid #dee2e6 !important;
-  padding: 8px 12px !important;
-  font-size: 13px !important;
-  color: #2c3e50 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  
-  &:hover {
-    background: rgba(0, 0, 0, 0.05) !important;
-  }
-}
-
-:host ::ng-deep .slick-header-column-sorted {
-  background: rgba(52, 152, 219, 0.1) !important;
-  font-weight: 700 !important;
-}
-
-:host ::ng-deep .slick-sort-indicator {
-  color: #3498db !important;
-  font-size: 14px !important;
-}
-
-:host ::ng-deep .slick-header-menubutton {
-  color: #7f8c8d !important;
-  
-  &:hover {
-    color: #2c3e50 !important;
-  }
-}
-
-// Filter Row Styling
-:host ::ng-deep .slick-headerrow {
-  background: #ffffff !important;
-  border-bottom: 1px solid #dee2e6 !important;
-}
-
-:host ::ng-deep .slick-headerrow-column {
-  background: #ffffff !important;
-  border-right: 1px solid #f0f0f0 !important;
-  padding: 4px 8px !important;
-}
-
-:host ::ng-deep .slick-headerrow-column input {
-  border: 1px solid #d9d9d9 !important;
-  border-radius: 4px !important;
-  padding: 4px 8px !important;
-  font-size: 12px !important;
-  
-  &:focus {
-    border-color: #40a9ff !important;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
-    outline: none !important;
-  }
-}
-
-// Row Styling
-:host ::ng-deep .slick-row {
-  &:hover {
-    background: #f5f5f5 !important;
-  }
-  
-  &.active {
-    background: #e6f7ff !important;
-  }
-}
-
-:host ::ng-deep .slick-cell {
-  border-right: 1px solid #f0f0f0 !important;
-  border-bottom: 1px solid #f0f0f0 !important;
-  padding: 8px 12px !important;
-  font-size: 13px !important;
 }

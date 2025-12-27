@@ -21,6 +21,7 @@ import {
   GridOption,
   SliderRangeOption,
   OperatorType,
+  Subscription,
 } from 'angular-slickgrid';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -50,7 +51,7 @@ import { WorkOrderFormComponent } from './work-order-form/work-order-form.compon
   selector: 'app-work-order',
   standalone: true,
   imports: [
-     CommonModule,
+    CommonModule,
     AngularSlickgridModule,
     NzCardModule,
     FormsModule,
@@ -74,42 +75,42 @@ import { WorkOrderFormComponent } from './work-order-form/work-order-form.compon
   ],
 
   templateUrl: './work-order.component.html',
-  styleUrl: './work-order.component.less'
+  styleUrl: './work-order.component.less',
 })
 export class WorkOrderComponent implements OnInit, AfterViewInit {
-
-   columnWorkOrder: Column[] = [];
+  columnWorkOrder: Column[] = [];
   gridOptionsWorkOrder: GridOption = {};
   datasetWorkOrder: any[] = [];
 
+  countChoXuLy: number = 0;
+  countDangSuaChua: number = 0;
+  countChoVatTu: number = 0;
+  countHoanThanh: number = 0;
+
   isCheckmode: boolean = false;
-  WorkOrderId : number = 0;
+  WorkOrderId: number = 0;
   WorkOrderData: any;
 
-  
   angularGrid: any;
   dataView: any;
 
   ngOnInit(): void {
-      this.defineGrid();
-      this.getWorkOrder();
-    
+    this.defineGrid();
+    this.getWorkOrder();
   }
 
-  ngAfterViewInit(): void {
-      
-  }
+  ngAfterViewInit(): void {}
 
-   constructor(
-      private notification: NzNotificationService,
-      private workOrderService: WorkOrderService,
-      private modal: NzModalService,
-      private message: NzMessageService
-    ) {}
+  constructor(
+    private notification: NzNotificationService,
+    private workOrderService: WorkOrderService,
+    private modal: NzModalService,
+    private message: NzMessageService
+  ) {}
 
-    defineGrid() {
+  defineGrid() {
     this.columnWorkOrder = [
-        {
+      {
         id: 'stt',
         name: 'STT',
         field: 'stt',
@@ -125,77 +126,78 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: { model: Filters['compoundInputText'] },
       },
-       {
+      {
         id: 'Code',
         name: 'Mã WO',
         field: 'Code',
         width: 100,
-        minWidth: 90,
-        maxWidth: 140,
+        minWidth: 150,
+        maxWidth: 200,
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
       {
-        id: 'CodeWC',
+        id: 'ClaimNo',
         name: 'Mã yêu cầu',
-        field: 'CodeWC',
-        width: 250,
+        field: 'ClaimNo',
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-       {
-              id: 'DateStart',
-              name: 'Ngày tạo',
-              field: 'DateStart',
-              sortable: true,
-              type: 'dateUtc',
-              formatter: (_row, _cell, value) => {
-                if (!value) return '';
-                const d = new Date(value);
-                return d.toLocaleDateString('vi-VN');
-              },
-              filterable: true,
-              filter: { model: Filters['compoundDate'] },
-     },
-        {
+      {
+        id: 'DateStart',
+        name: 'Ngày tạo',
+        field: 'DateStart',
+        sortable: true,
+        minWidth: 120,
+        type: 'dateUtc',
+        formatter: (_row, _cell, value) => {
+          if (!value) return '';
+          const d = new Date(value);
+          return d.toLocaleDateString('vi-VN');
+        },
+        filterable: true,
+        filter: { model: Filters['compoundDate'] },
+      },
+      {
         id: 'CustomerName',
         name: 'Khách hàng',
         field: 'CustomerName',
-        width: 250,
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-        {
+      {
         id: 'Name',
         name: 'Sản phẩm',
         field: 'Name',
-        width: 250,
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-         {
+      {
         id: 'FullName',
         name: 'Kỹ thuật viên',
         field: 'FullName',
-        width: 250,
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-       {
+      {
         id: 'ProgressComplete',
         name: 'Tiến độ',
         field: 'ProgressComplete',
-        width: 160,
+        width: 200,
         minWidth: 130,
         maxWidth: 220,
         sortable: true,
@@ -207,7 +209,14 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
           if (pct > 0 && pct <= 1) pct = pct * 100;
           pct = Math.max(0, Math.min(100, Math.round(pct)));
 
-          return Formatters.progressBar(row, cell, pct, columnDef, dataContext, grid);
+          return Formatters.progressBar(
+            row,
+            cell,
+            pct,
+            columnDef,
+            dataContext,
+            grid
+          );
         },
         type: 'number',
         filterable: true,
@@ -222,21 +231,21 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
           } as SliderRangeOption,
         },
       },
-        {
+      {
         id: 'Status',
         name: 'Trạng thái',
         field: 'Status',
-        width: 250,
+        minWidth: 150,
         sortable: true,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
         formatter: (_row, _cell, value) => {
           if (!value) return '';
-          
+
           let bgColor = '#d9d9d9';
           let textColor = '#000';
-          
+
           switch (value.trim()) {
             case 'Đang sửa chữa':
               bgColor = '#cce5ff';
@@ -259,7 +268,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
               textColor = '#fff';
               break;
           }
-          
+
           return `
             <span style="
               display: inline-block;
@@ -273,13 +282,12 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
           `;
         },
       },
-
     ];
 
     this.gridOptionsWorkOrder = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-container',
+        container: '.grid-workorder-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -298,22 +306,32 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     };
   }
 
-    gridReady(e: any) {
-    console.log('Grid ready event:', e);
+  gridReady(e: any) {
     this.angularGrid = e?.detail || e;
     this.dataView = this.angularGrid?.dataView;
   }
 
-   getWorkOrder() {
-    this.workOrderService
-      .getWorkOrder(0)
-      .subscribe((response: any) => {
-        this.datasetWorkOrder = response?.data || [];
-        console.log('Loaded work orders:', this.datasetWorkOrder);
-      });
+  getWorkOrder() {
+    this.workOrderService.getWorkOrder(0).subscribe((response: any) => {
+      this.datasetWorkOrder = response?.data || [];
+      this.computeOverviewCounts();
+    });
   }
 
-   onActiveCellChanged(e: any) {
+  private computeOverviewCounts(): void {
+    const items = Array.isArray(this.datasetWorkOrder) ? this.datasetWorkOrder : [];
+
+    const countByStatus = (status: string) =>
+      items.filter((x: any) => (x?.Status || '').toString().trim() === status)
+        .length;
+
+    this.countChoXuLy = countByStatus('Chờ xử lý');
+    this.countDangSuaChua = countByStatus('Đang sửa chữa');
+    this.countChoVatTu = countByStatus('Chờ vật tư');
+    this.countHoanThanh = countByStatus('Hoàn thành');
+  }
+
+  onActiveCellChanged(e: any) {
     const args = e?.detail?.args;
     const row = args?.row;
 
@@ -327,8 +345,6 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
 
     this.WorkOrderId = dataContext?.Id ?? 0;
     this.WorkOrderData = dataContext || null;
-
-    console.log('ProductDAta', this.WorkOrderData);
   }
 
   onSelectedRowsChanged(e: any) {
@@ -348,85 +364,80 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     this.WorkOrderData = item || null;
   }
 
-    onAddWorkOrder(isEditmode: boolean): void {
-      this.isCheckmode = isEditmode;
-      if (this.isCheckmode == true && this.WorkOrderId === 0) {
-        this.notification.warning(
-          NOTIFICATION_TITLE.warning,
-          'Vui lòng chọn 1 bản ghi để sửa!'
-        );
-        return;
-      }
-      const modalRef = this.modal.create({
-        nzTitle: this.isCheckmode ? `Sửa yêu cầu - ${this.WorkOrderData?.Code || ''}` : 'Thêm yêu cầu',
-        nzContent: WorkOrderFormComponent,
-        nzWidth: '50vw',
-        nzBodyStyle: {
-          'max-height': '70vh',
-          'overflow-y': 'auto',
-          'overflow-x': 'hidden'
-        },
-        nzFooter: null,
-        nzMaskClosable: false,
-        nzKeyboard: false,
-        nzData: {
-          WorkOrderID: this.WorkOrderId,
-          isEditMode: this.isCheckmode,
-          dataInput: this.WorkOrderData,
-        },
-      });
-  
-      modalRef.afterClose.subscribe((result) => {
-        if (result === true) {
-          this.getWorkOrder();
-        }
-      });
-    }
-
-  onDeleteIWorkOrder() {
-    if (!this.WorkOrderId) {
+  onAddWorkOrder(isEditmode: boolean): void {
+    this.isCheckmode = isEditmode;
+    if (this.isCheckmode == true && this.WorkOrderId === 0) {
       this.notification.warning(
-        'Thông báo',
-        'Vui lòng chọn 1 yêu cầu để xóa!'
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn 1 bản ghi để sửa!'
       );
       return;
     }
 
-    const order = this.WorkOrderData || {};
-    const payload = {
-      Order: {
-        ...order,
-        IsDeleted: true,
+    const modalRef = this.modal.create({
+      nzTitle: this.isCheckmode
+        ? `Sửa yêu cầu - ${this.WorkOrderData?.Code || ''}`
+        : 'Thêm yêu cầu',
+      nzContent: WorkOrderFormComponent,
+      nzWidth: '50vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        'overflow-y': 'auto',
+        'overflow-x': 'hidden',
       },
-      OrderDetails: [],
-      OrderDetailInfo: [],
-      DeletedOrder: [],
-    };
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {
+        WorkOrderID: this.WorkOrderId,
+        isEditMode: this.isCheckmode,
+        dataInput: this.WorkOrderData,
+      },
+    });
 
-    const productName = this.WorkOrderData?.Code || 'lỗi này';
-    this.modal.confirm({
-      nzTitle: 'Xác nhận xóa',
-      nzContent: `Bạn có chắc chắn muốn xóa mã ${productName}?`,
-      nzOkText: 'Đồng ý',
-      nzCancelText: 'Hủy',
-      nzOnOk: () => {
-        this.workOrderService.saveDataWorkOrder(payload).subscribe({
-          next: (res) => {
-            if (res.status === 1) {
-              this.notification.success('Thông báo', 'Đã xóa thành công!');
-              this.getWorkOrder();
-            } else {
-              this.notification.warning(
-                'Thông báo',
-                res.message || 'Không thể xóa bản ghi này!'
-              );
-            }
-          },
-          error: () => {
-            this.notification.error('Thông báo', 'Có lỗi xảy ra khi xóa!');
-          },
-        });
-      },
+    if (!this.isCheckmode) {
+      this.setupModalTitleUpdater(modalRef);
+    }
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+        this.getWorkOrder();
+      }
+    });
+  }
+
+  private setupModalTitleUpdater(modalRef: any): void {
+    let titleSub: Subscription | undefined;
+    modalRef.afterOpen.subscribe(() => {
+      const contentComponent =
+        modalRef.getContentComponent() as WorkOrderFormComponent;
+      const codeCtrl = contentComponent?.formGroup?.get('Code');
+      if (!codeCtrl) return;
+
+      const updateTitle = (code: string) => {
+        if (!code) return;
+        const newTitle = `Thêm yêu cầu - ${code}`;
+        modalRef.updateConfig({ nzTitle: newTitle });
+        // Fallback: direct DOM update
+        setTimeout(() => {
+          const modalTitleEl = document.querySelector('.ant-modal-title');
+          if (modalTitleEl) {
+            modalTitleEl.textContent = newTitle;
+          }
+        }, 0);
+      };
+
+      if (codeCtrl.value) {
+        updateTitle(codeCtrl.value);
+      }
+
+      titleSub = codeCtrl.valueChanges.subscribe((code) => {
+        updateTitle(code);
+      });
+    });
+
+    modalRef.afterClose.subscribe(() => {
+      titleSub?.unsubscribe();
     });
   }
 
@@ -441,24 +452,21 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
 
     const gridService = this.angularGrid.gridService;
     const dataView = this.angularGrid.dataView;
-    
-    console.log('Grid service:', gridService);
-    console.log('DataView:', dataView);
-    
+
     let selectedItems: any[] = [];
-    
+
     if (gridService && gridService.getSelectedRows) {
       const selectedRows = gridService.getSelectedRows();
-      console.log('Selected rows from gridService:', selectedRows);
-      selectedItems = selectedRows.map((idx: number) => dataView.getItem(idx)).filter((item: any) => item);
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
     } else if (dataView && dataView.getSelectedIds) {
       const selectedIds = dataView.getSelectedIds();
-      console.log('Selected IDs from dataView:', selectedIds);
-      selectedItems = selectedIds.map((id: any) => dataView.getItemById(id)).filter((item: any) => item);
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
     }
-    
-    console.log('Selected items:', selectedItems);
-    
+
     if (selectedItems.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
@@ -471,7 +479,6 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     const selectedCodes: string[] = [];
 
     selectedItems.forEach((item: any) => {
-      console.log('Processing item:', item);
       if (item && item.Id) {
         selectedIds.push(item.Id);
         selectedCodes.push(item.Code || '');
@@ -486,9 +493,10 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const confirmMessage = selectedIds.length === 1
-      ? `Bạn có chắc chắn muốn xóa yêu cầu ${selectedCodes[0]}?`
-      : `Bạn có chắc chắn muốn xóa ${selectedIds.length} yêu cầu đã chọn?`;
+    const confirmMessage =
+      selectedIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa yêu cầu ${selectedCodes[0]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedIds.length} yêu cầu đã chọn?`;
 
     this.modal.confirm({
       nzTitle: 'Xác nhận xóa',
@@ -524,5 +532,4 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
       },
     });
   }
-
 }

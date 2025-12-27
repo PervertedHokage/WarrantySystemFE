@@ -75,6 +75,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
     if (this.isEditMode && this.dataInput) {
       this.formGroup.patchValue({
         Name: this.dataInput.Name || '',
+        Code: this.dataInput.Code || '',
       });
     }
   }
@@ -130,7 +131,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
       },
       error: (err) => {
         this.notification.error(NOTIFICATION_TITLE.error, 'Lỗi khi load dữ liệu chi tiết lỗi!');
-        console.error(err);
       },
     });
   }
@@ -205,7 +205,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
       },
       error: (err) => {
         this.notification.error('Thông báo', 'Lỗi khi lưu dữ liệu!');
-        console.error(err);
       },
     });
   }

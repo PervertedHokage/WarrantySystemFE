@@ -26,7 +26,7 @@
           nz-button
           nzType="default"
           nzSize="small"
-          (click)="onDeleteSaleOrder()"
+          (click)="onDeleteMultiple()"
         >
           <img src="assets/icon/action_delete_item_16.png" /> Xóa
         </button>
@@ -39,7 +39,7 @@
             [columns]="columnSaleOrderGroup"
             [options]="gridOptionSaleOrderGroup"
             [dataset]="datasetSaleOrderGroup"
-
+            (onAngularGridCreated)="gridReady($event)"  
             (onActiveCellChanged)="onActiveCellChanged($event)"
             (selectedRowsChanged)="onSelectedRowsChanged($event)"
           >

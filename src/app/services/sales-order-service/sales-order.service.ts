@@ -14,10 +14,7 @@ export class SalesOrderService {
     const asset: any = {
       OrderId: OrderId || 0,
     };
-    return this.http.post<any>(
-      environment.host + `api/saleorder`,
-      asset
-    );
+    return this.http.post<any>(environment.host + `api/saleorder`, asset);
   }
 
   getProduct(ProductId: number): Observable<any> {
@@ -35,5 +32,9 @@ export class SalesOrderService {
       environment.host + `api/saleorder/save-data-sale-order`,
       data
     );
+  }
+
+  deleteSaleOrder(ids: number[]): Observable<any> {
+    return this.http.post<any>(environment.host + `api/saleorder/delete`, ids);
   }
 }
