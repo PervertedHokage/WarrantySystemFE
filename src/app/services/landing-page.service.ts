@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
-import { WarrantyClaim } from '../models/warranty-claim.model';
+import { WarrantyClaim } from '../models/warranty-claims/warranty-claim.model';
 import { APIResponse } from '../models/api-response.interface';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { WarrantyClaimTracking } from '../models/warranty-claim-tracking.model';
+import { WarrantyClaimTracking } from '../models/warranty-claims/warranty-claim-tracking.model';
 
 @Injectable({
   providedIn: 'root',

@@ -5,6 +5,7 @@ import { HttpParams } from '@angular/common/http';
 import { Product } from '../../models/product.model';
 import { environment } from '../../environments/environment';
 import { APIResponse } from '../../models/api-response.interface';
+import { SparePart } from '../../models/spare-parts.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,11 @@ export class ProductService {
       environment.host + `api/products`
     );
   }
-
+  getAllSpareParts() {
+    return this.http.get<APIResponse<SparePart[]>>(
+      environment.host + `api/products/spare-parts-all`
+    );
+  }
   getSparePart(ProductId: number): Observable<any> {
     const asset: any = {
       ProductId: ProductId || 0,

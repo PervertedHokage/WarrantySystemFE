@@ -107,10 +107,10 @@ button.ant-btn.btn-delete{
   display:flex; align-items:center; justify-content:center;
 }
  */
-.btn-apply-filter{
+.btn-apply-filter {
   background-color: #385df1 !important;
-    color: #fff !important;
-    border: none !important;
+  color: #fff !important;
+  border: none !important;
 }
 
 .btn-reset-filter {
@@ -338,7 +338,7 @@ button[nz-button] img {
   font-size: 13px !important;
   color: #2c3e50 !important;
   text-transform: uppercase !important;
-  
+
   &:hover {
     background: rgba(0, 0, 0, 0.05) !important;
   }
@@ -349,13 +349,14 @@ button[nz-button] img {
   font-weight: 700 !important;
 }
 
- .slick-sort-indicator {
+.slick-sort-indicator {
   color: #3498db !important;
   font-size: 14px !important;
 }
+
 .slick-header-menubutton {
   color: #7f8c8d !important;
-  
+
   &:hover {
     color: #2c3e50 !important;
   }
@@ -372,12 +373,13 @@ button[nz-button] img {
   border-right: 1px solid #f0f0f0 !important;
   padding: 4px 8px !important;
 }
+
 .slick-headerrow-column input {
   border: 1px solid #d9d9d9 !important;
   border-radius: 4px !important;
   padding: 4px 8px !important;
   font-size: 12px !important;
-  
+
   &:focus {
     border-color: #40a9ff !important;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
@@ -390,7 +392,7 @@ button[nz-button] img {
   &:hover {
     background: #f5f5f5 !important;
   }
-  
+
   &.active {
     background: #e6f7ff !important;
   }
@@ -401,4 +403,7 @@ button[nz-button] img {
   border-bottom: 1px solid #f0f0f0 !important;
   padding: 8px 12px !important;
   font-size: 13px !important;
+}
+.ant-table-placeholder{
+  display: none;
 }

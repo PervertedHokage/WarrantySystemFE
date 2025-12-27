@@ -26,7 +26,7 @@ import {
   GridOption,
   OnEventArgs,
 } from 'angular-slickgrid';
-import { WarrantyClaim } from '../../../../models/warranty-claim.model';
+import { WarrantyClaim } from '../../../../models/warranty-claims/warranty-claim.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { WarrantyClaimManagementService } from '../../../../services/warranty-claim-management.service';
 import { WarrantyManagmentModalComponent } from './warranty-managment-modal/warranty-managment-modal.component';
@@ -34,7 +34,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { WarrantyClaimDTO } from '../../../../models/warranty-claim-dto.model';
+import { WarrantyClaimDTO } from '../../../../models/warranty-claims/warranty-claim-dto.model';
 @Component({
   selector: 'app-warranty-management',
   templateUrl: './warranty-management.component.html',

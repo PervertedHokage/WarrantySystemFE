@@ -1,11 +1,9 @@
-export class QuotationDTO {
+export class Quotation {
   Id: number = 0;
 
   QuotationNumber: string | null = null;
 
   WarrantyClaimId: number | null = null;
-
-  ClaimNo: string | null = '';
 
   CustomerName: string | null = null;
 
@@ -15,35 +13,38 @@ export class QuotationDTO {
 
   CustomerAddress: string | null = null;
 
-  ProductSerialId: number | null = null;
-
-  ProductName: string | null = null;
-
+  /**
+   * 1 = Đã gửi, 2 = Chưa gửi, 3 = Đã duyệt, 4 = Đã từ chối, 5 = Hết hạn
+   */
   StatusQuotation: number | null = null;
-
-  StatusQuotationText: string | null = null;
 
   Note: string | null = null;
 
-  DeadLine: Date | null = null;
+  StartTime: Date | string | null = new Date();
 
-  CreatedDate: Date | null = null;
+  DeadLine: Date | string | null = new Date(
+    Date.now() + 7 * 24 * 60 * 60 * 1000
+  );
+
+  CreatedDate: Date | string | null = null;
 
   CreatedBy: string | null = null;
 
-  UpdatedDate: Date | null = null;
+  UpdatedDate: Date | string | null = null;
 
   UpdatedBy: string | null = null;
 
   StatusReply: number | null = null;
 
-  StatusReplyText: string | null = null;
-
-  ReplyDate: Date | null = null;
+  ReplyDate: Date | string | null = null;
 
   ReplyNote: string | null = null;
 
-  constructor(init?: Partial<QuotationDTO>) {
+  VATfee: number = 0;
+
+  IsDeleted: boolean | null = null;
+
+  constructor(init?: Partial<Quotation>) {
     Object.assign(this, init);
   }
 }

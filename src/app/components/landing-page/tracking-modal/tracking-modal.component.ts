@@ -1,8 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnInit,
+} from '@angular/core';
 import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
-import { WarrantyClaim } from '../../../models/warranty-claim.model';
+import { WarrantyClaim } from '../../../models/warranty-claims/warranty-claim.model';
 import { TuiConnected, TuiStepper } from '@taiga-ui/kit';
-import { WarrantyClaimTracking } from '../../../models/warranty-claim-tracking.model';
+import { WarrantyClaimTracking } from '../../../models/warranty-claims/warranty-claim-tracking.model';
 import { LandingPageService } from '../../../services/landing-page.service';
 
 @Component({
@@ -38,6 +44,5 @@ export class TrackingModalComponent implements OnInit {
   }
   onClick() {
     console.log(this.activeIndex);
-
   }
 }

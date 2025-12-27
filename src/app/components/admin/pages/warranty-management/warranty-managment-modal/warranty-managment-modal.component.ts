@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { WarrantyClaim } from '../../../../../models/warranty-claim.model';
+import { WarrantyClaim } from '../../../../../models/warranty-claims/warranty-claim.model';
 
 @Component({
   selector: 'app-warranty-managment-modal',

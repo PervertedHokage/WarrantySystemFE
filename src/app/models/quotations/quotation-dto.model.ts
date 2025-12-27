@@ -1,4 +1,4 @@
-export class Quotation {
+export class QuotationDTO {
   Id: number = 0;
 
   QuotationNumber: string | null = null;
@@ -13,11 +13,14 @@ export class Quotation {
 
   CustomerAddress: string | null = null;
 
-  ProductSerialId: number | null = null;
-
+  /**
+   * 1 = Đã gửi, 2 = Chưa gửi, 3 = Đã duyệt, 4 = Đã từ chối, 5 = Hết hạn
+   */
   StatusQuotation: number | null = null;
 
   Note: string | null = null;
+
+  StartTime: Date | null = null;
 
   DeadLine: Date | null = null;
 
@@ -35,7 +38,21 @@ export class Quotation {
 
   ReplyNote: string | null = null;
 
-  constructor(init?: Partial<Quotation>) {
+  Vatfee: number | null = null;
+
+  IsDeleted: boolean | null = null;
+
+  ClaimNo: string | null = null;
+
+  ProductSerialId: number | null = null;
+
+  ProductName: string | null = null;
+
+  StatusQuotationText: string | null = null;
+
+  StatusReplyText: string | null = null;
+
+  constructor(init?: Partial<QuotationDTO>) {
     Object.assign(this, init);
   }
 }

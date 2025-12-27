@@ -55,7 +55,7 @@ import {
   GridOption,
   OnEventArgs,
 } from 'angular-slickgrid';
-import { WarrantyClaim } from '../../models/warranty-claim.model';
+import { WarrantyClaim } from '../../models/warranty-claims/warranty-claim.model';
 import { LandingPageService } from '../../services/landing-page.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../app.config';
@@ -576,6 +576,8 @@ export class LandingPageComponent
             'Đăng ký thành công'
           );
           this.newWarrantyClaimForm.reset();
+          this.destroyCaptcha();
+          setTimeout(() => this.initCaptcha());
         },
         error: (error: APIResponse<WarrantyClaim>) => {
           this.notification.error(
