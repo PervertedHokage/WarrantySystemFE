@@ -404,6 +404,17 @@ button[nz-button] img {
   padding: 8px 12px !important;
   font-size: 13px !important;
 }
-.ant-table-placeholder{
+
+/* Bỏ màu dòng lẻ */
+.slick-row.odd:not(.active):not(:hover) {
+  background: transparent !important;
+}
+
+/* Nếu muốn đảm bảo cả dòng chẵn */
+.slick-row.even:not(.active):not(:hover) {
+  background: transparent !important;
+}
+
+.ant-table-placeholder {
   display: none;
 }

@@ -52,6 +52,83 @@
       <div class="overview-sub">Work Order</div>
     </div>
   </div>
+  <div class="wo-board">
+    <div class="wo-col">
+      <div class="wo-col-header">
+        <div class="wo-col-title">Chờ xử lý</div>
+        <span class="wo-badge">{{ countChoXuLy }}</span>
+      </div>
+      <div class="wo-col-body">
+        <div
+          class="wo-item"
+          *ngFor="let item of woChoXuLy"
+          (click)="openWorkOrder(item)"
+        >
+          <div class="wo-item-code">{{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
+          <div class="wo-item-line">KT: {{ item?.FullName || '-' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wo-col">
+      <div class="wo-col-header">
+        <div class="wo-col-title">Đang sửa chữa</div>
+        <span class="wo-badge">{{ countDangSuaChua }}</span>
+      </div>
+      <div class="wo-col-body">
+        <div
+          class="wo-item"
+          *ngFor="let item of woDangSuaChua"
+          (click)="openWorkOrder(item)"
+        >
+          <div class="wo-item-code">{{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
+          <div class="wo-item-line">KT: {{ item?.FullName || '-' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wo-col">
+      <div class="wo-col-header">
+        <div class="wo-col-title">Chờ vật tư</div>
+        <span class="wo-badge">{{ countChoVatTu }}</span>
+      </div>
+      <div class="wo-col-body">
+        <div
+          class="wo-item"
+          *ngFor="let item of woChoVatTu"
+          (click)="openWorkOrder(item)"
+        >
+          <div class="wo-item-code">{{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
+          <div class="wo-item-line">KT: {{ item?.FullName || '-' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wo-col">
+      <div class="wo-col-header">
+        <div class="wo-col-title">Hoàn thành</div>
+        <span class="wo-badge">{{ countHoanThanh }}</span>
+      </div>
+      <div class="wo-col-body">
+        <div
+          class="wo-item"
+          *ngFor="let item of woHoanThanh"
+          (click)="openWorkOrder(item)"
+        >
+          <div class="wo-item-code">{{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
+          <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
+          <div class="wo-item-line">KT: {{ item?.FullName || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="grid-container">
     <div class="grid-workorder-container">
       <angular-slickgrid

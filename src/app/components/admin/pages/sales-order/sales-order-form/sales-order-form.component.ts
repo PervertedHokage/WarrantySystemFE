@@ -94,6 +94,35 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     return start.getTime() < end.getTime();
   }
 
+  private getMissingTableColumns(tableData: any[]): string[] {
+    const rows = Array.isArray(tableData) ? tableData : [];
+    const missing = new Set<string>();
+
+    const isEmpty = (v: any) => v === null || v === undefined || String(v).trim() === '';
+
+    rows.forEach((row: any) => {
+      const productId = Number(row?.ProductId || 0);
+      if (!productId || productId <= 0) missing.add('Sản phẩm');
+
+      if (isEmpty(row?.ProductSerial)) missing.add('Serial sản phẩm');
+
+      const qty = Number(row?.Quantity);
+      if (!qty || Number.isNaN(qty) || qty <= 0) missing.add('Số lượng');
+
+      const price = Number(row?.Price);
+      if (isEmpty(row?.Price) || Number.isNaN(price) || price < 0) missing.add('Giá bán');
+
+      if (isEmpty(row?.DateStart)) missing.add('Ngày kích hoạt');
+      if (isEmpty(row?.DateEnd)) missing.add('Ngày bảo hành');
+
+      if (!isEmpty(row?.DateStart) && !isEmpty(row?.DateEnd) && !this.validateRowDates(row)) {
+        missing.add('Ngày kích hoạt phải nhỏ hơn hạn bảo hành');
+      }
+    });
+
+    return Array.from(missing);
+  }
+
   ngOnInit(): void {
     if (this.isEditMode && this.dataInput) {
       this.formGroup.patchValue({
@@ -265,7 +294,16 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     const tableData = this.OrderTable?.getData() || [];
     
     if (tableData.length === 0) {
-      this.notification.warning('Thông báo', 'Vui lòng thêm ít nhất 1 thiết bị!');
+      this.notification.warning('Thông báo', 'Vui lòng thêm ít nhất 1 sản phẩm!');
+      return;
+    }
+
+    const missingColumns = this.getMissingTableColumns(tableData);
+    if (missingColumns.length) {
+      this.notification.warning(
+        'Thông báo',
+        `Vui lòng nhập đầy đủ các cột: ${missingColumns.join(', ')}`
+      );
       return;
     }
 
@@ -324,10 +362,13 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
           );
         }
       },
-      error: (err) => {
-        this.notification.error('Thông báo', 'Lỗi khi lưu dữ liệu!');
-      },
-    });
+       error: (err) => {
+             this.notification.error(
+               NOTIFICATION_TITLE.error,
+               err?.error?.message || err?.message
+             );
+           },
+         });
   }
 
   draw_OrderTable() {
