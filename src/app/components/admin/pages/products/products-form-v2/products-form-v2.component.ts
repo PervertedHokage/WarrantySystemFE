@@ -90,7 +90,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
         Code: this.dataInput.Code || '',
         Description: this.dataInput.Description || '',
       });
-      this.loadsparePartDetailData();
+      // this.loadsparePartDetailData();
     }
 
     this.loadOptionUnit();
@@ -184,6 +184,27 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
     });
   }
 
+  private getMissingTableColumns(tableData: any[]): string[] {
+    const rows = Array.isArray(tableData) ? tableData : [];
+    const missing = new Set<string>();
+
+    const isEmpty = (v: any) =>
+      v === null || v === undefined || String(v).trim() === '';
+
+    rows.forEach((row: any) => {
+      const productId = Number(row?.Name || 0);
+      if (!productId || productId <= 0) missing.add('Tên linh kiện');
+
+      if (isEmpty(row?.SparePartNumber)) missing.add('Mã linh kiện');
+      if (isEmpty(row?.Description)) missing.add('Mô tả');
+
+      const qty = Number(row?.UnitId);
+      if (!qty || Number.isNaN(qty) || qty <= 0) missing.add('Đơn vị');
+    });
+
+    return Array.from(missing);
+  }
+
   private trimAllStringControls() {
     Object.keys(this.formGroup.controls).forEach((k) => {
       const c = this.formGroup.get(k);
@@ -207,14 +228,21 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
     if (tableData.length === 0) {
       this.notification.warning(
         'Thông báo',
-        'Vui lòng thêm ít nhất 1 thiết bị!'
+        'Vui lòng thêm ít nhất 1 linh kiện!'
+      );
+      return;
+    }
+
+    const missingColumns = this.getMissingTableColumns(tableData);
+    if (missingColumns.length) {
+      this.notification.warning(
+        'Thông báo',
+        `Vui lòng nhập đầy đủ các cột: ${missingColumns.join(', ')}`
       );
       return;
     }
 
     const formValue = this.formGroup.value;
-    if (this.isEditMode) {
-    }
 
     const payload = {
       Product: {
@@ -237,7 +265,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
             Id: this.isEditMode ? item.Id || 0 : 0,
             Description: item.Description,
             SparePartNumber: item.SparePartNumber,
-            UnitId: item.UnitId 
+            UnitId: item.UnitId,
           },
         ],
       })),
@@ -276,12 +304,12 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
     } else {
       this.sparePartTable = new Tabulator(this.tableRef1.nativeElement, {
         data: this.sparePartData,
-        layout: 'fitColumns',
+        layout: 'fitDataStretch',
         height: '100%',
         placeholder: 'Không có dữ liệu',
         movableColumns: true,
         resizableRows: true,
-        reactiveData: true,
+        // reactiveData: true,
         selectableRows: 1,
         columns: [
           {
@@ -353,7 +381,8 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
             headerHozAlign: 'center',
             minWidth: 400,
             maxWidth: 500,
-            editor: 'textarea',
+            editor: 'input',
+            formatter: 'textarea',
           },
           {
             title: 'Đơn vị',

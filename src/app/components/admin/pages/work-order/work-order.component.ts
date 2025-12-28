@@ -87,6 +87,11 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
   countChoVatTu: number = 0;
   countHoanThanh: number = 0;
 
+  woChoXuLy: any[] = [];
+  woDangSuaChua: any[] = [];
+  woChoVatTu: any[] = [];
+  woHoanThanh: any[] = [];
+
   isCheckmode: boolean = false;
   WorkOrderId: number = 0;
   WorkOrderData: any;
@@ -282,6 +287,27 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
           `;
         },
       },
+      {
+        id: 'actions',
+        name: 'Thao tác',
+        field: 'actions',
+        minWidth: 90,
+        maxWidth: 110,
+        sortable: false,
+        filterable: false,
+        excludeFromColumnPicker: true,
+        formatter: () => {
+          return `
+            <button class="btn btn-sm wo-view-btn" type="button" style="background-color: #f39c12; color: #fff;">Xem</button>
+          `;
+        },
+        onCellClick: (_e, args) => {
+          const item = args?.dataContext;
+          this.WorkOrderId = item?.Id ?? 0;
+          this.WorkOrderData = item || null;
+          this.onAddWorkOrder(true);
+        },
+      },
     ];
 
     this.gridOptionsWorkOrder = {
@@ -325,10 +351,24 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
       items.filter((x: any) => (x?.Status || '').toString().trim() === status)
         .length;
 
+    const listByStatus = (status: string) =>
+      items.filter((x: any) => (x?.Status || '').toString().trim() === status);
+
     this.countChoXuLy = countByStatus('Chờ xử lý');
     this.countDangSuaChua = countByStatus('Đang sửa chữa');
     this.countChoVatTu = countByStatus('Chờ vật tư');
     this.countHoanThanh = countByStatus('Hoàn thành');
+
+    this.woChoXuLy = listByStatus('Chờ xử lý');
+    this.woDangSuaChua = listByStatus('Đang sửa chữa');
+    this.woChoVatTu = listByStatus('Chờ vật tư');
+    this.woHoanThanh = listByStatus('Hoàn thành');
+  }
+
+  openWorkOrder(item: any): void {
+    this.WorkOrderId = item?.Id ?? 0;
+    this.WorkOrderData = item || null;
+    this.onAddWorkOrder(true);
   }
 
   onActiveCellChanged(e: any) {
