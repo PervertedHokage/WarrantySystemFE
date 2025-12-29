@@ -20,6 +20,7 @@ import { QuotationComponent } from '../pages/quotation/quotation.component';
 import { UnitComponent } from '../pages/unit/unit.component';
 import { WorkOrderComponent } from '../pages/work-order/work-order.component';
 import { SerialComponent } from '../pages/serial/serial.component';
+import { RegisterComponent } from '../pages/register/register.component';
 
 @Injectable({
   providedIn: 'root',
@@ -169,7 +170,15 @@ export class MenuService {
               comp: WorkOrderComponent,
               icon: 'assets/icon/menu_crm.svg',
           },
-          
+            {
+              kind: 'leaf',
+              key: 'RegisterComponent',
+              title: 'User ',
+              isOpen: true,
+              isPermission: true,
+              comp: RegisterComponent,
+              icon: 'assets/icon/menu_crm.svg',
+          },
         ];
 
 
