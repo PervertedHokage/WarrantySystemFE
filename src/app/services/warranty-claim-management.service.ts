@@ -52,4 +52,9 @@ export class WarrantyClaimManagementService {
       data
     );
   }
+  delete(data: WarrantyClaim | WarrantyClaimDTO) {
+    return this.http.delete<APIResponse<WarrantyClaim | WarrantyClaimDTO>>(
+      this.apiUrl + data.Id
+    );
+  }
 }

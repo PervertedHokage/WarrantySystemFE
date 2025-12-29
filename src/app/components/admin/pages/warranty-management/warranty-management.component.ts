@@ -481,6 +481,26 @@ export class WarrantyManagementComponent implements OnInit {
       }
     });
   }
+  onDelete() {
+    const selectedData = this.angularGrid.gridService.getSelectedRowsDataItem();
+    if (!selectedData.length) {
+      this.notification.warning('Thông báo', 'Vui lòng chọn 1 phiếu bảo hành');
+      return;
+    }
+    const confirmed = confirm('Bạn có chắc chắn muốn xóa?');
+    if (!confirmed) return;
+    this.warrantyService.delete(selectedData[0]).subscribe({
+      next: () => {
+        this.loadData();
+      },
+      error: () => {
+        this.notification.error(
+          'Lỗi',
+          'Thao tác thất bại'
+        );
+      },
+    });
+  }
   applyFilter() {
     this.loadData();
   }
