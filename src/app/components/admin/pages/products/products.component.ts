@@ -71,7 +71,6 @@ import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
     NzModalModule,
     NzFormModule,
     NzInputNumberModule,
-    
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.less',
@@ -90,7 +89,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   slickGrid: any;
   angularGridSparePart: any;
   dataViewSparePart: any;
-
 
   // slickgrid refs
   angularGrid: any;
@@ -184,9 +182,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     };
   }
 
-   defineSparePartGrid() {
-    this.columnSparePart= [
-        {
+  defineSparePartGrid() {
+    this.columnSparePart = [
+      {
         id: 'stt',
         name: 'STT',
         field: 'stt',
@@ -198,7 +196,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
           // STT động dựa trên số thứ tự dòng (bắt đầu từ 1)
           return row !== undefined && row !== null ? (row + 1).toString() : '';
         },
-        
       },
       {
         id: 'SparePartNumber',
@@ -210,7 +207,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         filter: { model: Filters['compoundInputText'] },
         maxWidth: 200,
         minWidth: 150,
-        cssClass: 'cell-wrap'
+        cssClass: 'cell-wrap',
       },
       {
         id: 'Name',
@@ -222,7 +219,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         filter: { model: Filters['compoundInputText'] },
         maxWidth: 300,
         minWidth: 250,
-        cssClass: 'cell-wrap'
+        cssClass: 'cell-wrap',
       },
       {
         id: 'Description',
@@ -233,9 +230,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
-        cssClass: 'cell-wrap'
+        cssClass: 'cell-wrap',
       },
-        {
+      {
         id: 'UnitName',
         name: 'Đơn vị',
         field: 'UnitName',
@@ -255,7 +252,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         resizeDetection: 'container',
       },
       enableSorting: true,
-      enableFiltering: true, 
+      enableFiltering: true,
       forceFitColumns: false,
       enableRowSelection: true,
       enableCheckboxSelector: true,
@@ -266,7 +263,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   getProducts() {
     this.productService.getDataProducts().subscribe((res: any) => {
       this.datasetProduct = res?.data || [];
-      
     });
   }
 
@@ -322,9 +318,10 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const confirmMessage = selectedIds.length === 1
-      ? `Bạn có chắc chắn muốn xóa sản phẩm ${selectedNames[0]}?`
-      : `Bạn có chắc chắn muốn xóa ${selectedIds.length} sản phẩm đã chọn?`;
+    const confirmMessage =
+      selectedIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa sản phẩm ${selectedNames[0]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedIds.length} sản phẩm đã chọn?`;
 
     this.modal.confirm({
       nzTitle: 'Xác nhận xóa',
@@ -362,12 +359,12 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     });
   }
 
-    getSparePart() {
+  getSparePart() {
     this.productService
       .getSparePart(this.ProductID)
       .subscribe((response: any) => {
         this.datasetSparePart = response?.data || [];
-        
+
         if (this.angularGridSparePart) {
           this.angularGridSparePart.filterService?.clearFilters();
 
@@ -394,7 +391,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
           }
         }
       });
-
   }
 
   onAddProduct(isEditmode: boolean): void {
@@ -412,7 +408,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       nzWidth: '50vw',
       nzBodyStyle: {
         'max-height': '70vh',
-        'overflow': 'auto',
+        overflow: 'auto',
       },
       nzFooter: null,
       nzMaskClosable: false,
@@ -427,7 +423,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     modalRef.afterClose.subscribe((result) => {
       if (result === true) {
         this.getProducts();
-         if (this.ProductID) {
+        if (this.ProductID) {
           this.getSparePart();
         }
       }
@@ -484,7 +480,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     this.dataView = this.angularGrid?.dataView;
   }
 
-    gridSparePartReady(e: any) {
+  gridSparePartReady(e: any) {
     this.angularGridSparePart = e?.detail?.angularGrid || e?.detail || e;
     this.dataViewSparePart = this.angularGridSparePart?.dataView;
   }

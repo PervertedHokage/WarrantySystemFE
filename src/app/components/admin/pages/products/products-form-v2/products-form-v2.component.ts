@@ -385,8 +385,8 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
           {
             title: 'Đơn vị',
             field: 'UnitId',
-            minWidth: 50,
-            maxWidth: 100,
+            minWidth: 150,
+            maxWidth: 200,
             headerHozAlign: 'center',
             editor: this.createdControl(
               SelectControlComponent,
