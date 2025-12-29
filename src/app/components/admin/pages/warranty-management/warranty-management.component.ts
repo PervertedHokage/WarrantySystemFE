@@ -360,7 +360,10 @@ export class WarrantyManagementComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          this.dataset = [...res.data];
+          this.dataset = res.data.map((d) => ({
+            ...d,
+            StatusText: this.getStatusText(d.Status ?? 0),
+          }));
           this.angularGrid.dataView.setItems(this.dataset, 'Id');
           this.cdr.detectChanges();
           this.angularGrid.slickGrid.invalidate(); // fallback
