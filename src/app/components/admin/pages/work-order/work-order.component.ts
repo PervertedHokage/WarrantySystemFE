@@ -187,6 +187,18 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
+        formatter: (_row, _cell, value, columnDef, dataContext) => {
+          const productName = value || '';
+          const productCode = dataContext?.ProductCode || '';
+          
+          if (productCode && productName) {
+            return `${productCode} - ${productName}`;
+          } else if (productCode) {
+            return productCode;
+          } else {
+            return productName;
+          }
+        },
       },
       {
         id: 'FullName',
