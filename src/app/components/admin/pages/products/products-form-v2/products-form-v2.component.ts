@@ -192,9 +192,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
       v === null || v === undefined || String(v).trim() === '';
 
     rows.forEach((row: any) => {
-      const productId = Number(row?.Name || 0);
-      if (!productId || productId <= 0) missing.add('Tên linh kiện');
-
+      if (isEmpty(row?.Name)) missing.add('Tên linh kiện');
       if (isEmpty(row?.SparePartNumber)) missing.add('Mã linh kiện');
       if (isEmpty(row?.Description)) missing.add('Mô tả');
 
