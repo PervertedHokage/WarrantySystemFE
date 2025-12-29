@@ -53,86 +53,75 @@ export class MenuService {
     1, 23, 24, 78, 88, 1221, 1313, 1434, 1431, 53, 51, 1534,
   ];
 
-    getMenus(): MenuItem[] {
-        let id = this.appUserService.currentUser?.ID || 0;
-        let employeeID = this.appUserService.currentUser?.EmployeeID || 0;
-        let departmentID = this.appUserService.currentUser?.DepartmentID || 0;
-        let positionID = this.appUserService.currentUser?.PositionID || 0;
-        let isHR =
-            this.employeeHRs.includes(employeeID) ||
-            this.departmentHRs.includes(departmentID);
+  getMenus(): MenuItem[] {
+    let id = this.appUserService.currentUser?.ID || 0;
+    let employeeID = this.appUserService.currentUser?.EmployeeID || 0;
+    let departmentID = this.appUserService.currentUser?.DepartmentID || 0;
+    let positionID = this.appUserService.currentUser?.PositionID || 0;
+    let isHR =
+      this.employeeHRs.includes(employeeID) ||
+      this.departmentHRs.includes(departmentID);
 
-        const isAdmin =
-            this.appUserService.currentUser?.IsAdmin &&
-            this.appUserService.currentUser?.EmployeeID <= 0;
-        const menus: MenuItem[] = [
-          //#region menu CRM
+    const isAdmin =
+      this.appUserService.currentUser?.IsAdmin &&
+      this.appUserService.currentUser?.EmployeeID <= 0;
+    const menus: MenuItem[] = [
+      //#region menu CRM
+      {
+        kind: 'group',
+        key: 'crm',
+        stt: 1,
+        title: 'Organization',
+        isOpen: true,
+        isPermission: true,
+        icon: 'assets/icon/menu_crm.svg',
+        children: [
           {
-            kind: 'group',
-            key: 'crm',
-            stt: 1,
-            title: 'Organization',
+            kind: 'leaf',
+            key: 'RegisterComponent',
+            title: 'User ',
             isOpen: true,
             isPermission: true,
+            comp: RegisterComponent,
             icon: 'assets/icon/menu_crm.svg',
-            children: [
-              {
-                kind: 'leaf',
-                key: 'OrganizationComponent',
-                title: 'User',
-                isOpen: true,
-                isPermission: true,
-                comp: OrganizationComponent,
-                // icon: 'assets/icon/menu_crm.svg',
-              },
-            ],
           },
+        ],
+      },
+      {
+        kind: 'group',
+        key: 'management',
+        stt: 2,
+        title: 'Nghiệp vụ',
+        isOpen: false,
+        isPermission: true,
+        icon: 'assets/icon/hr_asset_management_24.svg',
+        children: [
           {
-            kind: 'group',
-            key: 'management',
-            stt: 2,
-            title: 'Nghiệp vụ',
-            isOpen: false,
+            kind: 'leaf',
+            key: 'WarrantyManagementComponent',
+            title: 'Quản lý yêu cầu bảo hành',
+            isOpen: true,
             isPermission: true,
-            icon: 'assets/icon/hr_asset_management_24.svg',
-            children: [
-              {
-                kind: 'leaf',
-                key: 'WarrantyManagementComponent',
-                title: 'Quản lý yêu cầu bảo hành',
-                isOpen: true,
-                isPermission: true,
-                comp: WarrantyManagementComponent,
-                // icon: 'assets/icon/menu_crm.svg',
-              },
-              {
-                kind: 'leaf',
-                key: 'QuotationComponent',
-                title: 'Báo giá',
-                isOpen: true,
-                isPermission: true,
-                comp: QuotationComponent,
-                // icon: 'assets/icon/menu_crm.svg',
-              },
-            ],
+            comp: WarrantyManagementComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
           {
             kind: 'leaf',
-            key: 'ProductsComponent',
-            title: 'Sản phẩm',
+            key: 'QuotationComponent',
+            title: 'Báo giá',
             isOpen: true,
             isPermission: true,
-            comp: ProductsComponent,
-            icon: 'assets/icon/menu_crm.svg',
+            comp: QuotationComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
           {
             kind: 'leaf',
-            key: 'IssuesComponent',
-            title: 'Hiện tượng hỏng ',
+            key: 'WorkOrderComponent',
+            title: 'Work Order ',
             isOpen: true,
             isPermission: true,
-            comp: IssuesComponent,
-            icon: 'assets/icon/menu_crm.svg',
+            comp: WorkOrderComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
           {
             kind: 'leaf',
@@ -141,46 +130,67 @@ export class MenuService {
             isOpen: true,
             isPermission: true,
             comp: SalesOrderComponent,
-            icon: 'assets/icon/menu_crm.svg',
+            // icon: 'assets/icon/menu_crm.svg',
+          },
+        ],
+      },
+      {
+        kind: 'group',
+        key: 'masterdata',
+        stt: 3,
+        title: 'Master Data',
+        isOpen: true,
+        isPermission: true,
+        icon: 'assets/icon/hr_asset_management_24.svg',
+        children: [
+          {
+            kind: 'leaf',
+            key: 'ProductsComponent',
+            title: 'Sản phẩm',
+            isOpen: true,
+            isPermission: true,
+            comp: ProductsComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
           {
-              kind: 'leaf',
-              key: 'UnitComponent',
-              title: 'Đơn vị ',
-              isOpen: true,
-              isPermission: true,
-              comp: UnitComponent,
-              icon: 'assets/icon/menu_crm.svg',
+            kind: 'leaf',
+            key: 'IssuesComponent',
+            title: 'Hiện tượng hỏng ',
+            isOpen: true,
+            isPermission: true,
+            comp: IssuesComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
-           {
-              kind: 'leaf',
-              key: 'SerialComponent',
-              title: 'Serial',
-              isOpen: true,
-              isPermission: true,
-              comp: SerialComponent,
-              icon: 'assets/icon/menu_crm.svg',
+          {
+            kind: 'leaf',
+            key: 'UnitComponent',
+            title: 'Đơn vị ',
+            isOpen: true,
+            isPermission: true,
+            comp: UnitComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
-            {
-              kind: 'leaf',
-              key: 'WorkOrderComponent',
-              title: 'Work Order ',
-              isOpen: true,
-              isPermission: true,
-              comp: WorkOrderComponent,
-              icon: 'assets/icon/menu_crm.svg',
+          {
+            kind: 'leaf',
+            key: 'SerialComponent',
+            title: 'Serial',
+            isOpen: true,
+            isPermission: true,
+            comp: SerialComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
-            {
-              kind: 'leaf',
-              key: 'RegisterComponent',
-              title: 'User ',
-              isOpen: true,
-              isPermission: true,
-              comp: RegisterComponent,
-              icon: 'assets/icon/menu_crm.svg',
+          {
+            kind: 'leaf',
+            key: 'WorkOrderComponent',
+            title: 'Work Order ',
+            isOpen: true,
+            isPermission: true,
+            comp: WorkOrderComponent,
+            // icon: 'assets/icon/menu_crm.svg',
           },
-        ];
-
+        ],
+      },
+    ];
 
     return menus;
   }
