@@ -4,6 +4,7 @@ import {
   ViewChild,
   ElementRef,
   TemplateRef,
+  Input,
 } from '@angular/core';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule, NgIf } from '@angular/common';
@@ -38,9 +39,11 @@ import { QuotationModalComponent } from './quotation-modal/quotation-modal.compo
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { QuotationService } from '../../../../services/quotations-service/quotation.service';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { Quotation } from '../../../../models/quotations/quotation.model';
 
 @Component({
-  selector: 'app-quotation',
+  selector: 'quotation',
   templateUrl: './quotation.component.html',
   styleUrls: ['./quotation.component.less'],
   imports: [
@@ -49,12 +52,15 @@ import { QuotationService } from '../../../../services/quotations-service/quotat
     AngularSlickgridModule,
     NzModalModule,
     NzButtonModule,
+    NzInputModule,
     NzDatePickerModule,
     NzIconModule,
   ],
 })
 export class QuotationComponent implements OnInit {
+  @Input() claimNo: string = '';
   angularGrid!: AngularGridInstance;
+  gridId = `grid-quotation-${crypto.randomUUID()}`;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: QuotationDTO[] = [];
@@ -69,6 +75,7 @@ export class QuotationComponent implements OnInit {
   filter = {
     fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
     toDate: new Date(),
+    claimNo: this.claimNo,
   };
   constructor(
     private modal: NzModalService,
@@ -389,7 +396,11 @@ export class QuotationComponent implements OnInit {
   }
   loadData() {
     this.quotationService
-      .getAll(this.filter.fromDate, this.filter.toDate)
+      .getAll(
+        this.filter.fromDate,
+        this.filter.toDate,
+        this.filter.claimNo.trim()
+      )
       .subscribe({
         next: (res) => {
           this.dataset = res.data;
@@ -419,7 +430,8 @@ export class QuotationComponent implements OnInit {
     });
 
     modalRef.afterClose.subscribe((result) => {
-      if (result === true) {
+      if (result) {
+        this.loadData();
       }
     });
   }
@@ -429,7 +441,7 @@ export class QuotationComponent implements OnInit {
       this.notification.warning('Thông báo', 'Vui lòng chọn 1 phiếu báo giá');
       return;
     }
-    
+
     const modalRef = this.modal.create({
       nzTitle: 'Chỉnh sửa phiếu báo giá',
       nzContent: QuotationModalComponent,
@@ -449,8 +461,28 @@ export class QuotationComponent implements OnInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result === true) {
+        this.loadData();
       }
     });
+  }
+  onDelete() {
+    const selectedData = this.angularGrid.gridService.getSelectedRowsDataItem();
+    if (!selectedData.length) {
+      this.notification.warning('Thông báo', 'Vui lòng chọn 1 phiếu báo giá');
+      return;
+    }
+    const confirmed = confirm('Bạn có chắc chắn muốn xóa không?')
+    if (!confirmed) return;
+    const quotation = new Quotation(selectedData[0]);
+    quotation.IsDeleted = true;
+    this.quotationService.update(quotation).subscribe({
+      next: res => {
+        this.loadData();
+      },
+      error: err => {
+        this.notification.error('Lỗi', 'Thao tác thất bại');
+      }
+    })
   }
   applyFilter() {
     this.loadData();
@@ -459,6 +491,7 @@ export class QuotationComponent implements OnInit {
     this.filter = {
       fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
       toDate: new Date(),
+      claimNo: this.claimNo.trim(),
     };
   }
 }

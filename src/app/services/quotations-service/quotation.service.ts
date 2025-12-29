@@ -12,11 +12,12 @@ import { QuotationDTO } from '../../models/quotations/quotation-dto.model';
 export class QuotationService {
   private apiUrl = environment.host + 'api/quotation/';
   constructor(private http: HttpClient) {}
-  getAll(fromDate: Date, toDate: Date) {
+  getAll(fromDate: Date, toDate: Date, claimNo: string) {
     const from = fromDate.toISOString().slice(0, 10); // yyyy-MM-dd
     const to = toDate.toISOString().slice(0, 10);
     return this.http.get<APIResponse<QuotationDTO[]>>(
-      environment.host + `api/quotation/filter?from-date=${from}&to-date=${to}`
+      environment.host +
+        `api/quotation/filter?from-date=${from}&to-date=${to}&claim-no=${claimNo}`
     );
   }
   getDetailsById(quotationId: number) {
@@ -34,7 +35,7 @@ export class QuotationService {
     );
   }
   update(data: Quotation) {
-    return this.http.post<APIResponse<QuotationDetail>>(
+    return this.http.put<APIResponse<QuotationDetail>>(
       environment.host + `api/quotation/${data.Id}`,
       data
     );

@@ -30,6 +30,7 @@ import { QuotationService } from '../../../../../services/quotations-service/quo
 import { QuotationDetailsComponent } from './quotation-details/quotation-details.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { QuotationDTO } from '../../../../../models/quotations/quotation-dto.model';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-quotation-modal',
@@ -69,6 +70,7 @@ export class QuotationModalComponent implements OnInit {
     private modalRef: NzModalRef,
     @Inject(NZ_MODAL_DATA)
     public data: { quotation: QuotationDTO },
+    private notification: NzNotificationService,
     private userService: UserService,
     private warrantyClaimService: WarrantyClaimManagementService,
     private productService: ProductService,
@@ -141,11 +143,15 @@ export class QuotationModalComponent implements OnInit {
     });
   }
   onCancel() {
-    this.modalRef.close();
+    this.modalRef.close(false);
   }
   onSave() {
     const data = this.quotationForm.getRawValue();
     const request = new Quotation(data);
+    if (!request.WarrantyClaimId) {
+      this.notification.warning('Thông báo', 'Vui lòng chọn phiếu báo giá');
+      return;
+    }
     this.quotationService.saveOrUpdate(request).subscribe({
       next: (res) => {
         const { added, edited, deleted } =
@@ -156,7 +162,7 @@ export class QuotationModalComponent implements OnInit {
           .saveDetails([...added, ...edited, ...deleted])
           .subscribe({
             next: (resDetail) => {
-              this.modalRef.close();
+              this.modalRef.close(true);
             },
             error: (errDetail) => {},
           });

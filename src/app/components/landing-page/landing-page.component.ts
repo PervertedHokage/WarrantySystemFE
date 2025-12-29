@@ -67,6 +67,7 @@ import { IssueFullDTO } from '../../models/issue-full-DTO.model';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/products-service/product.service';
 import { IssuesService } from '../../services/issues-service/issues.service';
+import { WarrantyClaimDTO } from '../../models/warranty-claims/warranty-claim-dto.model';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -141,7 +142,7 @@ export class LandingPageComponent
   };
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
-  dataset: WarrantyClaim[] = [];
+  dataset: WarrantyClaimDTO[] = [];
   angularGrid!: AngularGridInstance;
   @ViewChild('captchaHolder')
   captchaHolder?: ElementRef<HTMLDivElement>;

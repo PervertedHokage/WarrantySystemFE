@@ -28,6 +28,11 @@ export class WarrantyClaimDTO {
   CreatedBy: string | null = '';
   UpdatedDate: Date | null = null;
   UpdatedBy: string | null = '';
+  DiagnosisDate: Date | null = null;
+  DiagnosisWorker: string | null = '';
+  DiagnosisNote: string | null = '';
+  ReceptionDate: Date | null = null;
+  ReceptionWorker: string | null = '';
 
   constructor(init?: Partial<WarrantyClaimDTO>) {
     Object.assign(this, init);

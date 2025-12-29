@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -12,10 +12,21 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-import { WarrantyClaim } from '../../../../../models/warranty-claims/warranty-claim.model';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { WarrantyClaimDTO } from '../../../../../models/warranty-claims/warranty-claim-dto.model';
+import { WarrantyClaimManagementService } from '../../../../../services/warranty-claim-management.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { IssueFullDTO } from '../../../../../models/issue-full-DTO.model';
+import { IssuesService } from '../../../../../services/issues-service/issues.service';
+import { NOTIFICATION_TITLE } from '../../../../../app.config';
+import { UserManagementService } from '../../../../../services/user-service/user-management.service';
+import { IUser } from '../../../../../models/user.interface';
+import { WarrantyClaimTracking } from '../../../../../models/warranty-claims/warranty-claim-tracking.model';
+import { LandingPageService } from '../../../../../services/landing-page.service';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 @Component({
   selector: 'app-warranty-managment-modal',
@@ -38,25 +49,150 @@ import { WarrantyClaim } from '../../../../../models/warranty-claims/warranty-cl
     NzTableModule,
     NzUploadModule,
     NzRadioModule,
+    NzStepsModule,
+    NzPopoverModule,
+    NgTemplateOutlet,
+    NzSwitchModule,
+    //QuotationComponent,
   ],
 })
 export class WarrantyManagmentModalComponent implements OnInit {
   currentTab = 1;
-  warrantyClaim: WarrantyClaim;
+  warrantyClaim: WarrantyClaimDTO = new WarrantyClaimDTO();
+  issueList: IssueFullDTO[] = [];
+  userList: IUser[] = [];
+  activeIndex: number = 0;
+  currentTracking: WarrantyClaimTracking = new WarrantyClaimTracking({
+    Id: 0,
+    WarrantyClaimId: this.warrantyClaim.Id,
+    StatusText: '',
+    Note: '',
+    IsActive: true,
+    CreatedDate: new Date(),
+  });
+  trackings: WarrantyClaimTracking[] = [];
+  deletedTrackings: WarrantyClaimTracking[] = [];
   constructor(
     @Inject(NZ_MODAL_DATA)
-    public data: { warrantyClaim: WarrantyClaim }
+    public data: { warrantyClaim: WarrantyClaimDTO },
+    private notification: NzNotificationService,
+    private warrantyClaimService: WarrantyClaimManagementService,
+    private issueService: IssuesService,
+    private userService: UserManagementService,
+    private landingPageService: LandingPageService,
+    private cdr: ChangeDetectorRef
   ) {
-    this.warrantyClaim = data.warrantyClaim ?? new WarrantyClaim();
+    const input = data.warrantyClaim ?? new WarrantyClaimDTO();
+    this.warrantyClaimService.getWarrantyClaimById(input.Id).subscribe({
+      next: (res) => {
+        this.warrantyClaim = res.data;
+      },
+      error: (err) => {},
+    });
+    this.loadIssues();
+    this.loadUsers();
+    this.loadTracking();
   }
 
-  ngOnInit() {
-    console.log(this.warrantyClaim);
-  }
+  ngOnInit() {}
   changeTab(newTab: number) {
     this.currentTab = newTab;
   }
   onStatusChange(index: number): void {
     this.warrantyClaim.Status = index + 1;
+  }
+  loadIssues() {
+    this.issueService.getIssues(0).subscribe({
+      next: (res) => {
+        this.issueList = res.data;
+      },
+      error: (err) => {
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Load dữ liệu hiện tượng hỏng thất bại'
+        );
+      },
+    });
+  }
+  loadUsers() {
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        this.userList = res.data;
+      },
+      error: (err) => {
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Load dữ liệu người dùng thất bại'
+        );
+      },
+    });
+  }
+  loadTracking() {
+    this.landingPageService
+      .getWarrantyClaimTrackings(this.warrantyClaim.Id)
+      .subscribe({
+        next: (result) => {
+          this.trackings = result.data;
+          this.activeIndex = this.trackings.findIndex((t) => t.IsActive);
+        },
+      });
+  }
+  onIndexChange(index: number): void {
+    this.activeIndex = index;
+    this.currentTracking = this.trackings[index];
+  }
+  onAddTracking() {
+    this.trackings.push(this.currentTracking);
+    this.trackings = [...this.trackings].sort((a, b) => {
+      const da = new Date(a.CreatedDate ?? 0).getTime();
+      const db = new Date(b.CreatedDate ?? 0).getTime();
+      return da - db;
+    });
+    this.currentTracking = new WarrantyClaimTracking({
+      Id: 0,
+      WarrantyClaimId: this.warrantyClaim.Id,
+      StatusText: '',
+      Note: '',
+      IsActive: false,
+      CreatedDate: new Date(),
+    });
+  }
+  onDeleteTracking() {
+    const confirmed = confirm('Bạn có chắc chắn muốn xóa không?');
+    if (!confirmed) return;
+    const deleted = this.trackings.splice(this.activeIndex, 1);
+    this.deletedTrackings.push(...deleted)
+    this.trackings = [...this.trackings].sort((a, b) => {
+      const da = new Date(a.CreatedDate ?? 0).getTime();
+      const db = new Date(b.CreatedDate ?? 0).getTime();
+      return da - db;
+    });
+    this.currentTracking = new WarrantyClaimTracking({
+      Id: 0,
+      WarrantyClaimId: this.warrantyClaim.Id,
+      StatusText: '',
+      Note: '',
+      IsActive: false,
+      CreatedDate: new Date(),
+    });
+  }
+  onSave() {
+    console.log(this.warrantyClaim);
+    this.warrantyClaimService.createOrUpdate(this.warrantyClaim).subscribe({
+      next: (res) => {
+        this.trackings.forEach((track) => {
+          track.WarrantyClaimId = res.data.Id;
+          if (!track.Id)
+            this.landingPageService.createWarrantyClaimTrackings(track);
+          else this.landingPageService.updateWarrantyClaimTrackings(track);
+        });
+        this.deletedTrackings.forEach(d => {
+          this.landingPageService.deleteWarrantyClaimTrackings(d);
+        })
+      },
+      error: (err) => {
+        this.notification.error('Lỗi', 'Thao tác thất bại');
+      },
+    });
   }
 }

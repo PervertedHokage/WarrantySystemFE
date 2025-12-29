@@ -40,7 +40,7 @@ export class Quotation {
 
   ReplyNote: string | null = null;
 
-  VATfee: number = 0;
+  Vatfee: number = 0;
 
   IsDeleted: boolean | null = null;
 
