@@ -4,6 +4,7 @@ import {
   ViewChild,
   ElementRef,
   TemplateRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule, NgIf } from '@angular/common';
@@ -79,7 +80,8 @@ export class WarrantyManagementComponent implements OnInit {
     private fb: FormBuilder,
     private modal: NzModalService,
     private notification: NzNotificationService,
-    private warrantyService: WarrantyClaimManagementService
+    private warrantyService: WarrantyClaimManagementService,
+    private cdr: ChangeDetectorRef
   ) {}
   ngOnInit() {
     this.initGrid();
@@ -358,7 +360,11 @@ export class WarrantyManagementComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          this.dataset = res.data;
+          this.dataset = [...res.data];
+          this.angularGrid.dataView.setItems(this.dataset, 'Id');
+          this.cdr.detectChanges();
+          this.angularGrid.slickGrid.invalidate(); // fallback
+          this.angularGrid.slickGrid.render();
         },
       });
   }
@@ -404,7 +410,6 @@ export class WarrantyManagementComponent implements OnInit {
           onClick: () => {
             const instance = modalRef.getContentComponent();
             instance.onSave();
-            this.loadData();
             modalRef.close(true);
           },
         },
@@ -422,6 +427,7 @@ export class WarrantyManagementComponent implements OnInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result === true) {
+        this.loadData();
       }
     });
   }
@@ -449,7 +455,6 @@ export class WarrantyManagementComponent implements OnInit {
           onClick: () => {
             const instance = modalRef.getContentComponent();
             instance.onSave();
-            this.loadData();
             modalRef.close(true);
           },
         },
@@ -469,6 +474,7 @@ export class WarrantyManagementComponent implements OnInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result === true) {
+        this.loadData();
       }
     });
   }

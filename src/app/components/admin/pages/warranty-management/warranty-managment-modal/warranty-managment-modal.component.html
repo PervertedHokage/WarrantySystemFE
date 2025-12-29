@@ -99,7 +99,11 @@
               <nz-form-item>
                 <nz-form-label>Sản phẩm</nz-form-label>
                 <nz-form-control>
-                  <input nz-input [(ngModel)]="warrantyClaim.ProductName" name="productname" />
+                  <nz-select [(ngModel)]="warrantyClaim.ProductId" name="productid" class="w-100">
+                    @for (product of productList; track product.Id) {
+                    <nz-option [nzLabel]="product.Name" [nzValue]="product.Id"></nz-option>
+                    }
+                  </nz-select>
                 </nz-form-control>
               </nz-form-item>
             </div>
