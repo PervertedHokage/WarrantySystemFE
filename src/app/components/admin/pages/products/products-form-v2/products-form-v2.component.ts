@@ -84,7 +84,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
   DeletedSparePartGroup: any[] = [];
 
   ngOnInit(): void {
-    if (this.isEditMode && this.dataInput) {
+    if ( this.dataInput) {
       this.formGroup.patchValue({
         Name: this.dataInput.Name || '',
         Code: this.dataInput.Code || '',
@@ -99,7 +99,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.draw_SparePartTable();
-      if (this.isEditMode && this.ProductID) {
+      if (this.ProductID) {
         this.loadsparePartDetailData();
       }
     }, 100);
@@ -123,9 +123,9 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
       this.dataInput = data.dataInput || null;
     }
     this.formGroup = this.fb.group({
-      Name: [null, [Validators.required, Validators.maxLength(100)]],
-      Code: ['', [Validators.required, Validators.maxLength(20)]],
-      Description: ['', [Validators.maxLength(500)]],
+      Name: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(100)]],
+      Code: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(20)]],
+      Description: [{ value: '', disabled: true }, [Validators.maxLength(500)]],
     });
   }
 
@@ -240,11 +240,11 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
       return;
     }
 
-    const formValue = this.formGroup.value;
+    const formValue = this.formGroup.getRawValue();
 
     const payload = {
       Product: {
-        Id: this.isEditMode ? this.dataInput?.Id || 0 : 0,
+        Id:  this.dataInput?.Id,
         Code: formValue.Code || '',
         Name: formValue.Name || '',
         Description: formValue.Description || '',
@@ -252,7 +252,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
 
       SparePartsGroups: tableData.map((item: any, index: number) => ({
         SparePartsGroup: {
-          Id: this.isEditMode ? item.GroupId || 0 : 0,
+          Id: item.GroupId ,
           ProductId: this.isEditMode ? this.dataInput?.ProductId || 0 : 0,
           STT: index + 1,
           Name: item.Name,
@@ -260,7 +260,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
 
         SparePart: [
           {
-            Id: this.isEditMode ? item.Id || 0 : 0,
+            Id: item.Id,
             Description: item.Description,
             SparePartNumber: item.SparePartNumber,
             UnitId: item.UnitId,

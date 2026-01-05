@@ -35,6 +35,13 @@ export class ProductService {
     return this.http.post<any>(environment.host + `api/products/delete`, ids);
   }
 
+   saveData(data: any): Observable<any> {
+    return this.http.post(
+      environment.host + `api/products/save-data`,
+      data
+    );
+  }
+
   saveDataProduct(data: any): Observable<any> {
     return this.http.post(
       environment.host + `api/products/save-data-product`,
