@@ -377,7 +377,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
             title: 'Mô tả',
             field: 'Description',
             headerHozAlign: 'center',
-            minWidth: 400,
+            minWidth: 380,
             maxWidth: 500,
             editor: 'input',
             formatter: 'textarea',
@@ -385,7 +385,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
           {
             title: 'Đơn vị',
             field: 'UnitId',
-            minWidth: 50,
+            minWidth: 80,
             maxWidth: 100,
             headerHozAlign: 'center',
             editor: this.createdControl(
