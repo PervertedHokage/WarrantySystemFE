@@ -10,9 +10,11 @@ import { environment } from '../../environments/environment';
 export class SalesOrderService {
   constructor(private http: HttpClient) {}
 
-  getSaleOrder(OrderId: number): Observable<any> {
+  getSaleOrder(OrderId: number, FromDateStart: Date, ToDateStart: Date): Observable<any> {
     const asset: any = {
       OrderId: OrderId || 0,
+      FromDateStart: FromDateStart,
+      ToDateStart: ToDateStart
     };
     return this.http.post<any>(environment.host + `api/saleorder`, asset);
   }

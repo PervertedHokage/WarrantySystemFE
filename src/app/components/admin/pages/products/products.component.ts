@@ -43,6 +43,8 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ProductService } from '../../../../services/products-service/product.service';
 import { ProductsFormComponent } from './products-form/products-form.component';
 import { ProductsFormV2Component } from './products-form-v2/products-form-v2.component';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 
@@ -108,7 +110,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     private notification: NzNotificationService,
     private productService: ProductService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef,
+
   ) {}
 
   defineGrid() {

@@ -19,6 +19,7 @@ import {
   Filters,
   Formatters,
   GridOption,
+  MultipleSelectOption,
 } from 'angular-slickgrid';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -43,6 +44,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 import { SalesOrderService } from '../../../../services/sales-order-service/sales-order.service';
 import { SalesOrderFormComponent } from './sales-order-form/sales-order-form.component';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-sales-order',
@@ -85,10 +87,18 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
   dataView: any;
 
   isCheckmode: boolean = false;
+  dateFormat = 'dd/MM/yyyy';
+
+
+  showFilter = false;
+  filter = {
+    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    toDate: new Date(),
+  };
 
   ngOnInit(): void {
     this.defineGrid();
-    this.getSaleOrder();
+    // this.getSaleOrder();
   }
 
   ngAfterViewInit(): void {}
@@ -97,8 +107,59 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     private notification: NzNotificationService,
     private salesOrderService: SalesOrderService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  private parseToDate(value: any): Date | null {
+    if (!value) return null;
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return null;
+    return d;
+  }
+
+  private calcDaysRemaining(dateEnd: any): number | null {
+    const end = this.parseToDate(dateEnd);
+    if (!end) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    const diffMs = end.getTime() - today.getTime();
+    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  }
+
+  private getWarrantyStatusLabel(dateEnd: any): {
+    text: string;
+    color: string;
+    daysRemaining: number | null;
+  } {
+    const daysRemaining = this.calcDaysRemaining(dateEnd);
+    const expiringThresholdDays = 30;
+
+    if (daysRemaining === null) {
+      return { text: '', color: '#8c8c8c', daysRemaining };
+    }
+
+    if (daysRemaining < 0) {
+      return { text: 'Hết hạn', color: '#ff4d4f', daysRemaining };
+    }
+
+    if (daysRemaining <= expiringThresholdDays) {
+      return { text: 'Sắp hết hạn', color: '#fa8c16', daysRemaining };
+    }
+
+    return { text: 'Còn hạn', color: '#52c41a', daysRemaining };
+  }
+
+  applyFilter() {
+        this.getSynthesisOfGeneratedMaterials();
+  }
+  resetFilter() {
+    this.filter = {
+      fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
+      toDate: new Date(),
+    };
+  }
 
   defineGrid() {
     this.columnSaleOrderGroup = [
@@ -145,12 +206,40 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         sortable: true,
         type: 'string',
         filterable: true,
-        filter: { model: Filters['compoundInputText'] },
+        filter: {
+          model: Filters['multipleSelect'],
+          collection: [],
+          collectionOptions: { addBlankEntry: true },
+          filterOptions: {
+            filter: true,
+            autoAdjustDropWidthByTextSize: true,
+          } as MultipleSelectOption,
+        },
       },
       {
         id: 'ProductSerial',
-        name: 'Serial/IMEI',
+        name: 'Serial',
         field: 'ProductSerial',
+        sortable: true,
+        minWidth: 150,
+        type: 'string',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
+        {
+        id: 'IMEI1',
+        name: 'IMEI 1',
+        field: 'Imei1',
+        sortable: true,
+        minWidth: 150,
+        type: 'string',
+        filterable: true,
+        filter: { model: Filters['compoundInputText'] },
+      },
+        {
+        id: 'IMEI2',
+        name: 'IMEI 2',
+        field: 'Imei2',
         sortable: true,
         minWidth: 150,
         type: 'string',
@@ -187,6 +276,23 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundDate'] },
       },
+      {
+        id: 'WarrantyStatus',
+        name: 'Trạng thái BH',
+        field: 'DateEnd',
+        minWidth: 150,
+        sortable: false,
+        filterable: false,
+        formatter: (_row, _cell, value) => {
+          const st = this.getWarrantyStatusLabel(value);
+          if (!st.text) return '';
+          const daysText =
+            st.text === 'Sắp hết hạn' && st.daysRemaining !== null
+              ? ` (${st.daysRemaining} ngày)`
+              : '';
+          return `<span style="color:${st.color}; font-weight:600;">${st.text}${daysText}</span>`;
+        },
+      },
     ];
 
     this.gridOptionSaleOrderGroup = {
@@ -208,6 +314,8 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
       datasetIdPropertyName: 'Id',
       enableCellNavigation: true,
     };
+    // this.getSaleOrder();
+    this.getSynthesisOfGeneratedMaterials();
   }
   gridReady(e: any) {
     this.angularGrid = e.detail || e;
@@ -247,11 +355,11 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     this.SaleOrderData = item || null;
   }
 
-  getSaleOrder() {
-    this.salesOrderService.getSaleOrder(0).subscribe((response: any) => {
-      this.datasetSaleOrderGroup = response?.data || [];
-    });
-  }
+  // getSaleOrder() {
+  //   this.salesOrderService.getSaleOrder(0).subscribe((response: any) => {
+  //     this.datasetSaleOrderGroup = response?.data || [];
+  //   });
+  // }
 
   onAddSaleOrder(isEditmode: boolean): void {
     this.isCheckmode = isEditmode;
@@ -268,7 +376,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
       nzWidth: '50vw',
       nzBodyStyle: {
         'max-height': '70vh',
-        'overflow': 'auto',
+        overflow: 'auto',
       },
       nzFooter: null,
       nzMaskClosable: false,
@@ -282,7 +390,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result === true) {
-        this.getSaleOrder();
+          this.getSynthesisOfGeneratedMaterials();
       }
     });
   }
@@ -367,7 +475,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
                 NOTIFICATION_TITLE.success,
                 res.message || 'Đã xóa thành công!'
               );
-              this.getSaleOrder();
+                  this.getSynthesisOfGeneratedMaterials();
             } else {
               this.notification.warning(
                 NOTIFICATION_TITLE.warning,
@@ -382,6 +490,98 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
             );
           },
         });
+      },
+    });
+  }
+
+  applyDistinctFilters(): void {
+    const angularGrid = this.angularGrid;
+    if (!angularGrid || !angularGrid.slickGrid || !angularGrid.dataView) return;
+
+    const data = angularGrid.dataView.getItems() as any[];
+    if (!data || data.length === 0) return;
+
+    const getUniqueValues = (
+      items: any[],
+      field: string
+    ): Array<{ value: any; label: string }> => {
+      const map = new Map<string, { value: any; label: string }>();
+      items.forEach((row: any) => {
+        const value = row?.[field];
+        if (value === null || value === undefined || value === '') return;
+        const key = `${typeof value}:${String(value)}`;
+        if (!map.has(key)) {
+          map.set(key, { value, label: String(value) });
+        }
+      });
+      return Array.from(map.values()).sort((a, b) =>
+        a.label.localeCompare(b.label)
+      );
+    };
+
+    const columns = angularGrid.slickGrid.getColumns();
+    if (columns) {
+      columns.forEach((column: any) => {
+        if (
+          column.filter &&
+          column.filter.model === Filters['multipleSelect']
+        ) {
+          const field = column.field;
+          if (!field) return;
+          column.filter.collection = getUniqueValues(data, field);
+        }
+      });
+    }
+
+    if (this.columnSaleOrderGroup) {
+      this.columnSaleOrderGroup.forEach((colDef: any) => {
+        if (
+          colDef.filter &&
+          colDef.filter.model === Filters['multipleSelect']
+        ) {
+          const field = colDef.field;
+          if (!field) return;
+          colDef.filter.collection = getUniqueValues(data, field);
+        }
+      });
+    }
+
+    const updatedColumns = angularGrid.slickGrid.getColumns();
+    angularGrid.slickGrid.setColumns(updatedColumns);
+    angularGrid.slickGrid.invalidate();
+    angularGrid.slickGrid.render();
+  }
+
+  async getSynthesisOfGeneratedMaterials() {
+    //  const request = { SaleOrderId: 0, FromDateStart: new Date('2020-12-12'), ToDateStart: new Date('2025-12-12')};
+
+    this.salesOrderService.getSaleOrder(0, this.filter.fromDate, this.filter.toDate).subscribe({
+      next: (response: any) => {
+        let dataArray: any[] = [];
+
+        if (Array.isArray(response.data)) {
+          dataArray = response.data;
+        } else if (response.data && Array.isArray(response.data.dt)) {
+          dataArray = response.data.dt;
+        } else if (response.data && typeof response.data === 'object') {
+          dataArray = [];
+        }
+
+        this.datasetSaleOrderGroup = dataArray.map(
+          (item: any, index: number) => ({
+            ...item,
+            id: item.ID || item.Id || index + 1,
+          })
+        );
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+          this.applyDistinctFilters();
+        }, 100);
+      },
+      error: (error) => {
+        this.notification.error('Lỗi', error.error?.message || 'Có lỗi xảy ra');
+        console.error('Lỗi:', error);
       },
     });
   }

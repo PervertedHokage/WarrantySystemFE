@@ -166,7 +166,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
         formatter: (_row, _cell, value) => {
-          return value = true ? 'Admin' : 'Kỹ thuật viên';
+          return value == true ? 'Admin' : 'Kỹ thuật viên';
         },
       },
     ];
@@ -195,6 +195,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   getUsers() {
     this.registerService.getDataUser(0).subscribe((response: any) => {
       this.datasetRegister = response?.data || [];
+      console.log("user: ", this.datasetRegister)
     });
   }
 

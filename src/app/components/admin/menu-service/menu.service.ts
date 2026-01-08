@@ -171,15 +171,6 @@ export class MenuService {
             comp: UnitComponent,
             // icon: 'assets/icon/menu_crm.svg',
           },
-          {
-            kind: 'leaf',
-            key: 'SerialComponent',
-            title: 'Serial',
-            isOpen: true,
-            isPermission: true,
-            comp: SerialComponent,
-            // icon: 'assets/icon/menu_crm.svg',
-          },
            {
             kind: 'leaf',
             key: 'CustomerComponent',
