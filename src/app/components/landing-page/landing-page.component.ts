@@ -233,13 +233,13 @@ export class LandingPageComponent
     this.currentTab = 1;
     this.prepareGrid();
     this.authService.getCurrentUser().subscribe({
-      next: res => {
+      next: (res) => {
         this.currentUser = res?.data ?? null;
       },
-      error: err => {
+      error: (err) => {
         this.currentUser = null;
-      }
-    })
+      },
+    });
   }
   ngAfterViewInit(): void {}
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -488,15 +488,20 @@ export class LandingPageComponent
     });
   }
   private async initCaptcha() {
-    if (!this.captchaHolder || this.widgetId !== undefined) return;
-
+    if (!this.captchaHolder || this.widgetId !== undefined) {
+      this.resetCaptcha();
+      return;
+    }
     await this.loadScript();
+    this.widgetId = grecaptcha.render(this.captchaHolder?.nativeElement, {
+      sitekey: '6Ldb8CssAAAAAI-kwsDqcgipSPu6AOffl8j2FaIi',
+    });
+  }
 
-    setTimeout(() => {
-      this.widgetId = grecaptcha.render(this.captchaHolder?.nativeElement, {
-        sitekey: '6Ldb8CssAAAAAI-kwsDqcgipSPu6AOffl8j2FaIi',
-      });
-    }, 50);
+  private resetCaptcha() {
+    if (this.widgetId !== undefined) {
+      grecaptcha.reset(this.widgetId);
+    }
   }
 
   private destroyCaptcha() {
@@ -593,8 +598,7 @@ export class LandingPageComponent
             'Đăng ký thành công'
           );
           this.newWarrantyClaimForm.reset();
-          this.destroyCaptcha();
-          setTimeout(() => this.initCaptcha());
+          this.resetCaptcha();
         },
         error: (error: APIResponse<WarrantyClaim>) => {
           this.notification.error(
