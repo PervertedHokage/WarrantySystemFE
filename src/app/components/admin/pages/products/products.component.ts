@@ -45,7 +45,6 @@ import { ProductsFormComponent } from './products-form/products-form.component';
 import { ProductsFormV2Component } from './products-form-v2/products-form-v2.component';
 import { ChangeDetectorRef } from '@angular/core';
 
-
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 
 @Component({
@@ -111,8 +110,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     private productService: ProductService,
     private modal: NzModalService,
     private message: NzMessageService,
-    private cdr: ChangeDetectorRef,
-
+    private cdr: ChangeDetectorRef
   ) {}
 
   defineGrid() {
@@ -308,7 +306,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   }
 
   onDeleteMultipleSpareParts() {
-
     if (!this.angularGridSparePart) {
       this.notification.error(
         NOTIFICATION_TITLE.error,

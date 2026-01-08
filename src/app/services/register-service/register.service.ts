@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 import { Register } from '../../models/register.model';
 import { APIResponse } from '../../models/api-response.interface';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -17,9 +16,12 @@ export class RegisterService {
     const asset: any = {
       Status: Status || 0,
     };
-    return this.http.get<APIResponse<Register[]>>(environment.host + `api/register`, {
-      params: asset,
-    });
+    return this.http.get<APIResponse<Register[]>>(
+      environment.host + `api/register`,
+      {
+        params: asset,
+      }
+    );
   }
 
   saveData(data: any): Observable<any> {

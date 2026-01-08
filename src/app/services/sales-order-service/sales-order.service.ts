@@ -12,19 +12,23 @@ import { SaleOrder } from '../../models/sale-order.model';
 export class SalesOrderService {
   constructor(private http: HttpClient) {}
 
-  getSaleOrder(OrderId: number, FromDateStart: Date, ToDateStart: Date): Observable<APIResponse<SaleOrder[]>> {
+  getSaleOrder(
+    OrderId: number,
+    FromDateStart: Date,
+    ToDateStart: Date
+  ): Observable<APIResponse<SaleOrder[]>> {
     let params = new HttpParams()
-    .set('OrderId', (OrderId || 0).toString())
-    .set('FromDateStart', FromDateStart ? FromDateStart.toISOString() : '')
-    .set('ToDateStart', ToDateStart ? ToDateStart.toISOString() : '');
-    return this.http.get<APIResponse<SaleOrder[]>>(environment.host + `api/saleorder`, { params });
+      .set('OrderId', (OrderId || 0).toString())
+      .set('FromDateStart', FromDateStart ? FromDateStart.toISOString() : '')
+      .set('ToDateStart', ToDateStart ? ToDateStart.toISOString() : '');
+    return this.http.get<APIResponse<SaleOrder[]>>(
+      environment.host + `api/saleorder`,
+      { params }
+    );
   }
 
   saveDataSaleOder(data: any): Observable<any> {
-    return this.http.post<any>(
-      environment.host + `api/saleorder`,
-      data
-    );
+    return this.http.post<any>(environment.host + `api/saleorder`, data);
   }
 
   deleteSaleOrder(ids: number[]): Observable<any> {

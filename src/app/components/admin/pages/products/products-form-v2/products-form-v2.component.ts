@@ -84,7 +84,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
   DeletedSparePartGroup: any[] = [];
 
   ngOnInit(): void {
-    if ( this.dataInput) {
+    if (this.dataInput) {
       this.formGroup.patchValue({
         Name: this.dataInput.Name || '',
         Code: this.dataInput.Code || '',
@@ -123,8 +123,14 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
       this.dataInput = data.dataInput || null;
     }
     this.formGroup = this.fb.group({
-      Name: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(100)]],
-      Code: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(20)]],
+      Name: [
+        { value: '', disabled: true },
+        [Validators.required, Validators.maxLength(100)],
+      ],
+      Code: [
+        { value: '', disabled: true },
+        [Validators.required, Validators.maxLength(20)],
+      ],
       Description: [{ value: '', disabled: true }, [Validators.maxLength(500)]],
     });
   }
@@ -244,7 +250,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
 
     const payload = {
       Product: {
-        Id:  this.dataInput?.Id,
+        Id: this.dataInput?.Id,
         Code: formValue.Code || '',
         Name: formValue.Name || '',
         Description: formValue.Description || '',
@@ -252,7 +258,7 @@ export class ProductsFormV2Component implements OnInit, AfterViewInit {
 
       SparePartsGroups: tableData.map((item: any, index: number) => ({
         SparePartsGroup: {
-          Id: item.GroupId ,
+          Id: item.GroupId,
           ProductId: this.isEditMode ? this.dataInput?.ProductId || 0 : 0,
           STT: index + 1,
           Name: item.Name,

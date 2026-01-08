@@ -17,10 +17,15 @@ export class WorkOrderService {
     const asset: any = {
       WorkOrderId: WorkOrderId || 0,
     };
-    return this.http.get<APIResponse<WorkOrder[]>>(environment.host + `api/workorder`, { params: asset });
+    return this.http.get<APIResponse<WorkOrder[]>>(
+      environment.host + `api/workorder`,
+      { params: asset }
+    );
   }
 
-  getWorkOrderDetail(WorkOrderId: number): Observable<APIResponse<WorkOrderSpareDetail[]>> {
+  getWorkOrderDetail(
+    WorkOrderId: number
+  ): Observable<APIResponse<WorkOrderSpareDetail[]>> {
     const asset: any = {
       WorkOrderId: WorkOrderId || 0,
     };

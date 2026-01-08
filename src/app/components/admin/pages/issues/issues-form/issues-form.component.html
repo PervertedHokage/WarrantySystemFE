@@ -2,11 +2,9 @@
   <form nz-form [formGroup]="formGroup" nzLayout="vertical" class="fs-7 mt-2">
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
-            <nz-form-item>
+        <nz-form-item>
           <nz-form-label for="CodeInput" class="form-label p-0"
-            >Mã lỗi lỗi<span class="text-danger ps-1"
-              >(*)
-            </span></nz-form-label
+            >Mã lỗi lỗi<span class="text-danger ps-1">(*) </span></nz-form-label
           >
           <nz-form-control
             [nzSpan]="24"
@@ -32,9 +30,7 @@
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
           <nz-form-label for="unitNameInput" class="form-label p-0"
-            >Tên lỗi<span class="text-danger ps-1"
-              >(*)
-            </span></nz-form-label
+            >Tên lỗi<span class="text-danger ps-1">(*) </span></nz-form-label
           >
           <nz-form-control
             [nzSpan]="24"
@@ -62,13 +58,8 @@
   <div class="table-container">
     <div #IssuesTable></div>
   </div>
-
 </div>
-  <div class="modal-footer mt-3 gap-3">
-      <button nz-button nzDanger nzType="default" (click)="close()">
-        Đóng
-      </button>
-      <button nz-button nzType="primary" (click)="saveIssuesData()">
-        Lưu
-      </button>
-    </div>
+<div class="modal-footer mt-3 gap-3">
+  <button nz-button nzDanger nzType="default" (click)="close()">Đóng</button>
+  <button nz-button nzType="primary" (click)="saveIssuesData()">Lưu</button>
+</div>
