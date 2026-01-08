@@ -1,4 +1,4 @@
-<div class="card" >
+<div class="card">
   <div class="card-header bg-white p-1">
     <div class="d-flex gap-1">
       <button
@@ -31,23 +31,29 @@
     </div>
   </div>
   <div class="grid-container">
-    <nz-splitter nzLayout="horizontal" style="height: 90vh !important;">
-      <nz-splitter-panel nzDefaultSize="50%" style="overflow: hidden !important;">
-        <div class="grid-master-container">
+    <nz-splitter nzLayout="horizontal" style="height: 90vh !important">
+      <nz-splitter-panel
+        nzDefaultSize="50%"
+        style="overflow: hidden !important"
+      >
+        <div class="grid-issuegroup-container">
           <angular-slickgrid
             gridId="issuesGroupGrid"
             [columns]="columnIssuesGroup"
             [options]="gridOptionsIssuesGroup"
-            [dataset]="datasetIssuesGroup" 
-            (onAngularGridCreated)="gridReady($event)"  
+            [dataset]="datasetIssuesGroup"
+            (onAngularGridCreated)="gridReady($event)"
             (onActiveCellChanged)="onActiveCellChanged($event)"
             (selectedRowsChanged)="onSelectedRowsChanged($event)"
           >
           </angular-slickgrid>
         </div>
       </nz-splitter-panel>
-      <nz-splitter-panel nzDefaultSize="50%" style="overflow: hidden !important;">
-        <div class="grid-detail-container">
+      <nz-splitter-panel
+        nzDefaultSize="50%"
+        style="overflow: hidden !important"
+      >
+        <div class="grid-issue-container">
           <angular-slickgrid
             gridId="issuesGrid"
             [columns]="columnIssues"

@@ -89,7 +89,6 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
   isCheckmode: boolean = false;
   dateFormat = 'dd/MM/yyyy';
 
-
   showFilter = false;
   filter = {
     fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
@@ -152,7 +151,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter() {
-        this.getSynthesisOfGeneratedMaterials();
+    this.getSynthesisOfGeneratedMaterials();
   }
   resetFilter() {
     this.filter = {
@@ -226,7 +225,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-        {
+      {
         id: 'IMEI1',
         name: 'IMEI 1',
         field: 'Imei1',
@@ -236,7 +235,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
       },
-        {
+      {
         id: 'IMEI2',
         name: 'IMEI 2',
         field: 'Imei2',
@@ -373,7 +372,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     const modalRef = this.modal.create({
       nzTitle: this.isCheckmode ? 'Sửa đơn hàng' : 'Thêm đơn hàng',
       nzContent: SalesOrderFormComponent,
-      nzWidth: '50vw',
+      nzWidth: '85vw',
       nzBodyStyle: {
         'max-height': '70vh',
         overflow: 'auto',
@@ -390,7 +389,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result === true) {
-          this.getSynthesisOfGeneratedMaterials();
+        this.getSynthesisOfGeneratedMaterials();
       }
     });
   }
@@ -475,7 +474,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
                 NOTIFICATION_TITLE.success,
                 res.message || 'Đã xóa thành công!'
               );
-                  this.getSynthesisOfGeneratedMaterials();
+              this.getSynthesisOfGeneratedMaterials();
             } else {
               this.notification.warning(
                 NOTIFICATION_TITLE.warning,
@@ -555,34 +554,39 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
   async getSynthesisOfGeneratedMaterials() {
     //  const request = { SaleOrderId: 0, FromDateStart: new Date('2020-12-12'), ToDateStart: new Date('2025-12-12')};
 
-    this.salesOrderService.getSaleOrder(0, this.filter.fromDate, this.filter.toDate).subscribe({
-      next: (response: any) => {
-        let dataArray: any[] = [];
+    this.salesOrderService
+      .getSaleOrder(0, this.filter.fromDate, this.filter.toDate)
+      .subscribe({
+        next: (response: any) => {
+          let dataArray: any[] = [];
 
-        if (Array.isArray(response.data)) {
-          dataArray = response.data;
-        } else if (response.data && Array.isArray(response.data.dt)) {
-          dataArray = response.data.dt;
-        } else if (response.data && typeof response.data === 'object') {
-          dataArray = [];
-        }
+          if (Array.isArray(response.data)) {
+            dataArray = response.data;
+          } else if (response.data && Array.isArray(response.data.dt)) {
+            dataArray = response.data.dt;
+          } else if (response.data && typeof response.data === 'object') {
+            dataArray = [];
+          }
 
-        this.datasetSaleOrderGroup = dataArray.map(
-          (item: any, index: number) => ({
-            ...item,
-            id: item.ID || item.Id || index + 1,
-          })
-        );
-        this.cdr.detectChanges();
+          this.datasetSaleOrderGroup = dataArray.map(
+            (item: any, index: number) => ({
+              ...item,
+              id: item.ID || item.Id || index + 1,
+            })
+          );
+          this.cdr.detectChanges();
 
-        setTimeout(() => {
-          this.applyDistinctFilters();
-        }, 100);
-      },
-      error: (error) => {
-        this.notification.error('Lỗi', error.error?.message || 'Có lỗi xảy ra');
-        console.error('Lỗi:', error);
-      },
-    });
+          setTimeout(() => {
+            this.applyDistinctFilters();
+          }, 100);
+        },
+        error: (error) => {
+          this.notification.error(
+            'Lỗi',
+            error.error?.message || 'Có lỗi xảy ra'
+          );
+          console.error('Lỗi:', error);
+        },
+      });
   }
 }

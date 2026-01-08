@@ -146,7 +146,7 @@ export class ProductsFormComponent implements OnInit, AfterViewInit {
       Id: this.isEditMode ? this.dataInput?.Id : 0,
       Code: formValue.Code || '',
       Name: formValue.Name || '',
-      Description: formValue.Description || ''
+      Description: formValue.Description || '',
     };
 
     this.productService.saveData(payload).subscribe({

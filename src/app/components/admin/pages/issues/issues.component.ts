@@ -156,7 +156,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.gridOptionsIssuesGroup = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-master-container',
+        container: '.grid-issuegroup-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -216,7 +216,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.gridOptionsIssues = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-detail-container',
+        container: '.grid-issue-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -235,17 +235,19 @@ export class IssuesComponent implements OnInit, AfterViewInit {
   }
 
   getIssues() {
-    this.issuesService.getIssues(this.IssuesGroupID).subscribe((response: any) => {
-      this.datasetIssues = response?.data || [];
+    this.issuesService
+      .getIssues(this.IssuesGroupID)
+      .subscribe((response: any) => {
+        this.datasetIssues = response?.data || [];
 
-      if (this.angularGridIssues) {
-        // Clear filters trước
-        this.angularGridIssues.filterService?.clearFilters();
+        if (this.angularGridIssues) {
+          // Clear filters trước
+          this.angularGridIssues.filterService?.clearFilters();
 
-        // Sử dụng gridService để update dataset
-        this.angularGridIssues.gridService.updateDataset(this.datasetIssues);
-      }
-    });
+          // Sử dụng gridService để update dataset
+          this.angularGridIssues.gridService.updateDataset(this.datasetIssues);
+        }
+      });
   }
 
   gridReady(e: any) {
@@ -376,10 +378,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       const id = item?.Id ?? item?.ID;
       if (!id) return;
 
-      const code =
-        item?.Code ??
-        item?.Name ??
-        '';
+      const code = item?.Code ?? item?.Name ?? '';
       selectedIds.push(id);
       selectedCodes.push(code);
     });

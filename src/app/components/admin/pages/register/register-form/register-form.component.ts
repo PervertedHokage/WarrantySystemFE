@@ -41,10 +41,6 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { forkJoin } from 'rxjs';
-import { NOTIFICATION_TITLE } from '../../../../../../app/app.config';
-import { ProductService } from '../../../../../services/products-service/product.service';
-import { SelectControlComponent } from '../../select-control/select-control.component';
 import { RegisterService } from '../../../../../services/register-service/register.service';
 
 @Component({

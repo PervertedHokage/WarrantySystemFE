@@ -190,7 +190,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
         formatter: (_row, _cell, value, columnDef, dataContext) => {
           const productName = value || '';
           const productCode = dataContext?.ProductCode || '';
-          
+
           if (productCode && productName) {
             return `${productCode} - ${productName}`;
           } else if (productCode) {
@@ -357,7 +357,9 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
   }
 
   private computeOverviewCounts(): void {
-    const items = Array.isArray(this.datasetWorkOrder) ? this.datasetWorkOrder : [];
+    const items = Array.isArray(this.datasetWorkOrder)
+      ? this.datasetWorkOrder
+      : [];
 
     const countByStatus = (status: string) =>
       items.filter((x: any) => (x?.Status || '').toString().trim() === status)

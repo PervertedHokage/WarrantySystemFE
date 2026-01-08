@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { WorkOrder, WorkOrderSpareDetail } from '../../models/work-order.model';
 import { Product } from '../../models/product.model';
+import { APIResponse } from '../../models/api-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,20 +13,25 @@ import { Product } from '../../models/product.model';
 export class WorkOrderService {
   constructor(private http: HttpClient) {}
 
-  getWorkOrder(WorkOrderId: number): Observable<any> {
+  getWorkOrder(WorkOrderId: number): Observable<APIResponse<WorkOrder[]>> {
     const asset: any = {
       WorkOrderId: WorkOrderId || 0,
     };
-    return this.http.post<any>(environment.host + `api/workorder`, asset);
+    return this.http.get<APIResponse<WorkOrder[]>>(
+      environment.host + `api/workorder`,
+      { params: asset }
+    );
   }
 
-  getWorkOrderDetail(WorkOrderId: number): Observable<any> {
+  getWorkOrderDetail(
+    WorkOrderId: number
+  ): Observable<APIResponse<WorkOrderSpareDetail[]>> {
     const asset: any = {
       WorkOrderId: WorkOrderId || 0,
     };
-    return this.http.post<any>(
+    return this.http.get<APIResponse<WorkOrderSpareDetail[]>>(
       environment.host + `api/workorder/work-order-detail`,
-      asset
+      { params: asset }
     );
   }
 
@@ -32,9 +39,9 @@ export class WorkOrderService {
     const asset: any = {
       WarrantyClaimId: WarrantyClaimId || 0,
     };
-    return this.http.post<any>(
+    return this.http.get<any>(
       environment.host + `api/workorder/warranty-claim`,
-      asset
+      { params: asset }
     );
   }
 

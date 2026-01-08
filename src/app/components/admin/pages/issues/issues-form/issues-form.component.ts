@@ -15,9 +15,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  TabulatorFull as Tabulator,
-} from 'tabulator-tables';
+import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule, NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
@@ -42,7 +40,7 @@ import { IssuesService } from '../../../../../services/issues-service/issues.ser
   selector: 'app-issues-form',
   standalone: true,
   imports: [
-     CommonModule,
+    CommonModule,
     ReactiveFormsModule,
     FormsModule,
     NzFormModule,
@@ -55,9 +53,9 @@ import { IssuesService } from '../../../../../services/issues-service/issues.ser
     NzSelectModule,
   ],
   templateUrl: './issues-form.component.html',
-  styleUrl: './issues-form.component.less'
+  styleUrl: './issues-form.component.less',
 })
-export class IssuesFormComponent implements OnInit, AfterViewInit{
+export class IssuesFormComponent implements OnInit, AfterViewInit {
   @ViewChild('IssuesTable') tableRef1!: ElementRef;
 
   IssuesGroupID: number = 0;
@@ -69,7 +67,6 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
   IssuesTable: Tabulator | null = null;
 
   DeletedIssues: any[] = [];
-
 
   ngOnInit(): void {
     if (this.isEditMode && this.dataInput) {
@@ -83,32 +80,32 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.draw_IssuesTable();
-      
+
       if (this.isEditMode && this.IssuesGroupID) {
         this.loadIssuesDetailData();
       }
     }, 100);
   }
 
-   constructor(
-      @Inject(NZ_MODAL_DATA)
-      public data: { IssuesGroupID: number; isEditMode: boolean; dataInput: any },
-      private fb: FormBuilder,
-      private modal: NzModalService,
-      private modalRef: NzModalRef,
-      private notification: NzNotificationService,
-      private issuesService: IssuesService
-    ) {
-      if (data) {
-        this.IssuesGroupID = data.IssuesGroupID || 0;
-        this.isEditMode = data.isEditMode || false;
-        this.dataInput = data.dataInput || null;
-      }
-      this.formGroup = this.fb.group({
-        Name: [null, [Validators.required, Validators.maxLength(50)]],
-        Code: ['', [Validators.required, Validators.maxLength(20)]],
-      });
+  constructor(
+    @Inject(NZ_MODAL_DATA)
+    public data: { IssuesGroupID: number; isEditMode: boolean; dataInput: any },
+    private fb: FormBuilder,
+    private modal: NzModalService,
+    private modalRef: NzModalRef,
+    private notification: NzNotificationService,
+    private issuesService: IssuesService
+  ) {
+    if (data) {
+      this.IssuesGroupID = data.IssuesGroupID || 0;
+      this.isEditMode = data.isEditMode || false;
+      this.dataInput = data.dataInput || null;
     }
+    this.formGroup = this.fb.group({
+      Name: [null, [Validators.required, Validators.maxLength(50)]],
+      Code: ['', [Validators.required, Validators.maxLength(20)]],
+    });
+  }
 
   loadIssuesDetailData() {
     if (!this.IssuesGroupID) {
@@ -117,20 +114,23 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
 
     this.issuesService.getIssues(this.IssuesGroupID).subscribe({
       next: (response) => {
-        const issues =  response?.data || [];
-        
+        const issues = response?.data || [];
+
         this.IssuesData = issues.map((item: any) => ({
           Id: item.Id || 0,
           Code: item.Code || '',
           Name: item.Name || '',
-        })); 
+        }));
 
         if (this.IssuesTable) {
           this.IssuesTable.setData(this.IssuesData);
         }
       },
       error: (err) => {
-        this.notification.error(NOTIFICATION_TITLE.error, 'Lỗi khi load dữ liệu chi tiết lỗi!');
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Lỗi khi load dữ liệu chi tiết lỗi!'
+        );
       },
     });
   }
@@ -146,7 +146,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
   // Lưu cả master và detail
   saveIssuesData() {
     this.trimAllStringControls();
-    
+
     // Validate form master
     if (this.formGroup.invalid) {
       this.formGroup.markAllAsTouched();
@@ -155,37 +155,43 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
     }
 
     const tableData = this.IssuesTable?.getData() || [];
-    
+
     if (tableData.length === 0) {
-      this.notification.warning('Thông báo', 'Vui lòng thêm ít nhất 1 chi tiết lỗi!');
+      this.notification.warning(
+        'Thông báo',
+        'Vui lòng thêm ít nhất 1 chi tiết lỗi!'
+      );
       return;
     }
 
-    const invalidRows = tableData.filter((row: any) => !row.Name || row.Name.trim() === '');
+    const invalidRows = tableData.filter(
+      (row: any) => !row.Name || row.Name.trim() === ''
+    );
     if (invalidRows.length > 0) {
-      this.notification.warning('Thông báo', 'Vui lòng nhập tên cho tất cả chi tiết lỗi!');
+      this.notification.warning(
+        'Thông báo',
+        'Vui lòng nhập tên cho tất cả chi tiết lỗi!'
+      );
       return;
     }
 
     const formValue = this.formGroup.value;
-    if(this.isEditMode) {
-      
+    if (this.isEditMode) {
     }
     const payload = {
       IssuesGroup: {
-      Id: this.isEditMode ? this.dataInput?.Id || 0 : 0,
-      Name: formValue.Name,
-      Code: formValue.Code
+        Id: this.isEditMode ? this.dataInput?.Id || 0 : 0,
+        Name: formValue.Name,
+        Code: formValue.Code,
       },
- 
+
       Issues: tableData.map((item: any, index: number) => ({
-        Id: this.isEditMode ? item.Id  : 0,
+        Id: this.isEditMode ? item.Id : 0,
         Code: item.Code || '',
         Name: item.Name || '',
       })),
-      
-      DeletedIssues: this.DeletedIssues,
 
+      DeletedIssues: this.DeletedIssues,
     };
 
     this.issuesService.saveDataIssuesGroup(payload).subscribe({
@@ -209,11 +215,11 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
     });
   }
 
-   close(reload: boolean = false) {
+  close(reload: boolean = false) {
     this.modalRef.close(reload);
   }
 
-    draw_IssuesTable() {
+  draw_IssuesTable() {
     if (this.IssuesTable) {
       this.IssuesTable.replaceData(this.IssuesData);
     } else {
@@ -257,8 +263,9 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
                       this.DeletedIssues.push(rowData['Id']);
                     }
                     row.delete();
-                    this.IssuesData =
-                      this.IssuesData.filter((x) => x !== rowData);
+                    this.IssuesData = this.IssuesData.filter(
+                      (x) => x !== rowData
+                    );
                   },
                 });
               }
@@ -271,7 +278,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
             headerHozAlign: 'center',
             field: 'STT',
           },
-         
+
           {
             title: 'Mã lỗi',
             field: 'Code',
@@ -296,5 +303,4 @@ export class IssuesFormComponent implements OnInit, AfterViewInit{
       });
     }
   }
-
 }

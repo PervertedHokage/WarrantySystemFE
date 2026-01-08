@@ -113,9 +113,9 @@ export class CustomerComponent implements OnInit, AfterViewInit {
         filter: { model: Filters['compoundInputText'] },
       },
           {
-        id: 'ClaimNo',
-        name: 'Mã yêu cầu',
-        field: 'ClaimNo',
+        id: 'Code',
+        name: 'Mã khách hàng',
+        field: 'Code',
         minWidth: 150,
         sortable: true,
         type: 'string',

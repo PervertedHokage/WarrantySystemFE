@@ -106,6 +106,8 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       if (!productId || productId <= 0) missing.add('Sản phẩm');
 
       if (isEmpty(row?.ProductSerial)) missing.add('Serial sản phẩm');
+      if (isEmpty(row?.Imei1)) missing.add('IMEI 1');
+      if (isEmpty(row?.Imei2)) missing.add('IMEI 2');
 
       const qty = Number(row?.Quantity);
       if (!qty || Number.isNaN(qty) || qty <= 0) missing.add('Số lượng');
@@ -299,6 +301,29 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     return input;
   }
 
+  private formatDateDisplay(value: any): string {
+    if (!value) return '';
+
+    const dateOnly =
+      value instanceof Date
+        ? value.toISOString().split('T')[0]
+        : value.toString().split('T')[0].split(' ')[0];
+
+    const ymd = dateOnly.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+    if (ymd) {
+      const [, yyyy, mm, dd] = ymd;
+      return `${dd.padStart(2, '0')}/${mm.padStart(2, '0')}/${yyyy}`;
+    }
+
+    const dmy = dateOnly.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (dmy) {
+      const [, dd, mm, yyyy] = dmy;
+      return `${dd.padStart(2, '0')}/${mm.padStart(2, '0')}/${yyyy}`;
+    }
+
+    return dateOnly;
+  }
+
   private trimAllStringControls() {
     Object.keys(this.formGroup.controls).forEach((k) => {
       const c = this.formGroup.get(k);
@@ -406,7 +431,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     } else {
       this.OrderTable = new Tabulator(this.tableRef1.nativeElement, {
         data: this.OrderData,
-        layout: 'fitColumns',
+        layout: 'fitDataStretch',
         height: '100%',
         placeholder: 'Không có dữ liệu',
         movableColumns: true,
@@ -592,7 +617,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
               const value = cell.getValue();
               if (!value) return '';
               // Extract only date part from datetime string
-              return value.toString().split('T')[0];
+              return this.formatDateDisplay(value);
             },
             cellEdited: (cell) => {
               const row = cell.getRow();
@@ -610,15 +635,14 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
           {
             title: 'Ngày bảo hành',
             field: 'DateEnd',
-            minWidth: 200,
-            width: 200,
+            resizable: false,
             headerHozAlign: 'center',
             editor: this.dateEditor.bind(this),
             formatter: (cell) => {
               const value = cell.getValue();
               if (!value) return '';
               // Extract only date part from datetime string
-              return value.toString().split('T')[0];
+              return this.formatDateDisplay(value);
             },
             cellEdited: (cell) => {
               const row = cell.getRow();
@@ -648,6 +672,9 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
         Quantity: 0,
         DateStart: '',
         DateEnd: '',
+        Imei1: '',
+        Imei2: '',
+        Price: 0
       });
     }
   }
