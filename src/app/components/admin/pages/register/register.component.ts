@@ -81,9 +81,6 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   gridOptionsRegister: GridOption = {};
   datasetRegister: any[] = [];
 
-  columnIssues: Column[] = [];
-  gridOptionsIssues: GridOption = {};
-  datasetIssues: any[] = [];
   isCheckmode: boolean = false;
   UserID: number = 0;
 
@@ -174,7 +171,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     this.gridOptionsRegister = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-master-container',
+        container: '.grid-register-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -195,7 +192,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
   getUsers() {
     this.registerService.getDataUser(0).subscribe((response: any) => {
       this.datasetRegister = response?.data || [];
-      console.log("user: ", this.datasetRegister)
+      console.log('user: ', this.datasetRegister);
     });
   }
 
@@ -272,8 +269,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     });
   }
 
-   onDelete() {
-
+  onDelete() {
     const payloads = {
       ID: this.UserID,
       IsDeleted: true,
@@ -311,5 +307,4 @@ export class RegisterComponent implements OnInit, AfterViewInit {
       },
     });
   }
-
 }

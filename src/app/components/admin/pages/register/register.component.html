@@ -1,4 +1,4 @@
-<div class="card" >
+<div class="card">
   <div class="card-header bg-white p-1">
     <div class="d-flex gap-1">
       <button
@@ -31,18 +31,17 @@
     </div>
   </div>
   <div class="grid-container">
-        <div class="grid-master-container">
-          <angular-slickgrid
-            gridId="issuesGroupGrid"
-            [columns]="columnRegister"
-            [options]="gridOptionsRegister"
-            [dataset]="datasetRegister" 
-            (onAngularGridCreated)="gridReady($event)"  
-            (onActiveCellChanged)="onActiveCellChanged($event)"
-            (selectedRowsChanged)="onSelectedRowsChanged($event)"
-          >
-          </angular-slickgrid>
-        </div>
-
+    <div class="grid-register-container">
+      <angular-slickgrid
+        gridId="registerGrid"
+        [columns]="columnRegister"
+        [options]="gridOptionsRegister"
+        [dataset]="datasetRegister"
+        (onAngularGridCreated)="gridReady($event)"
+        (onActiveCellChanged)="onActiveCellChanged($event)"
+        (selectedRowsChanged)="onSelectedRowsChanged($event)"
+      >
+      </angular-slickgrid>
+    </div>
   </div>
 </div>

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { APIResponse } from '../../models/api-response.interface';
+import { SaleOrder } from '../../models/sale-order.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,28 +12,17 @@ import { environment } from '../../environments/environment';
 export class SalesOrderService {
   constructor(private http: HttpClient) {}
 
-  getSaleOrder(OrderId: number, FromDateStart: Date, ToDateStart: Date): Observable<any> {
-    const asset: any = {
-      OrderId: OrderId || 0,
-      FromDateStart: FromDateStart,
-      ToDateStart: ToDateStart
-    };
-    return this.http.post<any>(environment.host + `api/saleorder`, asset);
-  }
-
-  getProduct(ProductId: number): Observable<any> {
-    const asset: any = {
-      ProductId: ProductId || 0,
-    };
-    return this.http.post<any>(
-      environment.host + `api/saleorder/product`,
-      asset
-    );
+  getSaleOrder(OrderId: number, FromDateStart: Date, ToDateStart: Date): Observable<APIResponse<SaleOrder[]>> {
+    let params = new HttpParams()
+    .set('OrderId', (OrderId || 0).toString())
+    .set('FromDateStart', FromDateStart ? FromDateStart.toISOString() : '')
+    .set('ToDateStart', ToDateStart ? ToDateStart.toISOString() : '');
+    return this.http.get<APIResponse<SaleOrder[]>>(environment.host + `api/saleorder`, { params });
   }
 
   saveDataSaleOder(data: any): Observable<any> {
     return this.http.post<any>(
-      environment.host + `api/saleorder/save-data-sale-order`,
+      environment.host + `api/saleorder`,
       data
     );
   }

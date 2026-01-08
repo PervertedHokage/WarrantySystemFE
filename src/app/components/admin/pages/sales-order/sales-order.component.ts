@@ -373,7 +373,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     const modalRef = this.modal.create({
       nzTitle: this.isCheckmode ? 'Sửa đơn hàng' : 'Thêm đơn hàng',
       nzContent: SalesOrderFormComponent,
-      nzWidth: '50vw',
+      nzWidth: '85vw',
       nzBodyStyle: {
         'max-height': '70vh',
         overflow: 'auto',

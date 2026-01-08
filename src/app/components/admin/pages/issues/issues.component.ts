@@ -156,7 +156,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.gridOptionsIssuesGroup = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-master-container',
+        container: '.grid-issuegroup-container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -216,7 +216,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     this.gridOptionsIssues = {
       enableAutoResize: true,
       autoResize: {
-        container: '.grid-detail-container',
+        container: '.grid-issue-container',
         resizeDetection: 'container',
       },
       enableSorting: true,

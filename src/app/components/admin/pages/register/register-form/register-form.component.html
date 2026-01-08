@@ -2,7 +2,7 @@
   <form nz-form [formGroup]="formGroup" nzLayout="vertical" class="fs-7 mt-2">
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
-            <nz-form-item>
+        <nz-form-item>
           <nz-form-label for="CodeInput" class="form-label p-0"
             >Mã nhân viên<span class="text-danger ps-1"
               >(*)
@@ -40,7 +40,8 @@
             [nzSpan]="24"
             [nzErrorTip]="
               formGroup.get('FullName')?.hasError('required') &&
-              (formGroup.get('FullName')?.dirty || formGroup.get('FullName')?.touched)
+              (formGroup.get('FullName')?.dirty ||
+                formGroup.get('FullName')?.touched)
                 ? 'Vui lòng nhập tên nhân viên!'
                 : formGroup.get('Name')?.hasError('maxlength')
                 ? 'Tên loại tối đa 50 ký tự!'
@@ -60,11 +61,9 @@
     </nz-row>
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
-            <nz-form-item>
+        <nz-form-item>
           <nz-form-label for="EmailInput" class="form-label p-0"
-            >Email<span class="text-danger ps-1"
-              >(*)
-            </span></nz-form-label
+            >Email<span class="text-danger ps-1">(*) </span></nz-form-label
           >
           <nz-form-control
             [nzSpan]="24"
@@ -100,7 +99,8 @@
             [nzSpan]="24"
             [nzErrorTip]="
               formGroup.get('Telephone')?.hasError('required') &&
-              (formGroup.get('Telephone')?.dirty || formGroup.get('Telephone')?.touched)
+              (formGroup.get('Telephone')?.dirty ||
+                formGroup.get('Telephone')?.touched)
                 ? 'Vui lòng nhập số điện thoại!'
                 : formGroup.get('Telephone')?.hasError('pattern')
                 ? 'Số điện thoại không đúng định dạng!'
@@ -121,9 +121,10 @@
           </nz-form-control>
         </nz-form-item>
       </nz-col>
-      <nz-row [nzGutter]="16">
+    </nz-row>
+    <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
-            <nz-form-item>
+        <nz-form-item>
           <nz-form-label for="LoginInput" class="form-label p-0"
             >Tên đăng nhập<span class="text-danger ps-1"
               >(*)
@@ -133,7 +134,8 @@
             [nzSpan]="24"
             [nzErrorTip]="
               formGroup.get('LoginName')?.hasError('required') &&
-              (formGroup.get('LoginName')?.dirty || formGroup.get('LoginName')?.touched)
+              (formGroup.get('LoginName')?.dirty ||
+                formGroup.get('LoginName')?.touched)
                 ? 'Vui lòng nhập tên đăng nhập!'
                 : formGroup.get('LoginName')?.hasError('maxlength')
                 ? 'Mã lỗi tối đa 50 ký tự!'
@@ -153,22 +155,21 @@
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
           <nz-form-label for="passwordInput" class="form-label p-0"
-            >Mật khẩu<span class="text-danger ps-1"
-              >(*)
-            </span></nz-form-label
+            >Mật khẩu<span class="text-danger ps-1">(*) </span></nz-form-label
           >
           <nz-form-control
             [nzSpan]="24"
             [nzErrorTip]="
               formGroup.get('PasswordHash')?.hasError('required') &&
-              (formGroup.get('PasswordHash')?.dirty || formGroup.get('PasswordHash')?.touched)
+              (formGroup.get('PasswordHash')?.dirty ||
+                formGroup.get('PasswordHash')?.touched)
                 ? 'Vui lòng nhập mật khẩu!'
                 : formGroup.get('PasswordHash')?.hasError('maxlength')
                 ? 'Tên loại tối đa 50 ký tự!'
                 : undefined
             "
           >
-            <div style="position: relative;">
+            <div style="position: relative">
               <input
                 id="passwordInput"
                 nz-input
@@ -176,18 +177,24 @@
                 name="PasswordHash"
                 placeholder="Nhập mật khẩu"
                 formControlName="PasswordHash"
-                style="padding-right: 40px;"
+                style="padding-right: 40px"
               />
-              <span 
-                nz-icon 
-                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" 
-                (click)="passwordVisible = !passwordVisible" 
-                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"
+              <span
+                nz-icon
+                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordVisible = !passwordVisible"
+                style="
+                  position: absolute;
+                  right: 10px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  cursor: pointer;
+                "
                 [class.password-hidden]="!passwordVisible"
               ></span>
               <style>
                 .password-hidden::after {
-                  content: '';
+                  content: "";
                   position: absolute;
                   top: 50%;
                   left: 0;
@@ -206,25 +213,17 @@
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24">
         <nz-form-item>
           <nz-form-control [nzSpan]="24">
-            <label nz-checkbox formControlName="IsAdmin">
-              Admin
-            </label>
+            <label nz-checkbox formControlName="IsAdmin"> Admin </label>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
-    </nz-row>
     </nz-row>
   </form>
   <div class="table-container">
     <div #IssuesTable></div>
   </div>
-
 </div>
-  <div class="modal-footer mt-3 gap-3">
-      <button nz-button nzDanger nzType="default" (click)="close()">
-        Đóng
-      </button>
-      <button nz-button nzType="primary" (click)="saveData()">
-        Lưu
-      </button>
-    </div>
+<div class="modal-footer mt-3 gap-3">
+  <button nz-button nzDanger nzType="default" (click)="close()">Đóng</button>
+  <button nz-button nzType="primary" (click)="saveData()">Lưu</button>
+</div>
