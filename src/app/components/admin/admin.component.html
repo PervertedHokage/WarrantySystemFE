@@ -28,7 +28,7 @@
         <nz-icon nzType="caret-down" nzTheme="outline" *ngIf="(m.icon || '') == ''" />
         <p class="m-0 fw-bold">{{ m.title }}</p>
       </ng-template>
-      <li nz-submenu [nzTitle]="nzTitle" *ngIf="isGroup(m) " [nzOpen]="menuKey === m.key">
+      <li nz-submenu [nzTitle]="nzTitle" *ngIf="isGroup(m) " [nzOpen]="true">
         <ul>
           @for (c1 of m.children; track c1.key) {
           <li nz-menu-item *ngIf="isLeaf(c1) && c1.isPermission && c1.isOpen" (click)="(c1.router || '') === ''

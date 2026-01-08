@@ -68,6 +68,8 @@ import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/products-service/product.service';
 import { IssuesService } from '../../services/issues-service/issues.service';
 import { WarrantyClaimDTO } from '../../models/warranty-claims/warranty-claim-dto.model';
+import { AuthService } from '../../auth/auth.service';
+import { IUser } from '../../models/user.interface';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -183,6 +185,7 @@ export class LandingPageComponent
   phoneNumberSearch: string = '';
   emailSearch: string = '';
   claimNoSearch: string = '';
+  currentUser: IUser | null = null;
   //#endregion
   //#region Constructor
   constructor(
@@ -190,6 +193,7 @@ export class LandingPageComponent
     private landingPageService: LandingPageService,
     private productService: ProductService,
     private issueService: IssuesService,
+    private authService: AuthService,
     private notification: NzNotificationService,
     private modal: NzModalService
   ) {
@@ -228,6 +232,14 @@ export class LandingPageComponent
   ngOnInit(): void {
     this.currentTab = 1;
     this.prepareGrid();
+    this.authService.getCurrentUser().subscribe({
+      next: res => {
+        this.currentUser = res?.data ?? null;
+      },
+      error: err => {
+        this.currentUser = null;
+      }
+    })
   }
   ngAfterViewInit(): void {}
   angularGridReady(angularGrid: AngularGridInstance) {
@@ -529,6 +541,10 @@ export class LandingPageComponent
 
   protected navigateToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  protected navigateToAdmin(): void {
+    this.router.navigate(['/admin']);
   }
 
   protected onSubmitForm() {

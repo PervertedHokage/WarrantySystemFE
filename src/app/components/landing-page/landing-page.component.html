@@ -22,9 +22,16 @@
     <span tuiFade>Warranty Portal</span>
   </span>
   <hr />
+  @if(currentUser){
+  <button appearance="secondary-grayscale" iconStart="@tui.house" tuiButton type="button" (click)="navigateToAdmin()">
+    Trang chủ
+  </button>
+  }
+  @else {
   <button appearance="secondary-grayscale" iconStart="@tui.log-in" tuiButton type="button" (click)="navigateToLogin()">
     Đăng nhập
   </button>
+  }
 </header>
 <div class="content-div">
   <aside [tuiNavigationAside]="expanded" class="menu-desktop">

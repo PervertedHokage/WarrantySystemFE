@@ -12,6 +12,7 @@ import { log } from 'ng-zorro-antd/core/logger';
 import { AuthService } from '../../auth/auth.service';
 import { jwtDecode } from 'jwt-decode';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { IUser } from '../../models/user.interface';
 
 
 @Component({
