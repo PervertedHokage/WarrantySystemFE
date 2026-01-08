@@ -106,6 +106,8 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       if (!productId || productId <= 0) missing.add('Sản phẩm');
 
       if (isEmpty(row?.ProductSerial)) missing.add('Serial sản phẩm');
+      if (isEmpty(row?.Imei1)) missing.add('IMEI 1');
+      if (isEmpty(row?.Imei2)) missing.add('IMEI 2');
 
       const qty = Number(row?.Quantity);
       if (!qty || Number.isNaN(qty) || qty <= 0) missing.add('Số lượng');
@@ -670,6 +672,9 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
         Quantity: 0,
         DateStart: '',
         DateEnd: '',
+        Imei1: '',
+        Imei2: '',
+        Price: 0
       });
     }
   }
