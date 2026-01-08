@@ -21,10 +21,9 @@
   }
 }
 
-.grid-sale-container{
+.grid-customer-container {
   height: 100%;
   width: 100%;
-  // display: flex;
 }
 
 angular-slickgrid,
@@ -38,28 +37,7 @@ angular-slickgrid,
   height: 100% !important;
 }
 
-@media (max-width: 576px) {
-  .filter-label {
-    width: 74px;
-  }
+:host ::ng-deep .ant-splitter-panel {
+  overflow: hidden !important;
 }
 
-.filter-input {
-  width: 170px;
-}
-
-.filter-wrapper {
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 500ms ease, opacity 500ms ease;
-}
-
-.filter-wrapper.open {
-  max-height: 600px;
-  opacity: 1;
-}
-
-:host ::ng-deep .ant-form-item-control-input {
-  min-height: auto !important;
-}

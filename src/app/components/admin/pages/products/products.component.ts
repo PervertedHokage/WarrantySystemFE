@@ -43,6 +43,8 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ProductService } from '../../../../services/products-service/product.service';
 import { ProductsFormComponent } from './products-form/products-form.component';
 import { ProductsFormV2Component } from './products-form-v2/products-form-v2.component';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 
@@ -108,7 +110,9 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     private notification: NzNotificationService,
     private productService: ProductService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private cdr: ChangeDetectorRef,
+
   ) {}
 
   defineGrid() {
@@ -218,7 +222,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
         maxWidth: 300,
-        minWidth: 250,
+        minWidth: 200,
         cssClass: 'cell-wrap',
       },
       {
@@ -237,7 +241,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         name: 'Đơn vị',
         field: 'UnitName',
         sortable: true,
-        minWidth: 50,
+        minWidth: 100,
         type: 'string',
         filterable: true,
         filter: { model: Filters['compoundInputText'] },
@@ -256,13 +260,174 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       forceFitColumns: false,
       enableRowSelection: true,
       enableCheckboxSelector: true,
+      checkboxSelector: {
+        hideSelectAllCheckbox: false,
+      },
+      multiSelect: true,
+      rowSelectionOptions: { selectActiveRow: false },
       datasetIdPropertyName: 'Id',
+      enableCellNavigation: true,
     };
   }
 
   getProducts() {
     this.productService.getDataProducts().subscribe((res: any) => {
       this.datasetProduct = res?.data || [];
+    });
+  }
+
+  private updateSparePartGridDataset(items: any[]) {
+    this.datasetSparePart = items || [];
+
+    if (!this.angularGridSparePart) return;
+
+    this.angularGridSparePart.filterService?.clearFilters();
+
+    const gs = this.angularGridSparePart.gridService;
+    if (gs && typeof gs.updateDataset === 'function') {
+      gs.updateDataset(this.datasetSparePart);
+      return;
+    }
+
+    const dv = this.angularGridSparePart.dataView;
+    const sg = this.angularGridSparePart.slickGrid;
+
+    if (dv && typeof dv.setItems === 'function') {
+      dv.setItems(this.datasetSparePart, 'Id');
+      if (sg && typeof sg.invalidate === 'function') {
+        sg.invalidate();
+        sg.render();
+      }
+    } else if (sg && typeof sg.setData === 'function') {
+      sg.setData(this.datasetSparePart);
+      if (typeof sg.invalidate === 'function') {
+        sg.invalidate();
+        sg.render();
+      }
+    }
+  }
+
+  onDeleteMultipleSpareParts() {
+
+    if (!this.angularGridSparePart) {
+      this.notification.error(
+        NOTIFICATION_TITLE.error,
+        'Grid chưa được khởi tạo!'
+      );
+      return;
+    }
+
+    const gridService = this.angularGridSparePart.gridService;
+    const dataView = this.angularGridSparePart.dataView;
+
+    let selectedItems: any[] = [];
+
+    if (gridService && gridService.getSelectedRows) {
+      const selectedRows = gridService.getSelectedRows();
+      selectedItems = selectedRows
+        .map((idx: number) => dataView.getItem(idx))
+        .filter((item: any) => item);
+    } else if (dataView && dataView.getSelectedIds) {
+      const selectedIds = dataView.getSelectedIds();
+      selectedItems = selectedIds
+        .map((id: any) => dataView.getItemById(id))
+        .filter((item: any) => item);
+    }
+
+    if (selectedItems.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn ít nhất 1 linh kiện để xóa!'
+      );
+      return;
+    }
+
+    const selectedRowIds = new Set<number>();
+    const selectedGroupIds: number[] = [];
+    const selectedNames: string[] = [];
+
+    selectedItems.forEach((item: any) => {
+      if (item?.Id) selectedRowIds.add(item.Id);
+      const groupId = item?.SparePartGroupId ?? item?.GroupId;
+      if (groupId) selectedGroupIds.push(groupId);
+      selectedNames.push(item?.Name || item?.SparePartNumber || '');
+    });
+
+    if (selectedGroupIds.length === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Không tìm thấy GroupId hợp lệ để xóa!'
+      );
+      return;
+    }
+
+    const confirmMessage =
+      selectedGroupIds.length === 1
+        ? `Bạn có chắc chắn muốn xóa linh kiện ${selectedNames[0]}?`
+        : `Bạn có chắc chắn muốn xóa ${selectedGroupIds.length} linh kiện đã chọn?`;
+
+    this.modal.confirm({
+      nzTitle: 'Xác nhận xóa',
+      nzContent: confirmMessage,
+      nzOkText: 'Đồng ý',
+      nzCancelText: 'Hủy',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        const remainingItems = (this.datasetSparePart || []).filter(
+          (x: any) => !selectedRowIds.has(x?.Id)
+        );
+
+        const payload = {
+          Product: {
+            Id: this.ProductData?.Id,
+            Code: this.ProductData?.Code || '',
+            Name: this.ProductData?.Name || '',
+            Description: this.ProductData?.Description || '',
+          },
+          SparePartsGroups: remainingItems.map((item: any, index: number) => ({
+            SparePartsGroup: {
+              Id: item?.SparePartGroupId ?? item?.GroupId,
+              ProductId: this.ProductID,
+              STT: index + 1,
+              Name: item?.Name,
+            },
+            SparePart: [
+              {
+                Id: item?.Id,
+                Description: item?.Description,
+                SparePartNumber: item?.SparePartNumber,
+                UnitId: item?.UnitId,
+              },
+            ],
+          })),
+          DeletedSparePartGroup: selectedGroupIds,
+        };
+
+        this.productService.saveDataProduct(payload).subscribe({
+          next: (res: any) => {
+            if (res?.status === 1) {
+              this.notification.success(
+                NOTIFICATION_TITLE.success,
+                res?.message || 'Đã xóa thành công!'
+              );
+              this.getSparePart();
+            } else {
+              this.notification.warning(
+                NOTIFICATION_TITLE.warning,
+                res?.message || 'Không thể xóa các bản ghi này!'
+              );
+              this.getSparePart();
+            }
+          },
+          error: (err) => {
+            this.notification.error(
+              NOTIFICATION_TITLE.error,
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+            );
+            this.getSparePart();
+          },
+        });
+      },
     });
   }
 
@@ -363,33 +528,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     this.productService
       .getSparePart(this.ProductID)
       .subscribe((response: any) => {
-        this.datasetSparePart = response?.data || [];
-
-        if (this.angularGridSparePart) {
-          this.angularGridSparePart.filterService?.clearFilters();
-
-          const gs = this.angularGridSparePart.gridService;
-          if (gs && typeof gs.updateDataset === 'function') {
-            gs.updateDataset(this.datasetSparePart);
-          } else {
-            const dv = this.angularGridSparePart.dataView;
-            const sg = this.angularGridSparePart.slickGrid;
-
-            if (dv && typeof dv.setItems === 'function') {
-              dv.setItems(this.datasetSparePart, 'Id');
-              if (sg && typeof sg.invalidate === 'function') {
-                sg.invalidate();
-                sg.render();
-              }
-            } else if (sg && typeof sg.setData === 'function') {
-              sg.setData(this.datasetSparePart);
-              if (typeof sg.invalidate === 'function') {
-                sg.invalidate();
-                sg.render();
-              }
-            }
-          }
-        }
+        this.updateSparePartGridDataset(response?.data || []);
       });
   }
 
@@ -398,12 +537,49 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     if (this.isCheckmode == true && this.ProductID === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn 1 bản ghi để sửa!'
+        'Vui lòng chọn 1 sản phẩm!'
       );
       return;
     }
     const modalRef = this.modal.create({
       nzTitle: this.isCheckmode ? 'Sửa sản phẩm' : 'Thêm sản phẩm',
+      nzContent: ProductsFormComponent,
+      nzWidth: '50vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        overflow: 'auto',
+      },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+      nzData: {
+        ProductID: this.ProductID,
+        isEditMode: this.isCheckmode,
+        dataInput: this.ProductData,
+      },
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+        this.getProducts();
+        if (this.ProductID) {
+          this.getSparePart();
+        }
+      }
+    });
+  }
+
+  onAddSparePart(isEditmode: boolean): void {
+    this.isCheckmode = isEditmode;
+    if (this.ProductID === 0) {
+      this.notification.warning(
+        NOTIFICATION_TITLE.warning,
+        'Vui lòng chọn 1 sản phẩm để thêm linh kiện!'
+      );
+      return;
+    }
+    const modalRef = this.modal.create({
+      nzTitle: 'Quản lý linh kiện',
       nzContent: ProductsFormV2Component,
       nzWidth: '50vw',
       nzBodyStyle: {

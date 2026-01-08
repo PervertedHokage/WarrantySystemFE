@@ -50,6 +50,7 @@ import { forkJoin } from 'rxjs';
 import { NOTIFICATION_TITLE } from '../../../../../../app/app.config';
 import { WorkOrderService } from '../../../../../services/work-order-service/work-order.service';
 import { SelectControlComponent } from '../../select-control/select-control.component';
+import { ProductService } from '../../../../../services/products-service/product.service';
 
 @Component({
   selector: 'app-work-order-form',
@@ -107,12 +108,11 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getdataEmployee();
-    this.getStatus();
     this.getdataProducts();
     this.getdataQuotation();
     this.setupQuotationChangeListener();
-    this.loadOptionSparePartGroup();
     this.getWarrantyClaims();
+    this.getStatus();
     if (!this.isEditMode) {
       this.generateWorkOrderCode();
     }
@@ -151,6 +151,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     private modalRef: NzModalRef,
     private notification: NzNotificationService,
     private workOrderService: WorkOrderService,
+    private productService: ProductService,
     private cdr: ChangeDetectorRef,
     private injector: EnvironmentInjector,
     private appRef: ApplicationRef
@@ -272,6 +273,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       .getWarrantyClaim(0)
       .subscribe((response: any) => {
         this.dataWarrantyClaims = response?.data || [];
+        this.loadOptionSparePartGroup();
       });
   }
 
@@ -292,10 +294,6 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
           if (selectedQuotation && selectedQuotation.CustomerName) {
             this.formGroup.patchValue({
               CustomerName: selectedQuotation.CustomerName,
-            });
-          }
-            if (selectedQuotation && selectedQuotation.QuotationId) {
-            this.formGroup.patchValue({
               QuotationId: selectedQuotation.QuotationId,
             });
           }
@@ -304,6 +302,8 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
               ProductId: selectedQuotation.ProductId,
             });
           }
+
+          this.loadOptionSparePartGroup();
         }
       });
   }
@@ -364,18 +364,32 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
   }
 
   loadOptionSparePartGroup() {
-    this.workOrderService.getSparePartGroup().subscribe({
+    const warrantyClaimId = this.formGroup?.get('WarrantyClaimId')?.value;
+
+    const selectedClaim = this.dataWarrantyClaims?.find(
+      (x: any) => x?.Id === warrantyClaimId
+    );
+
+    const productId =
+      Number(selectedClaim?.ProductId) || Number(this.dataInput?.ProductId) || 0;
+
+    if (!productId) {
+      this.SparePartGroupOptions = [];
+      return;
+    }
+
+    this.productService.getSparePart(productId).subscribe({
       next: (res: any) => {
         const productData = res.data;
         if (Array.isArray(productData)) {
           this.SparePartGroupOptions = productData
             .filter(
               (item) =>
-                item.Id !== null && item.Id !== undefined && item.Id !== 0
+                item.GroupId !== null && item.GroupId !== undefined && item.GroupId !== 0
             )
             .map((data) => ({
               label: data.Name,
-              value: data.Id,
+              value: data.GroupId,
               // Code: data.Code,
               Name: data.Name,
             }));

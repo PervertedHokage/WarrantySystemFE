@@ -21,6 +21,7 @@ import { UnitComponent } from '../pages/unit/unit.component';
 import { WorkOrderComponent } from '../pages/work-order/work-order.component';
 import { SerialComponent } from '../pages/serial/serial.component';
 import { RegisterComponent } from '../pages/register/register.component';
+import { CustomerComponent } from '../pages/customer/customer.component';
 
 @Injectable({
   providedIn: 'root',
@@ -168,6 +169,15 @@ export class MenuService {
             isOpen: true,
             isPermission: true,
             comp: UnitComponent,
+            // icon: 'assets/icon/menu_crm.svg',
+          },
+           {
+            kind: 'leaf',
+            key: 'CustomerComponent',
+            title: 'Khách hàng',
+            isOpen: true,
+            isPermission: true,
+            comp: CustomerComponent,
             // icon: 'assets/icon/menu_crm.svg',
           },
         ],

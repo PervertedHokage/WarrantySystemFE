@@ -1,0 +1,13 @@
+<div class="card">
+  <div class="grid-customer-container">
+    <angular-slickgrid
+      gridId="customerGrid"
+      [columns]="columnCustomer"
+      [options]="gridOptionCustomer"
+      [dataset]="datasetCustomer"
+      (onAngularGridCreated)="gridCustomerReady($event)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>
+

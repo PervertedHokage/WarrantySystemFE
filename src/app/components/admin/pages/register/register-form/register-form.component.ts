@@ -99,13 +99,23 @@ export class RegisterFormComponent implements OnInit, AfterViewInit {
     this.formGroup = this.fb.group({
       FullName: [null, [Validators.required, Validators.maxLength(50)]],
       Code: ['', [Validators.required, Validators.maxLength(20)]],
-      Email: [null, [Validators.required, Validators.maxLength(50)]],
-      Telephone: [null, [Validators.required, Validators.maxLength(50)]],
+      Email: [
+        null,
+        [Validators.required, Validators.email, Validators.maxLength(100)],
+      ],
+      Telephone: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(/^0\d{9,10}$/),
+          Validators.minLength(10),
+          Validators.maxLength(11),
+        ],
+      ],
       LoginName: [null, [Validators.required, Validators.maxLength(50)]],
       PasswordHash: [null, [Validators.required, Validators.maxLength(50)]],
       IsAdmin: [false],
     });
-    console.log("data: ", this.dataInput)
 
     // Initialize form with data if editing
     if (this.isEditMode && this.dataInput) {
