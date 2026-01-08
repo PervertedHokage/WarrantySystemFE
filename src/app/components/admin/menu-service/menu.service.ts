@@ -55,9 +55,9 @@ export class MenuService {
   ];
 
   getMenus(): MenuItem[] {
-    let id = this.appUserService.currentUser?.ID || 0;
+    let id = this.appUserService.currentUser?.Id || 0;
     let employeeID = this.appUserService.currentUser?.EmployeeID || 0;
-    let departmentID = this.appUserService.currentUser?.DepartmentID || 0;
+    let departmentID = this.appUserService.currentUser?.DepartmentId || 0;
     let positionID = this.appUserService.currentUser?.PositionID || 0;
     let isHR =
       this.employeeHRs.includes(employeeID) ||

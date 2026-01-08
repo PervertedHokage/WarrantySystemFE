@@ -90,6 +90,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
     this.warrantyClaimService.getWarrantyClaimById(input.Id).subscribe({
       next: (res) => {
         this.warrantyClaim = res.data;
+        console.log(this.warrantyClaim);
         this.loadTracking();
       },
       error: (err) => {},

@@ -27,7 +27,7 @@ export class AppUserService {
    * Lấy ID của user
    */
   public get id(): number | undefined {
-    return this.currentUser?.ID;
+    return this.currentUser?.Id;
   }
 
   /**
@@ -55,7 +55,7 @@ export class AppUserService {
    * Lấy ID phòng ban của user
    */
   public get departmentID(): number | undefined {
-    return this.currentUser?.DepartmentID;
+    return this.currentUser?.DepartmentId;
   }
 
   /**

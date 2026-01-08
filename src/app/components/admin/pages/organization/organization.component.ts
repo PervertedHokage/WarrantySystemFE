@@ -30,7 +30,6 @@ import { HasPermissionDirective } from '../../../../directives/has-permission.di
 import { NOTIFICATION_TITLE } from '../../../../app.config';
 import { forkJoin } from 'rxjs';
 import {TabulatorFull as Tabulator} from 'tabulator-tables';
-import 'tabulator-tables/dist/css/tabulator_simple.min.css';
 import { AuthInterceptor } from '../../../../auth/auth.interceptor';
 
 @Component({

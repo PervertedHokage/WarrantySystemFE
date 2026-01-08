@@ -162,7 +162,7 @@
                 <nz-form-label>Người tiếp nhận</nz-form-label>
                 <nz-form-control>
                   <nz-select [(ngModel)]="warrantyClaim.ReceptionWorker" name="receptionworker" class="w-100">
-                    @for (user of userList; track user.ID) {
+                    @for (user of userList; track user.Id) {
                     <nz-option [nzLabel]="user.FullName" [nzValue]="user.LoginName"></nz-option>
                     }
                   </nz-select>
@@ -258,7 +258,7 @@
                 <nz-form-label>Kỹ thuật viên chẩn đoán</nz-form-label>
                 <nz-form-control>
                   <nz-select [(ngModel)]="warrantyClaim.DiagnosisWorker" name="diagnosisworker" class="w-100">
-                    @for (user of userList; track user.ID) {
+                    @for (user of userList; track user.Id) {
                     <nz-option [nzLabel]="user.FullName" [nzValue]="user.LoginName"></nz-option>
                     }
                   </nz-select>

@@ -1,7 +1,7 @@
 export interface IUser {
   EmployeeID: number;
-  ID: number;
-  DepartmentID: number;
+  Id: number;
+  DepartmentId: number;
   Code: string;
   FullName: string;
   LoginName: string;
@@ -24,7 +24,7 @@ export interface IUser {
   TeamOfUser: number;
   Permissions: string;
   Name: string;
-  PasswordHash:string;
+  PasswordHash: string;
 }
 
 export interface ILoginResponse {
