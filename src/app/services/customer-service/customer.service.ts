@@ -17,4 +17,10 @@ export class CustomerService {
       environment.host + `api/customer/customer`
     );
   }
+    saveDataCustomer(data: any): Observable<any> {
+    return this.http.post<any>(environment.host + `api/customer`, data);
+  }
+    deleteCustomer(ids: number[]): Observable<any> {
+    return this.http.post<any>(environment.host + `api/customer/delete`, ids);
+  }
 }

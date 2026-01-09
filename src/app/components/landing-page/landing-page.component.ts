@@ -600,10 +600,10 @@ export class LandingPageComponent
           this.newWarrantyClaimForm.reset();
           this.resetCaptcha();
         },
-        error: (error: APIResponse<WarrantyClaim>) => {
+        error: (error: APIResponse<WarrantyClaim> | any) => {
           this.notification.error(
             NOTIFICATION_TITLE.error,
-            'Đăng ký thất bại: ' + error.message
+            'Đăng ký thất bại: ' + error?.error?.message || error?.message
           );
         },
       });
