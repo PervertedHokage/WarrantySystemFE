@@ -43,6 +43,7 @@ import {
   TuiTabs,
   TuiTextarea,
   TuiFilterByInputPipe,
+  TuiCheckbox,
 } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
 import {
@@ -70,6 +71,7 @@ import { IssuesService } from '../../services/issues-service/issues.service';
 import { WarrantyClaimDTO } from '../../models/warranty-claims/warranty-claim-dto.model';
 import { AuthService } from '../../auth/auth.service';
 import { IUser } from '../../models/user.interface';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -82,6 +84,7 @@ declare let grecaptcha: any;
     NzModalModule,
     TuiAppearance,
     TuiButton,
+    TuiCheckbox,
     TuiDataList,
     TuiDataListWrapper,
     TuiDropdown,
@@ -109,12 +112,13 @@ export class LandingPageComponent
   //#region Properties
   private router = inject(Router);
   private _currentTab = 0;
+  private _currentSection = 0;
   get currentTab() {
     return this._currentTab;
   }
   set currentTab(value: number) {
     this._currentTab = value;
-    if (this._currentTab == 1) {
+    if (this._currentTab == 1 && this._currentSection == 3) {
       this.newWarrantyClaimForm.reset();
       this.loadProducts();
       this.loadIssues();
@@ -123,9 +127,32 @@ export class LandingPageComponent
       this.destroyCaptcha();
     }
   }
+  get currentSection() {
+    return this._currentSection;
+  }
+  set currentSection(value: number) {
+    this._currentSection = value;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this._currentSection == 1) {
+      this.destroyCaptcha();
+    }
+    if (this._currentSection == 2) {
+      this.destroyCaptcha();
+    }
+    if (this._currentSection == 3) {
+      this.newWarrantyClaimForm.reset();
+      this.loadProducts();
+      this.loadIssues();
+      setTimeout(() => this.initCaptcha());
+    }
+  }
   currentFilter = 0;
+  pdfUrl: SafeResourceUrl;
+  hasAgreed = false;
   protected expanded = false;
   protected open = false;
+  title: string = 'Tạo yêu cầu bảo hành';
+  subTitle: string = 'Vui lòng điền đầy đủ thông tin để gửi yêu cầu bảo hành';
   statusMap: Record<number, { text: string; cls: string }> = {
     1: { text: 'Tiếp nhận thông tin', cls: 'status-badge status-1' },
     2: { text: 'Xác minh thông tin', cls: 'status-badge status-2' },
@@ -195,9 +222,12 @@ export class LandingPageComponent
     private issueService: IssuesService,
     private authService: AuthService,
     private notification: NzNotificationService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    private sanitizer: DomSanitizer
   ) {
     super();
+    const url = '/assets/docs/terms_and_conditions_placeholder.pdf';
+    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     this.newWarrantyClaimForm = this.formBuilder.group({
       Id: [0],
       CustomerName: ['', [Validators.required]],
@@ -231,6 +261,7 @@ export class LandingPageComponent
   //#endregion
   ngOnInit(): void {
     this.currentTab = 1;
+    this.currentSection = 1;
     this.prepareGrid();
     this.authService.getCurrentUser().subscribe({
       next: (res) => {
@@ -486,6 +517,15 @@ export class LandingPageComponent
         );
       },
     });
+  }
+  viewWarrantyStatusCheck() {
+    this.currentSection = 1;
+  }
+  viewTermsAndConditions() {
+    this.currentSection = 2;
+  }
+  viewNewWarrantyClaimForm() {
+    this.currentSection = 3;
   }
   private async initCaptcha() {
     if (!this.captchaHolder || this.widgetId !== undefined) {
