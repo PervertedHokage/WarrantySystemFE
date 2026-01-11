@@ -198,8 +198,8 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
     }
     const request = {
       SaleOrderId: this.SaleOrderID,
-      FromDateStart: new Date('2020-12-12'),
-      ToDateStart: new Date(),
+      FromDateStart: new Date('2000-01-01'),  // Từ quá khứ xa
+      ToDateStart: new Date('2099-12-31'),    // Đến tương lai xa
     };
     this.salesOrderService
       .getSaleOrder(
@@ -209,6 +209,8 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       )
       .subscribe({
         next: (response) => {
+          console.log('loadOrderData - SaleOrderID:', this.SaleOrderID);
+          console.log('loadOrderData - API response:', response);
           const order = response?.data || [];
           this.OrderData = order.map((item: any) => ({
             Id: item.Id || 0,
@@ -720,7 +722,7 @@ export class SalesOrderFormComponent implements OnInit, AfterViewInit {
       }
       container.appendChild(hostEl);
       appRef.attachView(componentRef.hostView);
-      onRendered(() => {});
+      onRendered(() => { });
 
       return container;
     };

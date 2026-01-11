@@ -44,6 +44,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
 import { SalesOrderService } from '../../../../services/sales-order-service/sales-order.service';
 import { SalesOrderFormComponent } from './sales-order-form/sales-order-form.component';
+import { ImportExcelProductSaleComponent } from './sales-order-excel/sales-order-excel.component';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -100,7 +101,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     // this.getSaleOrder();
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 
   constructor(
     private notification: NzNotificationService,
@@ -108,7 +109,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
     private modal: NzModalService,
     private message: NzMessageService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   private parseToDate(value: any): Date | null {
     if (!value) return null;
@@ -385,6 +386,27 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         isEditMode: this.isCheckmode,
         dataInput: this.SaleOrderData,
       },
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+        this.getSynthesisOfGeneratedMaterials();
+      }
+    });
+  }
+
+  onImportExcel(): void {
+    const modalRef = this.modal.create({
+      nzTitle: 'Nhập dữ liệu Excel',
+      nzContent: ImportExcelProductSaleComponent,
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        overflow: 'auto',
+      },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
     });
 
     modalRef.afterClose.subscribe((result) => {
