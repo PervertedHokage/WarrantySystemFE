@@ -167,8 +167,8 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
         id: 'stt',
         name: 'STT',
         field: 'stt',
-        minWidth: 30,
-        maxWidth: 50,
+        minWidth: 50,
+        maxWidth: 80,
         sortable: false,
         filterable: false,
         formatter: (row) => {

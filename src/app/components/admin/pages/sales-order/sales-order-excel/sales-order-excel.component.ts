@@ -1,7 +1,19 @@
-import { Component, OnInit, AfterViewInit, ViewChild, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  Input,
+} from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { FormsModule, Validators, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  Validators,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
 import * as ExcelJS from 'exceljs';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -13,7 +25,12 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
-import { NzModalService, NzModalModule, NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import {
+  NzModalService,
+  NzModalModule,
+  NzModalRef,
+  NZ_MODAL_DATA,
+} from 'ng-zorro-antd/modal';
 import { HttpClient } from '@angular/common/http';
 import { SaleOrder } from '../../../../../models/sale-order.model';
 import { SalesOrderService } from '../../../../../services/sales-order-service/sales-order.service';
@@ -22,13 +39,19 @@ import { ProductService } from '../../../../../services/products-service/product
 
 @Component({
   selector: 'app-import-excel-product-sale',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NzProgressModule, NzIconModule, NzButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NzProgressModule,
+    NzIconModule,
+    NzButtonModule,
+  ],
   templateUrl: './sales-order-excel.component.html',
-  styleUrl: './sales-order-excel.component.less'
+  styleUrl: './sales-order-excel.component.less',
 })
 export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
-
-  wareHouseCode: string = "HN";
+  wareHouseCode: string = 'HN';
   filePath: string = '';
   excelSheets: string[] = [];
   selectedSheet: string = '';
@@ -38,7 +61,6 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
   listImei1: any[] = [];
   listProductGroup: any[] = [];
   listLocation: any[] = [];
-
 
   // Biến hiển thị chính trên thanh tiến trình
   displayProgress: number = 0; // % hiển thị trên thanh
@@ -50,7 +72,9 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
   // Chặn đóng modal khi đang xử lý
   isReadingFile: boolean = false;
   isSavingData: boolean = false;
-  get isBusy(): boolean { return this.isReadingFile || this.isSavingData; }
+  get isBusy(): boolean {
+    return this.isReadingFile || this.isSavingData;
+  }
 
   constructor(
     private notification: NzNotificationService,
@@ -58,7 +82,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     private saleorderService: SalesOrderService,
     private productService: ProductService,
     private http: HttpClient
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadUnitAndImei1Data();
@@ -67,7 +91,8 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     this.drawtable();
   }
   drawtable() {
-    if (!this.tableExcel) { // Chỉ khởi tạo nếu chưa có
+    if (!this.tableExcel) {
+      // Chỉ khởi tạo nếu chưa có
       this.tableExcel = new Tabulator('#datatableExcel', {
         data: this.dataTableExcel, // Dữ liệu ban đầu rỗng
         layout: 'fitDataFill',
@@ -92,28 +117,101 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         locale: 'vi',
         // Tự động tạo cột dựa trên dữ liệu
         autoColumnsDefinitions: {
-          STT: { title: "STT", field: "STT", hozAlign: "center", headerHozAlign: "center", width: 50, editor: "input" },
-          CustomerName: { title: 'Tên khách hàng', field: 'CustomerName', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          CustomerPhoneNumber: { title: 'Số điện thoại', field: 'CustomerPhoneNumber', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          CustomerEmail: { title: 'Email', field: 'CustomerEmail', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          ProductName: { title: 'Tên nhóm', field: 'ProductName', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          Serial: { title: 'Mã Sản phẩm', field: 'Serial', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
+          STT: {
+            title: 'STT',
+            field: 'STT',
+            hozAlign: 'center',
+            headerHozAlign: 'center',
+            width: 50,
+            editor: 'input',
+          },
+          CustomerName: {
+            title: 'Tên khách hàng',
+            field: 'CustomerName',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          CustomerPhoneNumber: {
+            title: 'Số điện thoại',
+            field: 'CustomerPhoneNumber',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          CustomerEmail: {
+            title: 'Email',
+            field: 'CustomerEmail',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          ProductName: {
+            title: 'Tên nhóm',
+            field: 'ProductName',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          Serial: {
+            title: 'Mã Sản phẩm',
+            field: 'Serial',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
           // ProductName: { title: 'Tên Sản phẩm', field: 'ProductName', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          Imei1: { title: 'Imei1', field: 'Imei1', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
+          Imei1: {
+            title: 'Imei1',
+            field: 'Imei1',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
           // Unit: { title: 'ĐVT', field: 'Unit', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          Imei2: { title: 'Imei2', field: 'Imei2', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          Price: { title: 'Giá', field: 'Price', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          Quantity: { title: 'Số lượng', field: 'Quantity', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          DateStart: { title: 'Ngày kích hoạt', field: 'DateStart', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
-          DateEnd: { title: 'Hạn bảo hành', field: 'DateEnd', hozAlign: 'left', headerHozAlign: 'center', editor: "input" },
+          Imei2: {
+            title: 'Imei2',
+            field: 'Imei2',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          Price: {
+            title: 'Giá',
+            field: 'Price',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          Quantity: {
+            title: 'Số lượng',
+            field: 'Quantity',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          DateStart: {
+            title: 'Ngày kích hoạt',
+            field: 'DateStart',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
+          DateEnd: {
+            title: 'Hạn bảo hành',
+            field: 'DateEnd',
+            hozAlign: 'left',
+            headerHozAlign: 'center',
+            editor: 'input',
+          },
           // Note: { title: 'Ghi chú', field: 'Note', hozAlign: 'left', headerHozAlign: 'center', editor: "input" }
-        }
+        },
       });
     }
   }
   formatProgressText = (percent: number): string => {
     return this.displayText;
-  }
+  };
 
   openFileExplorer() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
@@ -125,11 +223,11 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
       const file = input.files[0];
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
-      console.log('File đã chọn:', file.name); // Log để kiểm tra
-      console.log('Phần mở rộng:', fileExtension); // Log để kiểm tra
-
       if (fileExtension !== 'xlsx' && fileExtension !== 'xls') {
-        this.notification.warning('Thông báo', 'Vui lòng chọn tệp Excel (.xlsx hoặc .xls)!');
+        this.notification.warning(
+          'Thông báo',
+          'Vui lòng chọn tệp Excel (.xlsx hoặc .xls)!'
+        );
         input.value = ''; // Xóa input để có thể chọn lại file
         this.resetExcelImportState(); // Reset trạng thái khi có lỗi định dạng
         return;
@@ -166,7 +264,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
           await workbook.xlsx.load(data);
           console.log('Workbook đã được tải bởi ExcelJS.'); // Log
 
-          this.excelSheets = workbook.worksheets.map(sheet => sheet.name);
+          this.excelSheets = workbook.worksheets.map((sheet) => sheet.name);
           console.log('Danh sách sheets tìm thấy:', this.excelSheets); // Log
 
           if (this.excelSheets.length > 0) {
@@ -186,7 +284,9 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
                 } else {
                   this.displayText = `0/${this.totalRowsAfterFileRead} bản ghi`;
                 }
-                console.log('Dữ liệu đã được đọc và bảng Excel preview đã được cập nhật (sau delay).');
+                console.log(
+                  'Dữ liệu đã được đọc và bảng Excel preview đã được cập nhật (sau delay).'
+                );
               }, minDisplayTime - elapsedTime);
             } else {
               // Nếu quá trình xử lý đã đủ lâu, cập nhật ngay lập tức
@@ -196,17 +296,27 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
               } else {
                 this.displayText = `0/${this.totalRowsAfterFileRead} bản ghi`;
               }
-              console.log('Dữ liệu đã được đọc và bảng Excel preview đã được cập nhật.');
+              console.log(
+                'Dữ liệu đã được đọc và bảng Excel preview đã được cập nhật.'
+              );
             }
-
           } else {
             console.warn('File Excel không chứa bất kỳ sheet nào.'); // Log
-            this.notification.warning('Thông báo', 'File Excel không có sheet nào!');
+            this.notification.warning(
+              'Thông báo',
+              'File Excel không có sheet nào!'
+            );
             this.resetExcelImportState();
           }
         } catch (error) {
-          console.error('Lỗi khi đọc tệp Excel trong FileReader.onload:', error); // Log chi tiết lỗi
-          this.notification.error('Thông báo', 'Không thể đọc tệp Excel. Vui lòng đảm bảo tệp không bị hỏng và đúng định dạng.');
+          console.error(
+            'Lỗi khi đọc tệp Excel trong FileReader.onload:',
+            error
+          ); // Log chi tiết lỗi
+          this.notification.error(
+            'Thông báo',
+            'Không thể đọc tệp Excel. Vui lòng đảm bảo tệp không bị hỏng và đúng định dạng.'
+          );
           this.resetExcelImportState(); // Reset trạng thái khi có lỗi
         }
         input.value = ''; // Xóa input để có thể chọn lại cùng file
@@ -219,7 +329,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     return s
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
-      .replace(/đ/g, 'd')  // chuyển 'đ' -> 'd' để khớp các synonym như 'dvt', 'don vi'
+      .replace(/đ/g, 'd') // chuyển 'đ' -> 'd' để khớp các synonym như 'dvt', 'don vi'
       .replace(/\s+/g, ' ');
   }
 
@@ -248,19 +358,36 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
   }
 
   private headerSynonymsMap: Record<string, string> = {
-    'stt': 'STT', 'so thu tu': 'STT', 'thu tu': 'STT',
-    'customername': 'CustomerName', 'ten khach hang': 'CustomerName', 'customer': 'CustomerName',
-    'customerphonenumber': 'CustomerPhoneNumber', 'so dien thoai': 'CustomerPhoneNumber',
-    'customeremail': 'CustomerEmail', 'email': 'CustomerEmail',
-    'customeraddress': 'CustomerAddress', 'dia chi': 'CustomerAddress',
-    'productname': 'ProductName', 'name': 'ProductName', 'ten san pham': 'ProductName', 'model': 'ProductName',
-    'serial': 'Serial', 'ma san pham': 'Serial',
-    'imei1': 'Imei1', 'imei 1': 'Imei1',
-    'imei2': 'Imei2', 'imei 2': 'Imei2',
-    'price': 'Price', 'gia': 'Price',
-    'quantity': 'Quantity', 'so luong': 'Quantity',
-    'datestart': 'DateStart', 'ngay kich hoat': 'DateStart',
-    'dateend': 'DateEnd', 'han bao hanh': 'DateEnd',
+    stt: 'STT',
+    'so thu tu': 'STT',
+    'thu tu': 'STT',
+    customername: 'CustomerName',
+    'ten khach hang': 'CustomerName',
+    customer: 'CustomerName',
+    customerphonenumber: 'CustomerPhoneNumber',
+    'so dien thoai': 'CustomerPhoneNumber',
+    customeremail: 'CustomerEmail',
+    email: 'CustomerEmail',
+    customeraddress: 'CustomerAddress',
+    'dia chi': 'CustomerAddress',
+    productname: 'ProductName',
+    name: 'ProductName',
+    'ten san pham': 'ProductName',
+    model: 'ProductName',
+    serial: 'Serial',
+    'ma san pham': 'Serial',
+    imei1: 'Imei1',
+    'imei 1': 'Imei1',
+    imei2: 'Imei2',
+    'imei 2': 'Imei2',
+    price: 'Price',
+    gia: 'Price',
+    quantity: 'Quantity',
+    'so luong': 'Quantity',
+    datestart: 'DateStart',
+    'ngay kich hoat': 'DateStart',
+    dateend: 'DateEnd',
+    'han bao hanh': 'DateEnd',
   };
 
   async readExcelData(workbook: ExcelJS.Workbook, sheetName: string) {
@@ -286,19 +413,111 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
       }
 
       const columns = [
-        { title: 'STT', field: 'STT', hozAlign: 'center', headerHozAlign: "center", width: 50, editor: "input" },
-        { title: 'Tên khách hàng', field: 'CustomerName', hozAlign: 'left', headerHozAlign: "center", width: 200, editor: "input" },
-        { title: 'Số điện thoại', field: 'CustomerPhoneNumber', hozAlign: 'left', headerHozAlign: "center", width: 150, editor: "input" },
-        { title: 'Email', field: 'CustomerEmail', hozAlign: 'left', headerHozAlign: "center", width: 150, editor: "input" },
-        { title: 'Địa chỉ', field: 'CustomerAddress', hozAlign: 'left', headerHozAlign: "center", width: 150, editor: "input" },
-        { title: 'Model', field: 'ProductName', hozAlign: 'left', headerHozAlign: "center", width: 200, editor: "input" },
-        { title: 'Serial', field: 'Serial', hozAlign: 'left', headerHozAlign: "center", width: 150, editor: "input" },
-        { title: 'Imei1', field: 'Imei1', hozAlign: 'left', headerHozAlign: 'center', width: 120, editor: "input" },
-        { title: 'Imei2', field: 'Imei2', hozAlign: 'left', headerHozAlign: "center", width: 120, editor: "input" },
-        { title: 'Giá', field: 'Price', hozAlign: 'right', headerHozAlign: 'center', width: 150, formatter: (cell: any) => this.formatCurrency(cell.getValue()), editor: "input" },
-        { title: 'Số lượng', field: 'Quantity', hozAlign: 'right', headerHozAlign: 'center', width: 100, editor: "input" },
-        { title: 'DateStart', field: 'DateStart', hozAlign: 'left', headerHozAlign: 'center', width: 200, editor: "input" },
-        { title: 'DateEnd', field: 'DateEnd', hozAlign: 'left', headerHozAlign: 'center', width: 200, editor: "input" },
+        {
+          title: 'STT',
+          field: 'STT',
+          hozAlign: 'center',
+          headerHozAlign: 'center',
+          width: 50,
+          editor: 'input',
+        },
+        {
+          title: 'Tên khách hàng',
+          field: 'CustomerName',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 200,
+          editor: 'input',
+        },
+        {
+          title: 'Số điện thoại',
+          field: 'CustomerPhoneNumber',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 150,
+          editor: 'input',
+        },
+        {
+          title: 'Email',
+          field: 'CustomerEmail',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 150,
+          editor: 'input',
+        },
+        {
+          title: 'Địa chỉ',
+          field: 'CustomerAddress',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 150,
+          editor: 'input',
+        },
+        {
+          title: 'Model',
+          field: 'ProductName',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 200,
+          editor: 'input',
+        },
+        {
+          title: 'Serial',
+          field: 'Serial',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 150,
+          editor: 'input',
+        },
+        {
+          title: 'Imei1',
+          field: 'Imei1',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 120,
+          editor: 'input',
+        },
+        {
+          title: 'Imei2',
+          field: 'Imei2',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 120,
+          editor: 'input',
+        },
+        {
+          title: 'Giá',
+          field: 'Price',
+          hozAlign: 'right',
+          headerHozAlign: 'center',
+          width: 150,
+          formatter: (cell: any) => this.formatCurrency(cell.getValue()),
+          editor: 'input',
+        },
+        {
+          title: 'Số lượng',
+          field: 'Quantity',
+          hozAlign: 'right',
+          headerHozAlign: 'center',
+          width: 100,
+          editor: 'input',
+        },
+        {
+          title: 'Ngày kích hoạt',
+          field: 'DateStart',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 200,
+          editor: 'input',
+        },
+        {
+          title: 'Hạn bảo hành',
+          field: 'DateEnd',
+          hozAlign: 'left',
+          headerHozAlign: 'center',
+          width: 200,
+          editor: 'input',
+        },
         // { title: 'Ghi chú', field: 'Note', hozAlign: 'left', headerHozAlign: 'center', width: 120, editor: "input" }
       ];
 
@@ -365,15 +584,21 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
 
         if (!rowData.STT) {
           const sttCell = row.getCell(1).value;
-          rowData.STT = sttCell ? String(sttCell).trim() : String(data.length + 1);
+          rowData.STT = sttCell
+            ? String(sttCell).trim()
+            : String(data.length + 1);
         }
 
         if (!rowData.ProductGroup && rowData.ProductName) {
           rowData.ProductGroup = rowData.ProductName;
         }
 
-        const hasCode = !!(rowData.Serial && String(rowData.Serial).trim().length > 0);
-        const hasName = !!(rowData.ProductName && String(rowData.ProductName).trim().length > 0);
+        const hasCode = !!(
+          rowData.Serial && String(rowData.Serial).trim().length > 0
+        );
+        const hasName = !!(
+          rowData.ProductName && String(rowData.ProductName).trim().length > 0
+        );
         const isEmptyRow = !hasCode && !hasName;
 
         if (!isEmptyRow) {
@@ -388,9 +613,10 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
       this.totalRowsAfterFileRead = validRecords;
 
       this.displayProgress = 0;
-      this.displayText = this.totalRowsAfterFileRead === 0
-        ? 'Không có dữ liệu hợp lệ trong sheet.'
-        : `0/${this.totalRowsAfterFileRead} bản ghi`;
+      this.displayText =
+        this.totalRowsAfterFileRead === 0
+          ? 'Không có dữ liệu hợp lệ trong sheet.'
+          : `0/${this.totalRowsAfterFileRead} bản ghi`;
 
       if (this.tableExcel) {
         this.tableExcel.replaceData(this.dataTableExcel);
@@ -398,14 +624,19 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         this.drawtable();
       }
     } catch (error) {
-      this.notification.error('Thông báo', 'Không thể đọc dữ liệu từ sheet! Vui lòng kiểm tra định dạng dữ liệu.');
+      this.notification.error(
+        'Thông báo',
+        'Không thể đọc dữ liệu từ sheet! Vui lòng kiểm tra định dạng dữ liệu.'
+      );
       this.resetExcelImportState();
     }
   }
   onSheetChange() {
     console.log('Sheet đã thay đổi thành:', this.selectedSheet);
     if (this.filePath) {
-      const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+      const fileInput = document.getElementById(
+        'fileInput'
+      ) as HTMLInputElement;
       if (fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const reader = new FileReader();
@@ -421,7 +652,10 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
             console.log('Dữ liệu đã được đọc lại sau khi thay đổi sheet.'); // Log
           } catch (error) {
             console.error('Lỗi khi đọc tệp Excel khi thay đổi sheet:', error);
-            this.notification.error('Thông báo', 'Không thể đọc dữ liệu từ sheet đã chọn!');
+            this.notification.error(
+              'Thông báo',
+              'Không thể đọc dữ liệu từ sheet đã chọn!'
+            );
             this.resetExcelImportState(); // Reset trạng thái khi có lỗi
           }
         };
@@ -445,15 +679,26 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     }
 
     // Lọc dữ liệu để chỉ lấy các dòng có STT là số để xử lý lưu
-    const validDataToSave = this.dataTableExcel.filter(row => {
+    const validDataToSave = this.dataTableExcel.filter((row) => {
       const stt = row.STT;
-      return typeof stt === 'number' || (typeof stt === 'string' && !isNaN(parseFloat(stt as string)) && isFinite(parseFloat(stt as string)));
+      return (
+        typeof stt === 'number' ||
+        (typeof stt === 'string' &&
+          !isNaN(parseFloat(stt as string)) &&
+          isFinite(parseFloat(stt as string)))
+      );
     });
 
-    console.log('Số lượng bản ghi hợp lệ để lưu (sau lọc STT số):', validDataToSave.length);
+    console.log(
+      'Số lượng bản ghi hợp lệ để lưu (sau lọc STT số):',
+      validDataToSave.length
+    );
 
     if (validDataToSave.length === 0) {
-      this.notification.warning('Thông báo', 'Không có dữ liệu hợp lệ (STT là số) để lưu!');
+      this.notification.warning(
+        'Thông báo',
+        'Không có dữ liệu hợp lệ (STT là số) để lưu!'
+      );
       this.displayProgress = 0;
       this.displayText = `0/${this.totalRowsAfterFileRead} bản ghi`;
       return;
@@ -468,9 +713,13 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     // Gom nhóm theo khách hàng (dựa trên CustomerPhoneNumber hoặc CustomerName)
     const groupedByCustomer = new Map<string, any[]>();
 
-    validDataToSave.forEach(row => {
+    validDataToSave.forEach((row) => {
       // Sử dụng CustomerPhoneNumber làm key để gom nhóm, fallback sang CustomerName
-      const customerKey = (row.CustomerPhoneNumber || row.CustomerName || 'unknown').trim();
+      const customerKey = (
+        row.CustomerPhoneNumber ||
+        row.CustomerName ||
+        'unknown'
+      ).trim();
       if (!groupedByCustomer.has(customerKey)) {
         groupedByCustomer.set(customerKey, []);
       }
@@ -494,14 +743,14 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         CreatedBy: '',
         UpdatedDate: new Date().toISOString(),
         UpdatedBy: '',
-        IsDeleted: false
+        IsDeleted: false,
       };
 
       // Tạo SaleOrderDetailDTO array
       const saleOrderDetailDTO = rows.map((row, index) => {
         // Tìm ProductId từ listProduct dựa trên ProductName
-        const product = this.listProduct.find(p =>
-          p.Name?.toLowerCase() === row.ProductName?.toLowerCase()
+        const product = this.listProduct.find(
+          (p) => p.Name?.toLowerCase() === row.ProductName?.toLowerCase()
         );
         const productId = product?.Id || 0;
 
@@ -515,7 +764,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
             OrderId: 0,
             Stt: index + 1,
             ProductId: productId,
-            Quantity: 1,
+            Quantity: Number(row.Quantity) || 0,
             CreatedDate: new Date().toISOString(),
             CreatedBy: '',
             UpdatedDate: new Date().toISOString(),
@@ -524,9 +773,9 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
             DateStart: dateStart,
             DateEnd: dateEnd,
             Code: '',
-            Price: 0,
+            Price: Number(row.Price) || 0,
             Imei1: row.Imei1 || '',
-            Imei2: row.Imei2 || ''
+            Imei2: row.Imei2 || '',
           },
           OrderDetailInfo: [
             {
@@ -537,16 +786,16 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
               CreatedBy: '',
               UpdatedDate: new Date().toISOString(),
               UpdatedBy: '',
-              IsDeleted: false
-            }
-          ]
+              IsDeleted: false,
+            },
+          ],
         };
       });
 
       payloads.push({
         Order: order,
         SaleOrderDetailDTO: saleOrderDetailDTO,
-        DeletedOrder: []
+        DeletedOrder: [],
       });
     });
 
@@ -566,9 +815,15 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         this.isSavingData = false;
 
         if (failCount === 0) {
-          this.notification.success('Thông báo', `Đã lưu thành công ${successCount} đơn hàng!`);
+          this.notification.success(
+            'Thông báo',
+            `Đã lưu thành công ${successCount} đơn hàng!`
+          );
         } else {
-          this.notification.warning('Thông báo', `Lưu thành công ${successCount}, thất bại ${failCount} đơn hàng!`);
+          this.notification.warning(
+            'Thông báo',
+            `Lưu thành công ${successCount}, thất bại ${failCount} đơn hàng!`
+          );
         }
         this.closeExcelModal();
         return;
@@ -578,7 +833,9 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         next: (res: any) => {
           successCount++;
           processedCount++;
-          this.displayProgress = Math.round((processedCount / payloads.length) * 100);
+          this.displayProgress = Math.round(
+            (processedCount / payloads.length) * 100
+          );
           this.displayText = `Đang lưu: ${processedCount}/${payloads.length} đơn hàng`;
           saveNext(index + 1);
         },
@@ -586,10 +843,12 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
           failCount++;
           processedCount++;
           console.error('Lỗi khi lưu đơn hàng:', err);
-          this.displayProgress = Math.round((processedCount / payloads.length) * 100);
+          this.displayProgress = Math.round(
+            (processedCount / payloads.length) * 100
+          );
           this.displayText = `Đang lưu: ${processedCount}/${payloads.length} đơn hàng`;
           saveNext(index + 1);
-        }
+        },
       });
     };
 
@@ -619,41 +878,58 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
 
     return new Date().toISOString();
   }
-  showSaveSummary(successCount: number, errorCount: number, totalProducts: number) {
+  showSaveSummary(
+    successCount: number,
+    errorCount: number,
+    totalProducts: number
+  ) {
     console.log('--- Hiển thị tóm tắt kết quả lưu ---');
-    console.log(`Tổng sản phẩm: ${totalProducts}, Thành công: ${successCount}, Thất bại: ${errorCount}`);
+    console.log(
+      `Tổng sản phẩm: ${totalProducts}, Thành công: ${successCount}, Thất bại: ${errorCount}`
+    );
 
     if (errorCount === 0) {
-      this.notification.success('Thông báo', `Đã lưu ${successCount} sản phẩm thành công`);
+      this.notification.success(
+        'Thông báo',
+        `Đã lưu ${successCount} sản phẩm thành công`
+      );
     } else if (successCount === 0) {
-      this.notification.error('Thông báo', `Lưu thất bại ${errorCount}/${totalProducts} sản phẩm`);
+      this.notification.error(
+        'Thông báo',
+        `Lưu thất bại ${errorCount}/${totalProducts} sản phẩm`
+      );
     } else {
-      this.notification.warning('Thông báo', `Đã lưu ${successCount} sản phẩm thành công, ${errorCount} sản phẩm thất bại`);
+      this.notification.warning(
+        'Thông báo',
+        `Đã lưu ${successCount} sản phẩm thành công, ${errorCount} sản phẩm thất bại`
+      );
     }
     this.closeExcelModal();
   }
   // Hàm helper để lấy ID của đơn vị tính từ tên
   private getUnitIdByName(unitName: string): number {
-    const unit = this.listProduct.find(u => u.Name === unitName);
+    const unit = this.listProduct.find((u) => u.Name === unitName);
     return unit ? unit.Id : 0;
   }
 
   // Hàm helper để lấy ID của hãng từ tên
   private getFirmIdByName(firmName: string): number {
-    const firm = this.listImei1.find(f => f.Imei1Name === firmName);
+    const firm = this.listImei1.find((f) => f.Imei1Name === firmName);
     console.log('Kết quả tìm kiếm:', firm);
     return firm ? firm.ID : 0;
   }
 
   // Hàm helper để lấy ID của ProductGroup từ tên
   private getProductGroupIdByName(groupName: string): number {
-    const group = this.listProductGroup.find(g => g.ProductName === groupName);
+    const group = this.listProductGroup.find(
+      (g) => g.ProductName === groupName
+    );
     return group ? group.ID : 0;
   }
 
   // Hàm helper để lấy ID của Location từ tên
   private getLocationIdByName(Imei2: string): number {
-    const location = this.listLocation.find(l => l.Imei2 === Imei2);
+    const location = this.listLocation.find((l) => l.Imei2 === Imei2);
     return location ? location.ID : 0;
   }
 
@@ -665,7 +941,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         console.error('Lỗi khi lấy danh sách sản phẩm:', err);
-      }
+      },
     });
 
     //   this.saleorderService.getdataProductGroup(this.wareHouseCode, false).subscribe({
@@ -716,7 +992,10 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
   closeExcelModal() {
     // Chặn đóng khi đang đọc/lưu
     if (this.isBusy) {
-      this.notification.warning('Thông báo', 'Đang nhập dữ liệu, vui lòng đợi hoàn tất!');
+      this.notification.warning(
+        'Thông báo',
+        'Đang nhập dữ liệu, vui lòng đợi hoàn tất!'
+      );
       return;
     }
     this.modalRef.close(true);
