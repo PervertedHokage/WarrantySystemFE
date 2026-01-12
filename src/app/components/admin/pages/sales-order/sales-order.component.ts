@@ -415,7 +415,18 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
+  onExportExcel() {
+    this.salesOrderService
+      .exportExcel(0, this.filter.fromDate, this.filter.toDate)
+      .subscribe((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'SaleOrders.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
   onDeleteMultiple() {
     if (!this.angularGrid) {
       this.notification.error(

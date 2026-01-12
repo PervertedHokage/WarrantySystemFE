@@ -34,4 +34,17 @@ export class SalesOrderService {
   deleteSaleOrder(ids: number[]): Observable<any> {
     return this.http.post<any>(environment.host + `api/saleorder/delete`, ids);
   }
+  exportExcel(OrderId: number, FromDateStart: Date, ToDateStart: Date) {
+    let params = new HttpParams()
+      .set('OrderId', (OrderId || 0).toString())
+      .set('FromDateStart', FromDateStart ? FromDateStart.toISOString() : '')
+      .set('ToDateStart', ToDateStart ? ToDateStart.toISOString() : '');
+    return this.http.get<Blob>(
+      environment.host + `api/saleorder/export-excel`,
+      {
+        params,
+        responseType: 'blob' as 'json',
+      }
+    );
+  }
 }

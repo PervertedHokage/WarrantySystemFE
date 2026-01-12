@@ -6,6 +6,7 @@ import { APIResponse } from '../models/api-response.interface';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { WarrantyClaimTracking } from '../models/warranty-claims/warranty-claim-tracking.model';
 import { WarrantyClaimDTO } from '../models/warranty-claims/warranty-claim-dto.model';
+import { CheckStatusBySerialResult } from '../models/serial-check-result.model';
 
 @Injectable({
   providedIn: 'root',
@@ -49,6 +50,11 @@ export class LandingPageService {
   deleteWarrantyClaimTrackings(data: WarrantyClaimTracking){
     return this.http.delete<APIResponse<WarrantyClaimTracking[]>>(
       environment.host + `api/warrantyclaimtracking/${data.Id}`
+    );
+  }
+  checkStatus(serial: string) {
+    return this.http.get<APIResponse<CheckStatusBySerialResult>>(
+      environment.host + `api/serialcheck?serial=${serial}`
     );
   }
 }

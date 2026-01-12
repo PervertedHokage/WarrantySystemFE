@@ -1,4 +1,4 @@
-import { KeyValuePipe } from '@angular/common';
+import { CommonModule, KeyValuePipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -72,6 +72,7 @@ import { WarrantyClaimDTO } from '../../models/warranty-claims/warranty-claim-dt
 import { AuthService } from '../../auth/auth.service';
 import { IUser } from '../../models/user.interface';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CheckStatusBySerialResult } from '../../models/serial-check-result.model';
 declare let grecaptcha: any;
 @Component({
   selector: 'app-landing-page',
@@ -79,6 +80,7 @@ declare let grecaptcha: any;
   styleUrls: ['./landing-page.component.less'],
   imports: [
     AngularSlickgridModule,
+    CommonModule,
     FormsModule,
     KeyValuePipe,
     NzModalModule,
@@ -148,6 +150,8 @@ export class LandingPageComponent
   }
   currentFilter = 0;
   pdfUrl: SafeResourceUrl;
+  serialValue: string = '';
+  statusData: CheckStatusBySerialResult | null = null;
   hasAgreed = false;
   protected expanded = false;
   protected open = false;
@@ -520,12 +524,28 @@ export class LandingPageComponent
   }
   viewWarrantyStatusCheck() {
     this.currentSection = 1;
+    this.serialValue = ''
   }
   viewTermsAndConditions() {
     this.currentSection = 2;
+    this.hasAgreed = false;
   }
   viewNewWarrantyClaimForm() {
     this.currentSection = 3;
+  }
+  checkStatusBySerial() {
+    this.landingPageService.checkStatus(this.serialValue).subscribe({
+      next: result => {
+        this.statusData = result.data;
+      },
+      error: err => {
+        this.statusData = null;
+        this.notification.warning(
+          NOTIFICATION_TITLE.warning,
+          'Không tìm thấy dữ liệu'
+        );
+      }
+    })
   }
   private async initCaptcha() {
     if (!this.captchaHolder || this.widgetId !== undefined) {

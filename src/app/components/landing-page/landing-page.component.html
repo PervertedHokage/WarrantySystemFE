@@ -69,11 +69,11 @@
           @if(currentSection == 1){
           <form id="status-search-form" class="search-form form-container d-flex flex-column">
             <div class="form-group">
-              <label for="serial-search" class="fs-3">Số Serial (SN) sản phẩm <span style="color:red">*</span></label>
-              <input type="text" id="serial-search" name="serial-search" required>
+              <label for="serial-search" class="fs-3 mb-3">Số Serial (SN) sản phẩm <span style="color:red">*</span></label>
+              <input type="text" id="serial-search" name="serial-search" [(ngModel)]="serialValue" required>
             </div>
             <div class="form-group" style="display: flex; align-items: flex-end;">
-              <button type="submit" class="btn btn-success">
+              <button type="button" class="btn btn-success" (click)="checkStatusBySerial()">
                 <i class="fas fa-search"></i> Kiểm tra bảo hành
               </button>
             </div>
@@ -81,48 +81,53 @@
               <div class="status-header">
                 <div class="status-title">
                   <h3>Thông tin bảo hành</h3>
-                  <span class="status-badge status-waiting">Chờ linh kiện</span>
                 </div>
-                <div>
+                <!-- <div>
                   <button class="btn btn-outline">
                     <i class="bi bi-printer"></i> In thông tin
                   </button>
-                </div>
+                </div> -->
               </div>
-
               <div class="status-info-grid">
+                @if(!!statusData){
                 <div class="status-info-item">
                   <div class="status-info-label">Số Serial (SN)</div>
-                  <div class="status-info-value">MD-SN-2023-123456</div>
+                  <div class="status-info-value">{{statusData.ProductSerial}}</div>
                 </div>
                 <div class="status-info-item">
                   <div class="status-info-label">Sản phẩm</div>
-                  <div class="status-info-value">MobyData Smart Device 2</div>
+                  <div class="status-info-value">{{statusData.ProductName}}</div>
                 </div>
                 <div class="status-info-item">
                   <div class="status-info-label">Khách hàng</div>
-                  <div class="status-info-value">Lê Văn C</div>
+                  <div class="status-info-value">{{statusData.CustomerName}}</div>
                 </div>
                 <div class="status-info-item">
-                  <div class="status-info-label">Loại bảo hành</div>
-                  <div class="status-info-value">Bảo hành chính hãng 12 tháng</div>
+                  <div class="status-info-label">IMEI1</div>
+                  <div class="status-info-value">{{statusData.IMEI1}}</div>
+                </div>
+                <div class="status-info-item">
+                  <div class="status-info-label">IMEI2</div>
+                  <div class="status-info-value">{{statusData.IMEI2}}</div>
                 </div>
                 <div class="status-info-item">
                   <div class="status-info-label">Ngày mua</div>
-                  <div class="status-info-value">10/6/2024</div>
+                  <div class="status-info-value">
+                    {{ statusData.DateStart | date:'dd/MM/yyyy' }}
+                  </div>
                 </div>
+
                 <div class="status-info-item">
                   <div class="status-info-label">Ngày hết hạn bảo hành</div>
-                  <div class="status-info-value">10/6/2025</div>
+                  <div class="status-info-value">
+                    {{ statusData.DateEnd | date:'dd/MM/yyyy' }}
+                  </div>
                 </div>
-                <div class="status-info-item">
-                  <div class="status-info-label">Số ngày còn lại</div>
-                  <div class="status-info-value">0 ngày</div>
-                </div>
-                <div class="status-info-item">
-                  <div class="status-info-label">Tình trạng bảo hành</div>
-                  <div class="status-info-value">Hết hiệu lực</div>
-                </div>
+
+                }
+                @else{
+                <div>Không có dữ liệu phù hợp được tìm thấy</div>
+                }
               </div>
 
               <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
