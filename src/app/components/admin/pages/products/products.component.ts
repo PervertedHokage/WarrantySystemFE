@@ -46,6 +46,7 @@ import { ProductsFormV2Component } from './products-form-v2/products-form-v2.com
 import { ChangeDetectorRef } from '@angular/core';
 
 import { NOTIFICATION_TITLE } from '../../../../../app/app.config';
+import { ImportExcelProductSaleComponent } from './product-excel/product-excel.component';
 
 @Component({
   selector: 'app-products',
@@ -271,6 +272,27 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   getProducts() {
     this.productService.getDataProducts().subscribe((res: any) => {
       this.datasetProduct = res?.data || [];
+    });
+  }
+
+  onImportExcel(): void {
+    const modalRef = this.modal.create({
+      nzTitle: 'Nhập dữ liệu Excel',
+      nzContent: ImportExcelProductSaleComponent,
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        overflow: 'auto',
+      },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+        this.getProducts();
+      }
     });
   }
 
