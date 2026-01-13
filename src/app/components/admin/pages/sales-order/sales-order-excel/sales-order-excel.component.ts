@@ -55,6 +55,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
   filePath: string = '';
   excelSheets: string[] = [];
   selectedSheet: string = '';
+  currentWorkbook: ExcelJS.Workbook | null = null; // Lưu trữ workbook hiện tại
   tableExcel: any;
   dataTableExcel: any[] = [];
   listProduct: any[] = [];
@@ -82,7 +83,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     private saleorderService: SalesOrderService,
     private productService: ProductService,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUnitAndImei1Data();
@@ -262,6 +263,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         try {
           const workbook = new ExcelJS.Workbook();
           await workbook.xlsx.load(data);
+          this.currentWorkbook = workbook; // Lưu trữ workbook để dùng lại khi thay đổi sheet
           console.log('Workbook đã được tải bởi ExcelJS.'); // Log
 
           this.excelSheets = workbook.worksheets.map((sheet) => sheet.name);
@@ -478,6 +480,12 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
           editor: 'input',
         },
         {
+          title: "Name",
+          field: "Name",
+          hozAlign: 'left',
+          headerHorAlign: 'center',
+        },
+        {
           title: 'Imei2',
           field: 'Imei2',
           hozAlign: 'left',
@@ -633,36 +641,24 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
   }
   onSheetChange() {
     console.log('Sheet đã thay đổi thành:', this.selectedSheet);
-    if (this.filePath) {
-      const fileInput = document.getElementById(
-        'fileInput'
-      ) as HTMLInputElement;
-      if (fileInput.files && fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = async (e: any) => {
-          const data = e.target.result;
-          try {
-            const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(data);
-            await this.readExcelData(workbook, this.selectedSheet);
-            // Sau khi thay đổi sheet và đọc dữ liệu, đặt lại thanh tiến trình
-            this.displayProgress = 0;
-            // displayText được cập nhật trong readExcelData
-            console.log('Dữ liệu đã được đọc lại sau khi thay đổi sheet.'); // Log
-          } catch (error) {
-            console.error('Lỗi khi đọc tệp Excel khi thay đổi sheet:', error);
-            this.notification.error(
-              'Thông báo',
-              'Không thể đọc dữ liệu từ sheet đã chọn!'
-            );
-            this.resetExcelImportState(); // Reset trạng thái khi có lỗi
-          }
-        };
-        reader.readAsArrayBuffer(file);
+    if (this.currentWorkbook && this.selectedSheet) {
+      try {
+        this.readExcelData(this.currentWorkbook, this.selectedSheet);
+        // Sau khi thay đổi sheet và đọc dữ liệu, đặt lại thanh tiến trình
+        this.displayProgress = 0;
+        // displayText được cập nhật trong readExcelData
+        console.log('Dữ liệu đã được đọc lại sau khi thay đổi sheet.'); // Log
+      } catch (error) {
+        console.error('Lỗi khi đọc tệp Excel khi thay đổi sheet:', error);
+        this.notification.error(
+          'Thông báo',
+          'Không thể đọc dữ liệu từ sheet đã chọn!'
+        );
+        this.resetExcelImportState(); // Reset trạng thái khi có lỗi
       }
     }
   }
+
   downloadTemplate() {
     const url = 'share/template_sale_order.xlsx';
     const a = document.createElement('a');
@@ -943,33 +939,6 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
         console.error('Lỗi khi lấy danh sách sản phẩm:', err);
       },
     });
-
-    //   this.saleorderService.getdataProductGroup(this.wareHouseCode, false).subscribe({
-    //     next: (res: any) => {
-    //       this.listProductGroup = res.data || [];
-    //     },
-    //     error: (err: any) => {
-    //       console.error('Lỗi khi lấy danh sách nhóm sản phẩm:', err);
-    //     }
-    //   });
-
-    //   this.saleorderService.getDataLocation(0).subscribe({
-    //     next: (res: any) => {
-    //       this.listLocation = res.data || [];
-    //     },
-    //     error: (err: any) => {
-    //       console.error('Lỗi khi lấy danh sách vị trí:', err);
-    //     }
-    //   });
-
-    //   this.saleorderService.getDataFirm().subscribe({
-    //     next: (res: any) => {
-    //       this.listImei1 = res.data || [];
-    //     },
-    //     error: (err: any) => {
-    //       console.error('Lỗi khi lấy danh sách hãng:', err);
-    //     }
-    //   });
   }
 
   // Hàm mới để reset trạng thái nhập Excel
@@ -977,6 +946,7 @@ export class ImportExcelProductSaleComponent implements OnInit, AfterViewInit {
     this.filePath = '';
     this.excelSheets = [];
     this.selectedSheet = '';
+    this.currentWorkbook = null; // Reset workbook khi reset trạng thái
     this.dataTableExcel = [];
     this.displayText = '0/0';
     this.displayProgress = 0;
