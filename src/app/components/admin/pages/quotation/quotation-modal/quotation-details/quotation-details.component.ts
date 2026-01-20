@@ -7,7 +7,6 @@ import {
   Output,
 } from '@angular/core';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { QuotationDetail } from '../../../../../../models/quotations/quotation-details.model';
 import { QuotationService } from '../../../../../../services/quotations-service/quotation.service';
 import { SparePart } from '../../../../../../models/spare-parts.model';
 import { ProductService } from '../../../../../../services/products-service/product.service';
@@ -15,6 +14,9 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { QuotationDetailDTO } from '../../../../../../models/quotations/quotation-detail-dto.model';
+import { Unit } from '../../../../../../models/unit.model';
+import { UnitService } from '../../../../../../services/unit-service/unit.service';
 
 @Component({
   selector: 'quotation-details',
@@ -39,18 +41,25 @@ export class QuotationDetailsComponent implements OnInit {
     this.VATfee = value;
     this.onInputChange(value);
   }
-  quotationDetails: QuotationDetail[] = [];
-  quotationDetailsForm: QuotationDetail[] = [];
+  units: Unit[] = [];
+  quotationDetails: QuotationDetailDTO[] = [];
+  quotationDetailsForm: QuotationDetailDTO[] = [];
 
   sparePartList: SparePart[] = [];
   constructor(
     private cdr: ChangeDetectorRef,
     private quotationService: QuotationService,
-    private productService: ProductService
+    private productService: ProductService,
+    private unitService: UnitService,
   ) {
     this.productService.getAllSpareParts().subscribe({
       next: (res) => {
         this.sparePartList = res.data;
+      },
+    });
+    this.unitService.getDataUnit().subscribe({
+      next: (res) => {
+        this.units = res.data;
       },
     });
   }
@@ -66,7 +75,7 @@ export class QuotationDetailsComponent implements OnInit {
 
   addDetail() {
     this.quotationDetailsForm = [
-      new QuotationDetail(),
+      new QuotationDetailDTO(),
       ...this.quotationDetailsForm,
     ];
     this.cdr.detectChanges();
@@ -92,10 +101,10 @@ export class QuotationDetailsComponent implements OnInit {
 
   checkForm() {
     const added = this.quotationDetailsForm.filter(
-      (d) => (!d.Id || d.Id === 0) && !d.IsDeleted
+      (d) => (!d.Id || d.Id === 0) && !d.IsDeleted,
     );
     const deleted = this.quotationDetailsForm.filter(
-      (d) => d.Id && d.Id > 0 && d.IsDeleted
+      (d) => d.Id && d.Id > 0 && d.IsDeleted,
     );
     const edited = this.quotationDetailsForm.filter((current) => {
       if (!current.Id || current.Id === 0) return false;
@@ -115,5 +124,14 @@ export class QuotationDetailsComponent implements OnInit {
       edited,
       deleted,
     };
+  }
+  onSparePartChange(sparePartId: number, detail: any) {
+    const sparePart = this.sparePartList.find((x) => x.Id === sparePartId);
+
+    if (sparePart) {
+      detail.UnitName = this.units.find(u => u.Id == sparePart.UnitId)?.Name;
+    } else {
+      detail.UnitName = '';
+    }
   }
 }

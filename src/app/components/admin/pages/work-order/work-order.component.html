@@ -1,31 +1,13 @@
 <div class="card">
   <div class="card-header bg-white p-1">
     <div class="d-flex gap-1">
-      <button
-        class="btn-add"
-        nz-button
-        nzType="default"
-        nzSize="small"
-        (click)="onAddWorkOrder(false)"
-      >
+      <button class="btn-add" nz-button nzType="default" nzSize="small" (click)="onAddWorkOrder(false)">
         <img src="assets/icon/action_add_item_16.png" /> Thêm
       </button>
-      <button
-        class="btn-edit"
-        nz-button
-        nzType="default"
-        nzSize="small"
-        (click)="onAddWorkOrder(true)"
-      >
+      <button class="btn-edit" nz-button nzType="default" nzSize="small" (click)="onAddWorkOrder(true)">
         <img src="assets/icon/action_edit_item_16.png" /> Sửa
       </button>
-      <button
-        class="btn-delete"
-        nz-button
-        nzType="default"
-        nzSize="small"
-        (click)="onDeleteMultipleWorkOrders()"
-      >
+      <button class="btn-delete" nz-button nzType="default" nzSize="small" (click)="onDeleteMultipleWorkOrders()">
         <img src="assets/icon/action_delete_item_16.png" /> Xóa
       </button>
     </div>
@@ -59,11 +41,7 @@
         <span class="wo-badge">{{ countChoXuLy }}</span>
       </div>
       <div class="wo-col-body">
-        <div
-          class="wo-item"
-          *ngFor="let item of woChoXuLy"
-          (click)="openWorkOrder(item)"
-        >
+        <div class="wo-item" *ngFor="let item of woChoXuLy" (click)="openWorkOrder(item)">
           <div class="wo-item-code">{{ item?.Code || '-' }}</div>
           <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
           <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
@@ -78,11 +56,7 @@
         <span class="wo-badge">{{ countDangSuaChua }}</span>
       </div>
       <div class="wo-col-body">
-        <div
-          class="wo-item"
-          *ngFor="let item of woDangSuaChua"
-          (click)="openWorkOrder(item)"
-        >
+        <div class="wo-item" *ngFor="let item of woDangSuaChua" (click)="openWorkOrder(item)">
           <div class="wo-item-code">{{ item?.Code || '-' }}</div>
           <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
           <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
@@ -97,11 +71,7 @@
         <span class="wo-badge">{{ countChoVatTu }}</span>
       </div>
       <div class="wo-col-body">
-        <div
-          class="wo-item"
-          *ngFor="let item of woChoVatTu"
-          (click)="openWorkOrder(item)"
-        >
+        <div class="wo-item" *ngFor="let item of woChoVatTu" (click)="openWorkOrder(item)">
           <div class="wo-item-code">{{ item?.Code || '-' }}</div>
           <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
           <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
@@ -116,11 +86,7 @@
         <span class="wo-badge">{{ countHoanThanh }}</span>
       </div>
       <div class="wo-col-body">
-        <div
-          class="wo-item"
-          *ngFor="let item of woHoanThanh"
-          (click)="openWorkOrder(item)"
-        >
+        <div class="wo-item" *ngFor="let item of woHoanThanh" (click)="openWorkOrder(item)">
           <div class="wo-item-code">{{ item?.Code || '-' }}</div>
           <div class="wo-item-line">WO: {{ item?.Code || '-' }}</div>
           <div class="wo-item-line">Khách: {{ item?.CustomerName || '-' }}</div>
@@ -131,15 +97,9 @@
   </div>
   <div class="grid-container">
     <div class="grid-workorder-container">
-      <angular-slickgrid
-        gridId="workOrderGrid"
-        [columns]="columnWorkOrder"
-        [options]="gridOptionsWorkOrder"
-        [dataset]="datasetWorkOrder"
-        (onAngularGridCreated)="gridReady($event)"
-        (onActiveCellChanged)="onActiveCellChanged($event)"
-        (selectedRowsChanged)="onSelectedRowsChanged($event)"
-      >
+      <angular-slickgrid gridId="workOrderGrid" [columns]="columnWorkOrder" [options]="gridOptionsWorkOrder"
+        [dataset]="datasetWorkOrder" (onAngularGridCreated)="gridReady($event)"
+        (onActiveCellChanged)="onActiveCellChanged($event)" (selectedRowsChanged)="onSelectedRowsChanged($event)">
       </angular-slickgrid>
     </div>
   </div>

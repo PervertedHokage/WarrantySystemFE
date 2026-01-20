@@ -120,6 +120,7 @@ export class LandingPageComponent
   }
   set currentTab(value: number) {
     this._currentTab = value;
+    if (this._currentTab == 0) return;
     if (this._currentTab == 1 && this._currentSection == 3) {
       this.newWarrantyClaimForm.reset();
       this.loadProducts();
@@ -264,7 +265,7 @@ export class LandingPageComponent
   }
   //#endregion
   ngOnInit(): void {
-    this.currentTab = 1;
+    this.currentTab = 0;
     this.currentSection = 1;
     this.prepareGrid();
     this.authService.getCurrentUser().subscribe({
@@ -524,7 +525,7 @@ export class LandingPageComponent
   }
   viewWarrantyStatusCheck() {
     this.currentSection = 1;
-    this.serialValue = ''
+    this.serialValue = '';
   }
   viewTermsAndConditions() {
     this.currentSection = 2;
@@ -532,20 +533,27 @@ export class LandingPageComponent
   }
   viewNewWarrantyClaimForm() {
     this.currentSection = 3;
+    this.newWarrantyClaimForm.reset();
   }
   checkStatusBySerial() {
+    if (!this.serialValue) return;
     this.landingPageService.checkStatus(this.serialValue).subscribe({
-      next: result => {
+      next: (result) => {
         this.statusData = result.data;
+        this.viewTermsAndConditions();
       },
-      error: err => {
+      error: (err) => {
         this.statusData = null;
-        this.notification.warning(
-          NOTIFICATION_TITLE.warning,
-          'Không tìm thấy dữ liệu'
-        );
-      }
-    })
+        this.showConfirm();
+      },
+    });
+  }
+  showConfirm() {
+    this.modal.confirm({
+      nzTitle: '<i>Thông báo?</i>',
+      nzContent: '<b>Sản phẩm này không có trong danh sách bảo hành, bạn có muốn tiếp tục không</b>',
+      nzOnOk: () => console.log('OK'),
+    });
   }
   private async initCaptcha() {
     if (!this.captchaHolder || this.widgetId !== undefined) {

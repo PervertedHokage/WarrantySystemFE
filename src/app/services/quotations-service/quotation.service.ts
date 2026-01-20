@@ -5,6 +5,7 @@ import { APIResponse } from '../../models/api-response.interface';
 import { QuotationDetail } from '../../models/quotations/quotation-details.model';
 import { Quotation } from '../../models/quotations/quotation.model';
 import { QuotationDTO } from '../../models/quotations/quotation-dto.model';
+import { QuotationDetailDTO } from '../../models/quotations/quotation-detail-dto.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +22,8 @@ export class QuotationService {
     );
   }
   getDetailsById(quotationId: number) {
-    return this.http.get<APIResponse<QuotationDetail[]>>(
-      environment.host + `api/quotation/details/${quotationId}`
+    return this.http.get<APIResponse<QuotationDetailDTO[]>>(
+      environment.host + `api/quotation/details/${quotationId}`,
     );
   }
   saveOrUpdate(data: Quotation) {

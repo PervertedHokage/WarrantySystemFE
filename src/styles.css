@@ -418,3 +418,7 @@ button[nz-button] img {
 .ant-table-placeholder {
   display: none;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

@@ -81,7 +81,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   WorkOrderID: number = 0;
   isEditMode: boolean = false;
-  dataInput: any = null;
+  dataInput: any | null = null;
   formGroup: FormGroup;
 
   dataEmployee: any[] = [];
@@ -183,35 +183,35 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   private dateEndValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
-    
+
     const dateEnd = new Date(control.value);
     const dateStart = this.formGroup?.get('DateStart')?.value;
-    
+
     if (!dateStart) return null;
-    
+
     const startDate = new Date(dateStart);
-    
+
     if (dateEnd <= startDate) {
       return { dateEndInvalid: true };
     }
-    
+
     return null;
-  }
+  } 
 
   private completedDateValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
-    
+
     const completedDate = new Date(control.value);
     const dateStart = this.formGroup?.get('DateStart')?.value;
-    
+
     if (!dateStart) return null;
-    
+
     const startDate = new Date(dateStart);
-    
+
     if (completedDate <= startDate) {
       return { completedDateInvalid: true };
     }
-    
+
     return null;
   }
 

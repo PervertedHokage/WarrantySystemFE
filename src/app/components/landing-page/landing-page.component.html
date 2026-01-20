@@ -17,9 +17,9 @@
       }
     </tui-data-list>
   </button>
-  <span tuiNavigationLogo>
+  <span tuiNavigationLogo (click)="currentTab = 0">
     <tui-icon icon="@tui.home" />
-    <span tuiFade>Warranty Portal</span>
+    <span tuiFade class="cursor-pointer">Warranty Portal</span>
   </span>
   <hr />
   @if(currentUser){
@@ -41,14 +41,22 @@
         {{ expanded ? 'Thu nhỏ' : 'Mở rộng' }}
       </button>
     </header>
-    <button iconStart="@tui.newspaper" type="button" tuiAsideItem
-      [tuiAppearanceState]="currentTab == 1 ? 'active' : null" (click)="currentTab = 1">
-      Đăng ký bảo hành
-    </button>
-    <button iconStart="@tui.history" tuiAsideItem type="button" [tuiAppearanceState]="currentTab == 2 ? 'active' : null"
-      (click)="currentTab = 2">
-      Lịch sử bảo hành
-    </button>
+    <tui-aside-group>
+      <button iconStart="@tui.newspaper" type="button" tuiAsideItem tuiChevron
+        [tuiAppearanceState]="currentTab == 0 ? 'active' : null">
+        Menu
+        <ng-template>
+          <button tuiAsideItem type="button" [tuiAppearanceState]="currentTab == 2 ? 'active' : null"
+            (click)="currentTab = 2">
+            Tra cứ lịch sử
+          </button>
+          <button tuiAsideItem type="button" [tuiAppearanceState]="currentTab == 1 ? 'active' : null"
+            (click)="currentTab = 1">
+            Tạo phiếu bảo hành
+          </button>
+        </ng-template>
+      </button>
+    </tui-aside-group>
     <button iconStart="@tui.contact" tuiAsideItem type="button" [tuiAppearanceState]="currentTab == 3 ? 'active' : null"
       (click)="currentTab = 3">
       Liên hệ
@@ -57,6 +65,103 @@
   <div tuiNavigationMain>
     <div class="wrapper">
       <div class="container">
+        @if(currentTab == 0){
+        <section id="warranty-history" class="page active">
+          <div class="page-header">
+            <div class="icon-wrapper">
+              <div class="warranty-icon">🌏</div>
+            </div>
+            <h2>Trung tâm hỗ trợ khách hàng</h2>
+            <p>Trung tâm Dịch vụ & Bảo hành Chính hãng</p>
+          </div>
+          <div class="p-3 pb-1">
+            <div class="services-grid">
+              <!-- Thẻ Tra cứu -->
+              <div class="service-card">
+                <div class="service-icon search-icon">
+                  <i class="bi bi-search"></i>
+                </div>
+                <div class="service-content">
+                  <h3>Tra cứu lịch sử bảo hành</h3>
+                  <p class="mb-1">Kiểm tra thông tin sản phẩm, trạng thái bảo hành, lịch sử sửa chữa và theo dõi tiến độ
+                    yêu cầu dịch
+                    vụ của bạn.</p>
+                  <button class="btn btn-search" (click)="currentTab = 2">
+                    <i class="bi bi-search"></i>
+                    Tra cứu Ngay
+                  </button>
+                </div>
+              </div>
+
+              <!-- Thẻ Bảo hành -->
+              <div class="service-card">
+                <div class="service-icon warranty-button-icon">
+                  <i class="bi bi-shield"></i>
+                </div>
+                <div class="service-content">
+                  <h3>Tạo phiếu bảo hành</h3>
+                  <p class="mb-1">Đăng ký yêu cầu bảo hành mới, theo dõi yêu cầu hiện tại hoặc tìm hiểu về chính sách
+                    bảo hành sản
+                    phẩm.</p>
+                  <button class="btn btn-warranty" (click)="currentTab = 1">
+                    <i class="bi bi-truck"></i>
+                    Bảo hành
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="features">
+              <h3>Tại sao chọn MobyData?</h3>
+              <div class="features-grid">
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="bi bi-clock"></i>
+                  </div>
+                  <div class="feature-text">
+                    <h4>Hỗ trợ 24/7</h4>
+                    <p>Đội ngũ hỗ trợ luôn sẵn sàng</p>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="bi bi-check-circle"></i>
+                  </div>
+                  <div class="feature-text">
+                    <h4>Chính hãng 100%</h4>
+                    <p>Linh kiện và dịch vụ chính hãng</p>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="bi bi-truck"></i>
+                  </div>
+                  <div class="feature-text">
+                    <h4>Miễn phí vận chuyển</h4>
+                    <p>Vận chuyển miễn phí toàn quốc</p>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="bi bi-headset"></i>
+                  </div>
+                  <div class="feature-text">
+                    <h4>Tư vấn chuyên nghiệp</h4>
+                    <p>Đội ngũ kỹ thuật viên trình độ cao</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Footer -->
+          <div class="footer">
+            <p>© 2024 MobyData. Tất cả các quyền được bảo lưu.</p>
+            <p>Hotline: 1800 1234 • Email: support&#64;mobydata.com</p>
+          </div>
+        </section>
+        }
         @if(currentTab == 1){
         <section id="create-request" class="page active">
           <div class="page-header">
@@ -69,26 +174,52 @@
           @if(currentSection == 1){
           <form id="status-search-form" class="search-form form-container d-flex flex-column">
             <div class="form-group">
-              <label for="serial-search" class="fs-3 mb-3">Số Serial (SN) sản phẩm <span style="color:red">*</span></label>
+              <label for="serial-search" class="fs-3 mb-3">Số Serial (SN) sản phẩm <span
+                  style="color:red">*</span></label>
               <input type="text" id="serial-search" name="serial-search" [(ngModel)]="serialValue" required>
             </div>
             <div class="form-group" style="display: flex; align-items: flex-end;">
               <button type="button" class="btn btn-success" (click)="checkStatusBySerial()">
-                <i class="fas fa-search"></i> Kiểm tra bảo hành
+                <i class="fas fa-search"></i> Tiếp tục
               </button>
             </div>
             <div id="status-result" class="status-result active">
-              <div class="status-header">
+              <div class="note-section">
+                <div class="note-title">
+                  <i class="fas fa-info-circle"></i> Lưu ý quan trọng cho khách hàng
+                </div>
+                <ul class="note-list">
+                  <li>Vui lòng kiểm tra kỹ số Serial (SN) trên sản phẩm hoặc hóa đơn mua hàng</li>
+                  <li>Thông tin bảo hành chỉ có hiệu lực khi sản phẩm còn trong thời hạn bảo hành</li>
+                  <li>Thời gian xử lý yêu cầu bảo hành: 3-5 ngày làm việc</li>
+                  <li>Để được hỗ trợ nhanh nhất, vui lòng cung cấp đầy đủ và chính xác thông tin</li>
+                  <li>Vui lòng giữ lại hóa đơn mua hàng để đối chiếu khi cần thiết</li>
+                  <li>Bảo hành không áp dụng cho các trường hợp hư hỏng do sử dụng sai mục đích hoặc tự ý sửa chữa</li>
+                  <li>Đối với sản phẩm bảo hành tại nhà, vui lòng cung cấp địa chỉ chính xác và số điện thoại liên hệ
+                  </li>
+                  <li>Mọi thắc mắc về chính sách bảo hành, vui lòng tham khảo trang "Chính sách bảo hành" trên website
+                  </li>
+                </ul>
+
+                <div class="important-note">
+                  <div>
+                    <strong>Lưu ý đặc biệt:</strong> Trong trường hợp sản phẩm có dấu hiệu mất an toàn (cháy, nổ, rò rỉ
+                    điện), vui
+                    lòng ngừng sử dụng ngay và liên hệ hỗ trợ khẩn cấp qua hotline: 1800-xxxx.
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="status-header">
                 <div class="status-title">
                   <h3>Thông tin bảo hành</h3>
                 </div>
-                <!-- <div>
+                <div>
                   <button class="btn btn-outline">
                     <i class="bi bi-printer"></i> In thông tin
                   </button>
-                </div> -->
-              </div>
-              <div class="status-info-grid">
+                </div>
+              </div> -->
+              <!-- <div class="status-info-grid">
                 @if(!!statusData){
                 <div class="status-info-item">
                   <div class="status-info-label">Số Serial (SN)</div>
@@ -128,14 +259,14 @@
                 @else{
                 <div>Không có dữ liệu phù hợp được tìm thấy</div>
                 }
-              </div>
+              </div> -->
 
               <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
                 <h4>Hỗ trợ thêm:</h4>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
-                  <button class="btn btn-outline" (click)="viewTermsAndConditions()">
+                  <!-- <button class="btn btn-outline" (click)="viewTermsAndConditions()">
                     <i class="bi bi-plus-circle"></i> Tạo yêu cầu bảo hành mới
-                  </button>
+                  </button> -->
                   <button class="btn btn-outline">
                     <i class="bi bi-headset"></i> Liên hệ hỗ trợ
                   </button>
@@ -159,7 +290,7 @@
             <div class="d-flex flex-column">
               <div>
                 <label class="d-flex align-items-center justify-content-center gap-1 fs-5">
-                  <input size="s" tuiCheckbox type="checkbox" [(ngModel)]="hasAgreed" />
+                  <input class="term-checkbox" size="s" tuiCheckbox type="checkbox" [(ngModel)]="hasAgreed" />
                   Tôi đã đọc và đồng ý với những điều khoản trên
                 </label>
               </div>

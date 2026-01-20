@@ -3,6 +3,8 @@ export class QuotationDetailDTO {
   QuotationId: number | null = null;
   SparePartId: number | null = null;
   SparePartNumber: string = '';
+  UnitCode: string = '';
+  UnitName: string = '';
   Quantity: number | null = null;
   Price: number | null = null;
   IsDeleted: boolean | null = null;
