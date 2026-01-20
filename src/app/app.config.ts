@@ -17,6 +17,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { icons } from './icons-provider';
 import { AuthInterceptor } from './auth/auth.interceptor';
+import { NgxMaskConfig, provideEnvironmentNgxMask } from 'ngx-mask';
+
+const maskConfig: Partial<NgxMaskConfig> = { validation: false };
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -33,6 +36,7 @@ export const appConfig: ApplicationConfig = {
         defaultLanguage: 'vi',
       })
     ),
+    provideEnvironmentNgxMask(maskConfig)
   ],
 };
 export const APP_LOGIN_NAME = 'admin';

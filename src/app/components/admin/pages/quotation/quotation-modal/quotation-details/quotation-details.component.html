@@ -81,6 +81,8 @@
             [(ngModel)]="detail.Price"
             [name]="'price1_' + i"
             [ngModelOptions]="{ standalone: true }"
+            mask="separator.0"
+            thousandSeparator=","
           />
         </td>
 
@@ -90,6 +92,8 @@
             [(ngModel)]="detail.Price"
             [name]="'price2_' + i"
             [ngModelOptions]="{ standalone: true }"
+            mask="separator.0"
+            thousandSeparator=","
           />
         </td>
       </tr>

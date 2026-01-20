@@ -17,6 +17,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { QuotationDetailDTO } from '../../../../../../models/quotations/quotation-detail-dto.model';
 import { Unit } from '../../../../../../models/unit.model';
 import { UnitService } from '../../../../../../services/unit-service/unit.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'quotation-details',
@@ -28,6 +29,7 @@ import { UnitService } from '../../../../../../services/unit-service/unit.servic
     NzTableModule,
     NzSelectModule,
     NzInputModule,
+    NgxMaskDirective,
   ],
 })
 export class QuotationDetailsComponent implements OnInit {
@@ -129,7 +131,7 @@ export class QuotationDetailsComponent implements OnInit {
     const sparePart = this.sparePartList.find((x) => x.Id === sparePartId);
 
     if (sparePart) {
-      detail.UnitName = this.units.find(u => u.Id == sparePart.UnitId)?.Name;
+      detail.UnitName = this.units.find((u) => u.Id == sparePart.UnitId)?.Name;
     } else {
       detail.UnitName = '';
     }
