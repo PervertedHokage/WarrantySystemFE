@@ -31,7 +31,7 @@ export class WarrantyClaimManagementService {
     );
   }
   getWarrantyClaimDropdownData() {
-    return this.http.get<APIResponse<WarrantyClaim[]>>(this.apiUrl + `info`);
+    return this.http.get<APIResponse<WarrantyClaimDTO[]>>(this.apiUrl + `info`);
   }
   getWarrantyClaimById(id: number) {
     return this.http.get<APIResponse<WarrantyClaimDTO>>(this.apiUrl + id);

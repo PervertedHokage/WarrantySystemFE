@@ -29,6 +29,7 @@ import { LandingPageService } from '../../../../../services/landing-page.service
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { Product } from '../../../../../models/product.model';
 import { ProductService } from '../../../../../services/products-service/product.service';
+import { WarrantyQuotationComponent } from './warranty-quotation/warranty-quotation.component';
 
 @Component({
   selector: 'app-warranty-managment-modal',
@@ -55,7 +56,7 @@ import { ProductService } from '../../../../../services/products-service/product
     NzPopoverModule,
     NgTemplateOutlet,
     NzSwitchModule,
-    //QuotationComponent,
+    WarrantyQuotationComponent,
   ],
 })
 export class WarrantyManagmentModalComponent implements OnInit {
@@ -84,13 +85,14 @@ export class WarrantyManagmentModalComponent implements OnInit {
     private userService: UserManagementService,
     private landingPageService: LandingPageService,
     private productService: ProductService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     const input = data.warrantyClaim ?? new WarrantyClaimDTO();
     this.warrantyClaimService.getWarrantyClaimById(input.Id).subscribe({
       next: (res) => {
         this.warrantyClaim = res.data;
         console.log(this.warrantyClaim);
+        this.cdr.detectChanges();
         this.loadTracking();
       },
       error: (err) => {},
@@ -115,7 +117,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          'Load dữ liệu hiện tượng hỏng thất bại'
+          'Load dữ liệu hiện tượng hỏng thất bại',
         );
       },
     });
@@ -128,7 +130,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          'Load dữ liệu người dùng thất bại'
+          'Load dữ liệu người dùng thất bại',
         );
       },
     });
@@ -141,7 +143,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          'Load dữ liệu sản phẩm thất bại'
+          'Load dữ liệu sản phẩm thất bại',
         );
       },
     });

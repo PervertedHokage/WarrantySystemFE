@@ -22,7 +22,7 @@ import { IUser } from '../../../../../models/user.interface';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { WarrantyClaim } from '../../../../../models/warranty-claims/warranty-claim.model';
 import { WarrantyClaimManagementService } from '../../../../../services/warranty-claim-management.service';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators';
 import { QuotationDetail } from '../../../../../models/quotations/quotation-details.model';
 import { ProductService } from '../../../../../services/products-service/product.service';
 import { SparePart } from '../../../../../models/spare-parts.model';
@@ -31,6 +31,7 @@ import { QuotationDetailsComponent } from './quotation-details/quotation-details
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { QuotationDTO } from '../../../../../models/quotations/quotation-dto.model';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { WarrantyClaimDTO } from '../../../../../models/warranty-claims/warranty-claim-dto.model';
 
 @Component({
   selector: 'app-quotation-modal',
@@ -55,7 +56,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 })
 export class QuotationModalComponent implements OnInit {
   currentUser: IUser | null = null;
-  warrantyClaimList: WarrantyClaim[] = [];
+  warrantyClaimList: WarrantyClaimDTO[] = [];
   quotation: QuotationDTO;
   quotationDetails: QuotationDetail[] = [];
   sparePartList: SparePart[] = [];
@@ -75,7 +76,7 @@ export class QuotationModalComponent implements OnInit {
     private warrantyClaimService: WarrantyClaimManagementService,
     private productService: ProductService,
     private quotationService: QuotationService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
   ) {
     this.quotation = data.quotation ?? new QuotationDTO();
 
@@ -108,8 +109,13 @@ export class QuotationModalComponent implements OnInit {
     });
     this.quotationForm
       .get('WarrantyClaimId')!
-      .valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+      .valueChanges.pipe(
+        startWith(this.quotationForm.get('WarrantyClaimId')!.value),
+        debounceTime(300),
+        distinctUntilChanged(),
+      )
       .subscribe((value) => {
+        if (!value) return;
         this.warrantyClaimService.getWarrantyClaimById(value).subscribe({
           next: (res) => {
             const data = res.data;
@@ -121,6 +127,7 @@ export class QuotationModalComponent implements OnInit {
               SerialNumber: data.SerialNumber,
               ProductName: data.ProductName,
             });
+            this.quotationForm.get('WarrantyClaimId')?.disable();
           },
         });
       });

@@ -1,28 +1,62 @@
 <div class="tab-container">
   <div class="tabs">
-    <div class="tab" [class.active]="currentTab == 1" data-tab="tab1" (click)="changeTab(1)">
+    <div
+      class="tab"
+      [class.active]="currentTab == 1"
+      data-tab="tab1"
+      (click)="changeTab(1)"
+    >
       Thông tin phiếu
     </div>
-    <div class="tab" [class.active]="currentTab == 2" data-tab="tab2" (click)="changeTab(2)">
+    <div
+      class="tab"
+      [class.active]="currentTab == 2"
+      data-tab="tab2"
+      (click)="changeTab(2)"
+    >
       Thông tin chi tiết
     </div>
-    <!-- <div class="tab" [class.active]="currentTab == 3" data-tab="tab3" (click)="changeTab(3)">
+    <div
+      class="tab"
+      [class.active]="currentTab == 3"
+      data-tab="tab3"
+      (click)="changeTab(3)"
+    >
       Báo giá
-    </div> -->
-    <!-- <div class="tab" [class.active]="currentTab == 4" data-tab="tab4" (click)="changeTab(4)">
+    </div>
+    <div
+      class="tab"
+      [class.active]="currentTab == 4"
+      data-tab="tab4"
+      (click)="changeTab(4)"
+    >
       Work Order
-    </div> -->
-    <div class="tab" [class.active]="currentTab == 5" data-tab="tab5" (click)="changeTab(5)">
+    </div>
+    <div
+      class="tab"
+      [class.active]="currentTab == 5"
+      data-tab="tab5"
+      (click)="changeTab(5)"
+    >
       Tài liệu đính kèm
     </div>
-    <div class="tab" [class.active]="currentTab == 6" data-tab="tab6" (click)="changeTab(6)">
+    <div
+      class="tab"
+      [class.active]="currentTab == 6"
+      data-tab="tab6"
+      (click)="changeTab(6)"
+    >
       Tracking
     </div>
   </div>
 
   <div class="tab-content">
     <!-- Tab Thông tin master -->
-    <div class="modal-tab-content" [class.active]="currentTab == 1" id="master-tab">
+    <div
+      class="modal-tab-content"
+      [class.active]="currentTab == 1"
+      id="master-tab"
+    >
       <form nz-form nzLayout="vertical">
         <!-- Thông tin khách hàng -->
         <div class="form-section">
@@ -30,8 +64,11 @@
 
           <div nz-row [nzGutter]="16">
             <div nz-col nzSpan="24">
-              <nz-steps nzType="navigation" [nzCurrent]="(warrantyClaim.Status ?? 1) - 1"
-                (nzIndexChange)="onStatusChange($event)">
+              <nz-steps
+                nzType="navigation"
+                [nzCurrent]="(warrantyClaim.Status ?? 1) - 1"
+                (nzIndexChange)="onStatusChange($event)"
+              >
                 <nz-step nzTitle="Tiếp nhận thông tin"></nz-step>
                 <nz-step nzTitle="Xác minh thông tin"></nz-step>
                 <nz-step nzTitle="Chẩn đoán sơ bộ"></nz-step>
@@ -52,7 +89,11 @@
               <nz-form-item>
                 <nz-form-label>Khách hàng</nz-form-label>
                 <nz-form-control>
-                  <input nz-input [(ngModel)]="warrantyClaim.CustomerName" name="customername" />
+                  <input
+                    nz-input
+                    [(ngModel)]="warrantyClaim.CustomerName"
+                    name="customername"
+                  />
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -63,7 +104,11 @@
               <nz-form-item>
                 <nz-form-label>Điện thoại di động</nz-form-label>
                 <nz-form-control>
-                  <input nz-input [(ngModel)]="warrantyClaim.CustomerPhoneNumber" name="phonenumber" />
+                  <input
+                    nz-input
+                    [(ngModel)]="warrantyClaim.CustomerPhoneNumber"
+                    name="phonenumber"
+                  />
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -72,7 +117,11 @@
               <nz-form-item>
                 <nz-form-label>Email</nz-form-label>
                 <nz-form-control>
-                  <input nz-input [(ngModel)]="warrantyClaim.CustomerEmail" name="customeremail" />
+                  <input
+                    nz-input
+                    [(ngModel)]="warrantyClaim.CustomerEmail"
+                    name="customeremail"
+                  />
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -83,7 +132,12 @@
               <nz-form-item>
                 <nz-form-label>Địa chỉ</nz-form-label>
                 <nz-form-control>
-                  <textarea nz-input rows="2" [(ngModel)]="warrantyClaim.CustomerAddress" name="address"></textarea>
+                  <textarea
+                    nz-input
+                    rows="2"
+                    [(ngModel)]="warrantyClaim.CustomerAddress"
+                    name="address"
+                  ></textarea>
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -99,9 +153,16 @@
               <nz-form-item>
                 <nz-form-label>Sản phẩm</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.ProductId" name="productid" class="w-100">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.ProductId"
+                    name="productid"
+                    class="w-100"
+                  >
                     @for (product of productList; track product.Id) {
-                    <nz-option [nzLabel]="product.Name" [nzValue]="product.Id"></nz-option>
+                      <nz-option
+                        [nzLabel]="product.Name"
+                        [nzValue]="product.Id"
+                      ></nz-option>
                     }
                   </nz-select>
                 </nz-form-control>
@@ -112,7 +173,11 @@
               <nz-form-item>
                 <nz-form-label>Serial Number</nz-form-label>
                 <nz-form-control>
-                  <input nz-input [(ngModel)]="warrantyClaim.SerialNumber" name="serial" />
+                  <input
+                    nz-input
+                    [(ngModel)]="warrantyClaim.SerialNumber"
+                    name="serial"
+                  />
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -123,9 +188,16 @@
               <nz-form-item>
                 <nz-form-label>Hiện tượng hỏng hóc</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.IssueId" name="issueid" class="w-100">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.IssueId"
+                    name="issueid"
+                    class="w-100"
+                  >
                     @for (issue of issueList; track issue.Id) {
-                    <nz-option [nzLabel]="issue.Name" [nzValue]="issue.Id"></nz-option>
+                      <nz-option
+                        [nzLabel]="issue.Name"
+                        [nzValue]="issue.Id"
+                      ></nz-option>
                     }
                   </nz-select>
                 </nz-form-control>
@@ -133,14 +205,16 @@
             </div>
           </div>
         </div>
-
       </form>
     </div>
 
     <!-- Tab Thông tin chi tiết -->
-    <div class="modal-tab-content" [class.active]="currentTab == 2" id="detail-tab">
+    <div
+      class="modal-tab-content"
+      [class.active]="currentTab == 2"
+      id="detail-tab"
+    >
       <form nz-form nzLayout="vertical">
-
         <!-- Chi tiết hỏng hóc -->
         <div class="form-section">
           <h3>Chi tiết hỏng hóc</h3>
@@ -150,8 +224,12 @@
               <nz-form-item>
                 <nz-form-label>Ngày tiếp nhận</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker nzFormat="yyyy-MM-dd" [(ngModel)]="warrantyClaim.ReceptionDate" name="receptiondate"
-                    class="w-100">
+                  <nz-date-picker
+                    nzFormat="yyyy-MM-dd"
+                    [(ngModel)]="warrantyClaim.ReceptionDate"
+                    name="receptiondate"
+                    class="w-100"
+                  >
                   </nz-date-picker>
                 </nz-form-control>
               </nz-form-item>
@@ -161,9 +239,16 @@
               <nz-form-item>
                 <nz-form-label>Người tiếp nhận</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.ReceptionWorker" name="receptionworker" class="w-100">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.ReceptionWorker"
+                    name="receptionworker"
+                    class="w-100"
+                  >
                     @for (user of userList; track user.Id) {
-                    <nz-option [nzLabel]="user.FullName" [nzValue]="user.LoginName"></nz-option>
+                      <nz-option
+                        [nzLabel]="user.FullName"
+                        [nzValue]="user.LoginName"
+                      ></nz-option>
                     }
                   </nz-select>
                 </nz-form-control>
@@ -176,7 +261,10 @@
               <nz-form-item>
                 <nz-form-label>Có bao silicon</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.HasProtection" name="hasprotection">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.HasProtection"
+                    name="hasprotection"
+                  >
                     <nz-option nzLabel="Có" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="Không" [nzValue]="false"></nz-option>
                   </nz-select>
@@ -188,7 +276,10 @@
               <nz-form-item>
                 <nz-form-label>Có adapter</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.HasAdapter" name="hasadapter">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.HasAdapter"
+                    name="hasadapter"
+                  >
                     <nz-option nzLabel="Có" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="Không" [nzValue]="false"></nz-option>
                   </nz-select>
@@ -201,7 +292,10 @@
               <nz-form-item>
                 <nz-form-label>Có cáp dữ liệu</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.HasCable" name="hascable">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.HasCable"
+                    name="hascable"
+                  >
                     <nz-option nzLabel="Có" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="Không" [nzValue]="false"></nz-option>
                   </nz-select>
@@ -213,7 +307,10 @@
               <nz-form-item>
                 <nz-form-label>Có pin</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.HasBattery" name="hasbattery">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.HasBattery"
+                    name="hasbattery"
+                  >
                     <nz-option nzLabel="Có" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="Không" [nzValue]="false"></nz-option>
                   </nz-select>
@@ -226,7 +323,10 @@
               <nz-form-item>
                 <nz-form-label>Có lỗi khi mở hộp</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.HasIssueWhenOpenBox" name="hasissue">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.HasIssueWhenOpenBox"
+                    name="hasissue"
+                  >
                     <nz-option nzLabel="Có" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="Không" [nzValue]="false"></nz-option>
                   </nz-select>
@@ -238,7 +338,10 @@
               <nz-form-item>
                 <nz-form-label>Có bị rơi/va đập</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.HasCollision" name="hascollision">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.HasCollision"
+                    name="hascollision"
+                  >
                     <nz-option nzLabel="Có" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="Không" [nzValue]="false"></nz-option>
                   </nz-select>
@@ -257,9 +360,16 @@
               <nz-form-item>
                 <nz-form-label>Kỹ thuật viên chẩn đoán</nz-form-label>
                 <nz-form-control>
-                  <nz-select [(ngModel)]="warrantyClaim.DiagnosisWorker" name="diagnosisworker" class="w-100">
+                  <nz-select
+                    [(ngModel)]="warrantyClaim.DiagnosisWorker"
+                    name="diagnosisworker"
+                    class="w-100"
+                  >
                     @for (user of userList; track user.Id) {
-                    <nz-option [nzLabel]="user.FullName" [nzValue]="user.LoginName"></nz-option>
+                      <nz-option
+                        [nzLabel]="user.FullName"
+                        [nzValue]="user.LoginName"
+                      ></nz-option>
                     }
                   </nz-select>
                 </nz-form-control>
@@ -270,8 +380,12 @@
               <nz-form-item>
                 <nz-form-label>Ngày chẩn đoán</nz-form-label>
                 <nz-form-control>
-                  <nz-date-picker nzFormat="yyyy-MM-dd" [(ngModel)]="warrantyClaim.DiagnosisDate" name="diagnosisdate"
-                    class="w-100">
+                  <nz-date-picker
+                    nzFormat="yyyy-MM-dd"
+                    [(ngModel)]="warrantyClaim.DiagnosisDate"
+                    name="diagnosisdate"
+                    class="w-100"
+                  >
                   </nz-date-picker>
                 </nz-form-control>
               </nz-form-item>
@@ -283,107 +397,38 @@
               <nz-form-item>
                 <nz-form-label>Kết quả chẩn đoán</nz-form-label>
                 <nz-form-control>
-                  <textarea nz-input rows="4" [(ngModel)]="warrantyClaim.DiagnosisNote" name="diagnosisnote"></textarea>
+                  <textarea
+                    nz-input
+                    rows="4"
+                    [(ngModel)]="warrantyClaim.DiagnosisNote"
+                    name="diagnosisnote"
+                  ></textarea>
                 </nz-form-control>
               </nz-form-item>
             </div>
           </div>
         </div>
-
       </form>
     </div>
 
     <!-- Tab Báo giá -->
-    <!-- <div class="modal-tab-content" [class.active]="currentTab == 3" id="quote-tab"> -->
-    <!-- <quotation [claimNo]="warrantyClaim.ClaimNo ?? ''"></quotation> -->
-    <!-- <form nz-form nzLayout="vertical">
-
-        <div class="form-section">
-          <h3>Báo giá sửa chữa</h3>
-
-          <div nz-row [nzGutter]="16">
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label>Ngày báo giá</nz-form-label>
-                <nz-form-control>
-                  <nz-date-picker nzFormat="yyyy-MM-dd" nzValue="2024-12-17" class="w-100">
-                  </nz-date-picker>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label>Người báo giá</nz-form-label>
-                <nz-form-control>
-                  <input nz-input value="NV002 - Lê Báo Giá" />
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h4>Chi tiết vật tư</h4>
-
-            <nz-table nzBordered [nzData]="[]" [nzShowPagination]="false" style="margin-top: 15px;">
-              <thead>
-                <tr>
-                  <th>Tên vật tư</th>
-                  <th>Số lượng</th>
-                  <th>Đơn giá</th>
-                  <th>Thành tiền</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Pin M52 2700mAh</td>
-                  <td>1</td>
-                  <td>450,000</td>
-                  <td>450,000</td>
-                </tr>
-                <tr>
-                  <td>Cổng sạc M52</td>
-                  <td>1</td>
-                  <td>200,000</td>
-                  <td>200,000</td>
-                </tr>
-                <tr>
-                  <td>Phí sửa chữa</td>
-                  <td>1</td>
-                  <td>300,000</td>
-                  <td>300,000</td>
-                </tr>
-                <tr>
-                  <td colspan="3"><strong>Tổng cộng</strong></td>
-                  <td><strong>950,000</strong></td>
-                </tr>
-              </tbody>
-            </nz-table>
-          </div>
-
-          <div nz-row [nzGutter]="16">
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label>Khách hàng đồng ý</nz-form-label>
-                <nz-form-control>
-                  <nz-select nzValue="Chờ phản hồi">
-                    <nz-option nzLabel="Chờ phản hồi" nzValue="Chờ phản hồi"></nz-option>
-                    <nz-option nzLabel="Đồng ý" nzValue="Đồng ý"></nz-option>
-                    <nz-option nzLabel="Từ chối" nzValue="Từ chối"></nz-option>
-                  </nz-select>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-
-        </div>
-
-      </form> -->
-    <!-- </div> -->
+    <div
+      class="modal-tab-content"
+      [class.active]="currentTab == 3"
+      id="quote-tab"
+    >
+    @if(!!warrantyClaim.ClaimNo){
+      <warranty-quotation [claimNo]="warrantyClaim.ClaimNo"></warranty-quotation>
+    }
+    </div>
 
     <!-- Tab Work Order -->
-    <!-- <div class="modal-tab-content" [class.active]="currentTab == 4" id="workorder-tab">
-      <form nz-form nzLayout="vertical">
+    <div
+      class="modal-tab-content"
+      [class.active]="currentTab == 4"
+      id="workorder-tab"
+    >
+      <!-- <form nz-form nzLayout="vertical">
 
         <div class="form-section">
           <h3>Work Order - Phiếu sửa chữa</h3>
@@ -477,13 +522,16 @@
 
         </div>
 
-      </form>
-    </div> -->
+      </form> -->
+    </div>
 
     <!-- Tab Tài liệu đính kèm -->
-    <div class="modal-tab-content" [class.active]="currentTab == 5" id="documents-tab">
+    <div
+      class="modal-tab-content"
+      [class.active]="currentTab == 5"
+      id="documents-tab"
+    >
       <form nz-form nzLayout="vertical">
-
         <!-- Tài liệu đính kèm -->
         <div class="form-section">
           <h3>Tài liệu đính kèm</h3>
@@ -494,7 +542,11 @@
               <nz-form-item>
                 <nz-form-label>Tải lên tài liệu mới</nz-form-label>
                 <nz-form-control>
-                  <nz-upload nzMultiple nzType="select" [nzShowUploadList]="true">
+                  <nz-upload
+                    nzMultiple
+                    nzType="select"
+                    [nzShowUploadList]="true"
+                  >
                     <button nz-button nzType="default">
                       <span nz-icon nzType="upload"></span>
                       Chọn file
@@ -509,7 +561,12 @@
           <div class="form-section">
             <h4>Danh sách tài liệu</h4>
 
-            <nz-table nzBordered [nzShowPagination]="false" [nzData]="[]" style="margin-top: 15px;">
+            <nz-table
+              nzBordered
+              [nzShowPagination]="false"
+              [nzData]="[]"
+              style="margin-top: 15px"
+            >
               <thead>
                 <tr>
                   <th>Tên file</th>
@@ -527,12 +584,23 @@
                   <td>2.4 MB</td>
                   <td>admin</td>
                   <td>
-                    <button nz-button nzType="primary" nzSize="small" nzShape="circle">
+                    <button
+                      nz-button
+                      nzType="primary"
+                      nzSize="small"
+                      nzShape="circle"
+                    >
                       <span nz-icon nzType="download"></span>
                     </button>
 
-                    <button nz-button nzType="default" nzDanger nzSize="small" nzShape="circle"
-                      style="margin-left: 6px;">
+                    <button
+                      nz-button
+                      nzType="default"
+                      nzDanger
+                      nzSize="small"
+                      nzShape="circle"
+                      style="margin-left: 6px"
+                    >
                       <span nz-icon nzType="delete"></span>
                     </button>
                   </td>
@@ -544,12 +612,23 @@
                   <td>1.2 MB</td>
                   <td>admin</td>
                   <td>
-                    <button nz-button nzType="primary" nzSize="small" nzShape="circle">
+                    <button
+                      nz-button
+                      nzType="primary"
+                      nzSize="small"
+                      nzShape="circle"
+                    >
                       <span nz-icon nzType="download"></span>
                     </button>
 
-                    <button nz-button nzType="default" nzDanger nzSize="small" nzShape="circle"
-                      style="margin-left: 6px;">
+                    <button
+                      nz-button
+                      nzType="default"
+                      nzDanger
+                      nzSize="small"
+                      nzShape="circle"
+                      style="margin-left: 6px"
+                    >
                       <span nz-icon nzType="delete"></span>
                     </button>
                   </td>
@@ -561,12 +640,23 @@
                   <td>580 KB</td>
                   <td>admin</td>
                   <td>
-                    <button nz-button nzType="primary" nzSize="small" nzShape="circle">
+                    <button
+                      nz-button
+                      nzType="primary"
+                      nzSize="small"
+                      nzShape="circle"
+                    >
                       <span nz-icon nzType="download"></span>
                     </button>
 
-                    <button nz-button nzType="default" nzDanger nzSize="small" nzShape="circle"
-                      style="margin-left: 6px;">
+                    <button
+                      nz-button
+                      nzType="default"
+                      nzDanger
+                      nzSize="small"
+                      nzShape="circle"
+                      style="margin-left: 6px"
+                    >
                       <span nz-icon nzType="delete"></span>
                     </button>
                   </td>
@@ -574,20 +664,26 @@
               </tbody>
             </nz-table>
           </div>
-
         </div>
-
       </form>
     </div>
 
-    <div class="modal-tab-content" [class.active]="currentTab == 6" id="tracking-tab">
+    <div
+      class="modal-tab-content"
+      [class.active]="currentTab == 6"
+      id="tracking-tab"
+    >
       <form nz-form nzLayout="vertical">
         <div nz-row [nzGutter]="16">
           <div nz-col nzSpan="24">
             <nz-form-item>
               <nz-form-label>Trạng thái</nz-form-label>
               <nz-form-control>
-                <input nz-input [(ngModel)]="currentTracking.StatusText" name="statustext" />
+                <input
+                  nz-input
+                  [(ngModel)]="currentTracking.StatusText"
+                  name="statustext"
+                />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -597,7 +693,11 @@
             <nz-form-item>
               <nz-form-label>Ghi chú</nz-form-label>
               <nz-form-control>
-                <textarea nz-input [(ngModel)]="currentTracking.Note" name="trackingnote"></textarea>
+                <textarea
+                  nz-input
+                  [(ngModel)]="currentTracking.Note"
+                  name="trackingnote"
+                ></textarea>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -607,8 +707,12 @@
             <nz-form-item>
               <nz-form-label>Ngày</nz-form-label>
               <nz-form-control>
-                <nz-date-picker nzFormat="yyyy-MM-dd" [(ngModel)]="currentTracking.CreatedDate"
-                  name="trackingcreateddate" class="w-100">
+                <nz-date-picker
+                  nzFormat="yyyy-MM-dd"
+                  [(ngModel)]="currentTracking.CreatedDate"
+                  name="trackingcreateddate"
+                  class="w-100"
+                >
                 </nz-date-picker>
               </nz-form-control>
             </nz-form-item>
@@ -619,30 +723,61 @@
             <nz-form-item>
               <nz-form-label>Kích hoạt</nz-form-label>
               <nz-form-control>
-                <nz-switch [(ngModel)]="currentTracking.IsActive" name="trackingisactive"></nz-switch>
+                <nz-switch
+                  [(ngModel)]="currentTracking.IsActive"
+                  name="trackingisactive"
+                ></nz-switch>
               </nz-form-control>
             </nz-form-item>
           </div>
         </div>
         <div nz-row [nzGutter]="16">
           <div nz-col nzSpan="24">
-            <button class="mb-3 me-2 btn-add" nz-button nzType="default" (click)="onAddTracking()">
-              <i class="bi bi-plus-lg"></i> Thêm</button>
-            <button class="mb-3 btn-delete" nz-button nzType="default" (click)="onDeleteTracking()">
-              <i class="bi bi-trash"></i> Xóa</button>
+            <button
+              class="mb-3 me-2 btn-add"
+              nz-button
+              nzType="default"
+              (click)="onAddTracking()"
+            >
+              <i class="bi bi-plus-lg"></i> Thêm
+            </button>
+            <button
+              class="mb-3 btn-delete"
+              nz-button
+              nzType="default"
+              (click)="onDeleteTracking()"
+            >
+              <i class="bi bi-trash"></i> Xóa
+            </button>
           </div>
         </div>
         <div nz-row [nzGutter]="16">
           <div nz-col nzSpan="24">
             <h4>Trạng thái:</h4>
-            <nz-steps [nzCurrent]="activeIndex" nzDirection="vertical" (nzIndexChange)="onIndexChange($event)">
-              @for(track of trackings; let i = $index; track i){
-              <nz-step [nzTitle]="track.StatusText ?? ''" [nzDescription]="track.Note ?? ''"
-                [nzStatus]="i === activeIndex ? 'finish' : 'process'"></nz-step>
+            <nz-steps
+              [nzCurrent]="activeIndex"
+              nzDirection="vertical"
+              (nzIndexChange)="onIndexChange($event)"
+            >
+              @for (track of trackings; let i = $index; track i) {
+                <nz-step
+                  [nzTitle]="track.StatusText ?? ''"
+                  [nzDescription]="track.Note ?? ''"
+                  [nzStatus]="i === activeIndex ? 'finish' : 'process'"
+                ></nz-step>
               }
             </nz-steps>
-            <ng-template #dateTemplate let-dot let-status="status" let-index="index">
-              <span nz-popover nzPopoverContent="steps {{ index }} status: {{ status }}" style="margin-left: -100%;">
+            <ng-template
+              #dateTemplate
+              let-dot
+              let-status="status"
+              let-index="index"
+            >
+              <span
+                nz-popover
+                nzPopoverContent="steps {{ index }} status: {{ status }}"
+                style="margin-left: -100%"
+              >
                 <ng-template [ngTemplateOutlet]="dot"></ng-template>
               </span>
             </ng-template>

@@ -5,6 +5,7 @@ import {
   ElementRef,
   TemplateRef,
   Input,
+  SimpleChanges,
 } from '@angular/core';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { CommonModule, NgIf } from '@angular/common';
@@ -17,11 +18,8 @@ import {
   FormsModule,
 } from '@angular/forms';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
-import { HasPermissionDirective } from '../../../../directives/has-permission.directive';
-import { NOTIFICATION_TITLE } from '../../../../app.config';
 import { forkJoin } from 'rxjs';
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
-import { OrganizationService } from '../organization/organization.service';
 import {
   AngularGridInstance,
   AngularSlickgridModule,
@@ -32,20 +30,21 @@ import {
   GridOption,
   OnEventArgs,
 } from 'angular-slickgrid';
-import { WarrantyClaim } from '../../../../models/warranty-claims/warranty-claim.model';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-import { QuotationDTO } from '../../../../models/quotations/quotation-dto.model';
-import { QuotationModalComponent } from './quotation-modal/quotation-modal.component';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { QuotationService } from '../../../../services/quotations-service/quotation.service';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { Quotation } from '../../../../models/quotations/quotation.model';
+import { QuotationDTO } from '../../../../../../models/quotations/quotation-dto.model';
+import { QuotationService } from '../../../../../../services/quotations-service/quotation.service';
+import { NOTIFICATION_TITLE } from '../../../../../../app.config';
+import { QuotationModalComponent } from '../../../quotation/quotation-modal/quotation-modal.component';
+import { Quotation } from '../../../../../../models/quotations/quotation.model';
+import { WarrantyClaimManagementService } from '../../../../../../services/warranty-claim-management.service';
 
 @Component({
-  selector: 'quotation',
-  templateUrl: './quotation.component.html',
-  styleUrls: ['./quotation.component.less'],
+  selector: 'warranty-quotation',
+  templateUrl: './warranty-quotation.component.html',
+  styleUrls: ['./warranty-quotation.component.less'],
   imports: [
     CommonModule,
     FormsModule,
@@ -57,10 +56,10 @@ import { Quotation } from '../../../../models/quotations/quotation.model';
     NzIconModule,
   ],
 })
-export class QuotationComponent implements OnInit {
+export class WarrantyQuotationComponent implements OnInit {
   @Input() claimNo: string = '';
   angularGrid!: AngularGridInstance;
-  gridId = `grid-quotation-${crypto.randomUUID()}`;
+  gridId = `grid-warranty-quotation-${crypto.randomUUID()}`;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: QuotationDTO[] = [];
@@ -73,7 +72,7 @@ export class QuotationComponent implements OnInit {
   };
   showFilter = false;
   filter = {
-    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    fromDate: new Date(2020, 0, 1),
     toDate: new Date(),
     claimNo: this.claimNo,
   };
@@ -81,10 +80,17 @@ export class QuotationComponent implements OnInit {
     private modal: NzModalService,
     private notification: NzNotificationService,
     private quotationService: QuotationService,
+    private warrantyClaimService: WarrantyClaimManagementService,
   ) {}
 
   ngOnInit() {
     this.initGrid();
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['claimNo']) {
+      this.filter.claimNo = this.claimNo;
+      this.loadData();
+    }
   }
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -170,10 +176,10 @@ export class QuotationComponent implements OnInit {
         filterable: false,
         width: 100,
         formatter: () => `
-          <button class="btn btn-sm btn-outline open-modal-btn">
-            📋 Chi tiết
-          </button>
-        `,
+            <button class="btn btn-sm btn-outline open-modal-btn">
+              📋 Chi tiết
+            </button>
+          `,
         onCellClick: (e: Event, args: OnEventArgs) => {
           const target = e.target as HTMLElement;
           if (!target.closest('.open-modal-btn')) {
@@ -204,7 +210,6 @@ export class QuotationComponent implements OnInit {
       multiSelect: false,
       rowSelectionOptions: { selectActiveRow: true },
     };
-    this.loadData();
   }
   loadData() {
     this.quotationService
@@ -226,26 +231,47 @@ export class QuotationComponent implements OnInit {
       });
   }
   openAddModal() {
-    const modalRef = this.modal.create({
-      nzTitle: 'Thêm mới phiếu báo giá',
-      nzContent: QuotationModalComponent,
-      nzFooter: null,
-      nzMaskClosable: false,
-      nzKeyboard: false,
-      nzData: {},
-      nzWidth: '80vw',
-      nzBodyStyle: {
-        'max-height': '80vh',
-        'overflow-y': 'auto',
-      },
-      nzCentered: true,
-    });
+    this.warrantyClaimService
+      .getWarrantyClaims(
+        '',
+        '',
+        this.claimNo,
+        new Date(2020, 0, 1),
+        new Date(),
+        0,
+      )
+      .subscribe({
+        next: (result) => {
+          const warrantyClaim = result.data[0];
+          const modalRef = this.modal.create({
+            nzTitle: 'Thêm mới phiếu báo giá',
+            nzContent: QuotationModalComponent,
+            nzFooter: null,
+            nzMaskClosable: false,
+            nzKeyboard: false,
+            nzData: {
+              quotation: new QuotationDTO({
+                WarrantyClaimId: warrantyClaim.Id,
+              }),
+            },
+            nzWidth: '80vw',
+            nzBodyStyle: {
+              'max-height': '80vh',
+              'overflow-y': 'auto',
+            },
+            nzCentered: true,
+          });
 
-    modalRef.afterClose.subscribe((result) => {
-      if (result) {
-        this.loadData();
-      }
-    });
+          modalRef.afterClose.subscribe((result) => {
+            if (result) {
+              this.loadData();
+            }
+          });
+        },
+        error: () => {
+          this.notification.warning('Thông báo', 'Load dữ liệu phiếu bảo hành thất bại');
+        },
+      });
   }
   openEditModal() {
     const selectedData = this.angularGrid.gridService.getSelectedRowsDataItem();
@@ -301,7 +327,7 @@ export class QuotationComponent implements OnInit {
   }
   resetFilter() {
     this.filter = {
-      fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
+      fromDate: new Date(2020, 0, 1),
       toDate: new Date(),
       claimNo: this.claimNo.trim(),
     };

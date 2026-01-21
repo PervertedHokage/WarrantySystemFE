@@ -100,7 +100,7 @@
       <tr>
         <td colspan="4"></td>
         <td class="text-right fw-bold">Tổng cộng:</td>
-        <td class="fw-bold">{{ getSumPrice(0) }} ₫</td>
+        <td class="fw-bold">{{ getSumPrice(0) | number:'1.0-0' }} ₫</td>
       </tr>
       <tr>
         <td colspan="4"></td>
@@ -117,7 +117,7 @@
       <tr>
         <td colspan="4"></td>
         <td class="text-right fw-bold">Tổng thanh toán:</td>
-        <td class="fw-bold text-danger">{{ getSumPrice(VATfeeForm) }} ₫</td>
+        <td class="fw-bold text-danger">{{ getSumPrice(VATfeeForm) | number:'1.0-0' }} ₫</td>
       </tr>
     </tbody>
   </nz-table>
