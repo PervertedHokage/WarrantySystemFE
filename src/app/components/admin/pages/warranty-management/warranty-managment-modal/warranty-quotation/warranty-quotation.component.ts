@@ -197,7 +197,7 @@ export class WarrantyQuotationComponent implements OnInit {
       datasetIdPropertyName: 'Id',
       enableAutoResize: true,
       autoResize: {
-        container: '#grid_quotation_container',
+        container: '#grid_warranty_quotation_container',
         resizeDetection: 'container',
       },
       enableSorting: true,
@@ -269,7 +269,10 @@ export class WarrantyQuotationComponent implements OnInit {
           });
         },
         error: () => {
-          this.notification.warning('Thông báo', 'Load dữ liệu phiếu bảo hành thất bại');
+          this.notification.warning(
+            'Thông báo',
+            'Load dữ liệu phiếu bảo hành thất bại',
+          );
         },
       });
   }

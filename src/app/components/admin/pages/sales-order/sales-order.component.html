@@ -1,25 +1,69 @@
 <div class="card">
   <div class="card-header bg-white p-1">
     <div class="d-flex gap-1">
-      <button class="fs-12" nz-button nzType="default" nzSize="small" (click)="showFilter = !showFilter"
-        alt="Lọc dữ liệu">
+      <button
+        class="fs-12"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="showFilter = !showFilter"
+        alt="Lọc dữ liệu"
+      >
         <nz-icon [nzType]="showFilter ? 'up' : 'down'" nzTheme="outline" />
       </button>
-      <button class="btn-add" nz-button nzType="default" nzSize="small" (click)="onAddSaleOrder(false)">
+      <button
+        class="btn-add"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onAddSaleOrder(false)"
+      >
         <img src="assets/icon/action_add_item_16.png" /> Thêm
       </button>
-      <button class="btn-edit" nz-button nzType="default" nzSize="small" (click)="onAddSaleOrder(true)">
+      <button
+        class="btn-edit"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onAddSaleOrder(true)"
+      >
         <img src="assets/icon/action_edit_item_16.png" /> Sửa
       </button>
 
-      <button class="btn-delete" nz-button nzType="default" nzSize="small" (click)="onDeleteMultiple()">
+      <button
+        class="btn-delete"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onDeleteMultiple()"
+      >
         <img src="assets/icon/action_delete_item_16.png" /> Xóa
       </button>
-      <button class="btn-import" nz-button nzType="default" nzSize="small" (click)="onImportExcel()">
-          <img class="btn-action-icon" src="assets/icon/action_import_excel_24.svg" /> Nhập Excel
+      <button
+        class="btn-import"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onImportExcel()"
+      >
+        <img
+          class="btn-action-icon"
+          src="assets/icon/action_import_excel_24.svg"
+        />
+        Nhập Excel
       </button>
-      <button class="btn-import" nz-button nzType="default" nzSize="small" (click)="onExportExcel()">
-          <img class="btn-action-icon" src="assets/icon/action_export_excel_24.svg" /> Xuất Excel
+      <button
+        class="btn-import"
+        nz-button
+        nzType="default"
+        nzSize="small"
+        (click)="onExportExcel()"
+      >
+        <img
+          class="btn-action-icon"
+          src="assets/icon/action_export_excel_24.svg"
+        />
+        Xuất Excel
       </button>
     </div>
   </div>
@@ -27,26 +71,54 @@
     <!-- Filters -->
     <div class="d-flex flex-wrap gap-3 align-items-center">
       <!-- Date range -->
-      <form nz-form nzLayout="horizontal" class="d-flex flex-wrap gap-3 align-items-end">
+      <form
+        nz-form
+        nzLayout="horizontal"
+        class="d-flex flex-wrap gap-3 align-items-end"
+      >
         <nz-form-item class="mb-0">
           <nz-form-label class="fs-12 p-0" [nzSpan]="24">Từ ngày</nz-form-label>
           <nz-form-control [nzSpan]="24">
-            <nz-date-picker [nzFormat]="dateFormat" class="w-100" nzSize="small" [(ngModel)]="filter.fromDate"
-              name="dateStart">
+            <nz-date-picker
+              [nzFormat]="dateFormat"
+              class="w-100"
+              nzSize="small"
+              [(ngModel)]="filter.fromDate"
+              name="dateStart"
+            >
             </nz-date-picker>
           </nz-form-control>
         </nz-form-item>
         <nz-form-item class="mb-0">
-          <nz-form-label class="fs-12 p-0" [nzSpan]="24">Đến ngày</nz-form-label>
+          <nz-form-label class="fs-12 p-0" [nzSpan]="24"
+            >Đến ngày</nz-form-label
+          >
           <nz-form-control [nzSpan]="24">
-            <nz-date-picker [nzFormat]="dateFormat" class="w-100" nzSize="small" [(ngModel)]="filter.toDate"
-              name="dateEnd"></nz-date-picker>
+            <nz-date-picker
+              [nzFormat]="dateFormat"
+              class="w-100"
+              nzSize="small"
+              [(ngModel)]="filter.toDate"
+              name="dateEnd"
+            ></nz-date-picker>
           </nz-form-control>
         </nz-form-item>
-        <button class="btn-apply-filter p-2" nz-button nzType="primary" nzSize="small" (click)="applyFilter()">
+        <button
+          class="btn-apply-filter p-2"
+          nz-button
+          nzType="primary"
+          nzSize="small"
+          (click)="applyFilter()"
+        >
           🔍 Lọc
         </button>
-        <button class="btn-reset-filter" nz-button nzType="default" nzSize="small" (click)="resetFilter()">
+        <button
+          class="btn-reset-filter"
+          nz-button
+          nzType="default"
+          nzSize="small"
+          (click)="resetFilter()"
+        >
           ❌ Reset
         </button>
       </form>
@@ -54,9 +126,16 @@
   </div>
   <div class="grid-container">
     <div class="grid-sale-container">
-      <angular-slickgrid gridId="saleGrid" [columns]="columnSaleOrderGroup" [options]="gridOptionSaleOrderGroup"
-        [dataset]="datasetSaleOrderGroup" (onAngularGridCreated)="gridReady($event)"
-        (onActiveCellChanged)="onActiveCellChanged($event)" (selectedRowsChanged)="onSelectedRowsChanged($event)">
+      <angular-slickgrid
+        gridId="saleGrid"
+        [columns]="columnSaleOrderGroup"
+        [options]="gridOptionSaleOrderGroup"
+        [dataset]="datasetSaleOrderGroup"
+        (onAngularGridCreated)="gridReady($event)"
+        (onActiveCellChanged)="onActiveCellChanged($event)"
+        (selectedRowsChanged)="onSelectedRowsChanged($event)"
+        (onDblClick)="onAddSaleOrder(true)"
+      >
       </angular-slickgrid>
     </div>
   </div>

@@ -13,8 +13,8 @@
               (formGroup.get('Code')?.dirty || formGroup.get('Code')?.touched)
                 ? 'Vui lòng nhập mã lỗi hỏng hóc!'
                 : formGroup.get('Code')?.hasError('maxlength')
-                ? 'Mã lỗi tối đa 20 ký tự!'
-                : undefined
+                  ? 'Mã lỗi tối đa 20 ký tự!'
+                  : undefined
             "
           >
             <input
@@ -39,8 +39,8 @@
               (formGroup.get('Name')?.dirty || formGroup.get('Name')?.touched)
                 ? 'Vui lòng nhập tên lỗi hỏng hóc!'
                 : formGroup.get('Name')?.hasError('maxlength')
-                ? 'Tên loại tối đa 50 ký tự!'
-                : undefined
+                  ? 'Tên loại tối đa 50 ký tự!'
+                  : undefined
             "
           >
             <input

@@ -1,24 +1,42 @@
 <div class="modal-body">
-  <h3 style="border-bottom: 1px solid #eee; color: #2c3e50; font-size: 18px" class="mb-2 pb-2">
+  <h3
+    style="border-bottom: 1px solid #eee; color: #2c3e50; font-size: 18px"
+    class="mb-2 pb-2"
+  >
     Thông tin chung
   </h3>
   <form nz-form [formGroup]="formGroup" nzLayout="vertical" class="fs-7 mt-2">
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="CodeInput" class="form-label p-0">Mã yêu cầu<span class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="CodeInput" class="form-label p-0"
+            >Mã yêu cầu<span class="text-danger ps-1">(*) </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('WarrantyClaimId')?.hasError('required') &&
-              (formGroup.get('WarrantyClaimId')?.dirty || formGroup.get('WarrantyClaimId')?.touched)
+              (formGroup.get('WarrantyClaimId')?.dirty ||
+                formGroup.get('WarrantyClaimId')?.touched)
                 ? 'Vui lòng nhập mã yêu cầu!'
                 : formGroup.get('WarrantyClaimId')?.hasError('maxlength')
-                ? 'Mã yêu cầu tối đa 50 ký tự!'
-                : undefined
-            ">
-            <nz-select formControlName="WarrantyClaimId" nzPlaceHolder="Chọn mã yêu cầu" nzShowSearch nzAllowClear
-              [nzFilterOption]="filterOption" class="fs-12 w-100">
-              <nz-option *ngFor="let item of dataWarrantyClaims" [nzValue]="item.Id" [nzLabel]="item.ClaimNo">
+                  ? 'Mã yêu cầu tối đa 50 ký tự!'
+                  : undefined
+            "
+          >
+            <nz-select
+              formControlName="WarrantyClaimId"
+              nzPlaceHolder="Chọn mã yêu cầu"
+              nzShowSearch
+              nzAllowClear
+              [nzFilterOption]="filterOption"
+              class="fs-12 w-100"
+            >
+              <nz-option
+                *ngFor="let item of dataWarrantyClaims"
+                [nzValue]="item.Id"
+                [nzLabel]="item.ClaimNo"
+              >
               </nz-option>
             </nz-select>
           </nz-form-control>
@@ -26,18 +44,32 @@
       </nz-col>
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="QuotationNumberInput" class="form-label p-0">Mã báo giá<span class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="QuotationNumberInput" class="form-label p-0"
+            >Mã báo giá<span class="text-danger ps-1">(*) </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('QuotationId')?.invalid &&
               (formGroup.get('QuotationId')?.dirty ||
                 formGroup.get('QuotationId')?.touched)
                 ? 'Vui lòng chọn mã báo giá !'
                 : undefined
-            ">
-            <nz-select formControlName="QuotationId" nzPlaceHolder="Chọn mã báo giá" nzShowSearch nzAllowClear
-              [nzFilterOption]="filterOption" class="fs-12 w-100">
-              <nz-option *ngFor="let item of dataQuotation" [nzValue]="item.Id" [nzLabel]="item.QuotationNumber">
+            "
+          >
+            <nz-select
+              formControlName="QuotationId"
+              nzPlaceHolder="Chọn mã báo giá"
+              nzShowSearch
+              nzAllowClear
+              [nzFilterOption]="filterOption"
+              class="fs-12 w-100"
+            >
+              <nz-option
+                *ngFor="let item of dataQuotation"
+                [nzValue]="item.Id"
+                [nzLabel]="item.QuotationNumber"
+              >
               </nz-option>
             </nz-select>
           </nz-form-control>
@@ -47,37 +79,59 @@
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="CustomerNameInput" class="form-label p-0">Khách hàng<span class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="CustomerNameInput" class="form-label p-0"
+            >Khách hàng<span class="text-danger ps-1">(*) </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('CustomerName')?.hasError('required') &&
               (formGroup.get('CustomerName')?.dirty ||
                 formGroup.get('CustomerName')?.touched)
                 ? 'Vui lòng nhập tên khách hàng!'
                 : formGroup.get('CustomerName')?.hasError('maxlength')
-                ? 'Tên khách hàng tối đa 50 ký tự!'
-                : undefined
-            ">
-            <input id="CustomerNameInput" nz-input name="CustomerName" placeholder="Nhập tên khách hàng"
-              formControlName="CustomerName" />
+                  ? 'Tên khách hàng tối đa 50 ký tự!'
+                  : undefined
+            "
+          >
+            <input
+              id="CustomerNameInput"
+              nz-input
+              name="CustomerName"
+              placeholder="Nhập tên khách hàng"
+              formControlName="CustomerName"
+            />
           </nz-form-control>
         </nz-form-item>
       </nz-col>
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="ProductId" class="form-label p-0">Sản phẩm<span class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="ProductId" class="form-label p-0"
+            >Sản phẩm<span class="text-danger ps-1">(*) </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('ProductId')?.invalid &&
               (formGroup.get('ProductId')?.dirty ||
                 formGroup.get('ProductId')?.touched)
                 ? 'Vui lòng chọn sản phẩm !'
                 : undefined
-            ">
-            <nz-select formControlName="ProductId" nzPlaceHolder="Chọn sản phẩm" nzShowSearch nzAllowClear
-              [nzFilterOption]="filterOption" class="fs-12 w-100">
-              <nz-option *ngFor="let item of dataProducts" [nzValue]="item.Id"
-                [nzLabel]="item.Code + ' - ' + item.Name">
+            "
+          >
+            <nz-select
+              formControlName="ProductId"
+              nzPlaceHolder="Chọn sản phẩm"
+              nzShowSearch
+              nzAllowClear
+              [nzFilterOption]="filterOption"
+              class="fs-12 w-100"
+            >
+              <nz-option
+                *ngFor="let item of dataProducts"
+                [nzValue]="item.Id"
+                [nzLabel]="item.Code + ' - ' + item.Name"
+              >
               </nz-option>
             </nz-select>
           </nz-form-control>
@@ -87,34 +141,57 @@
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="DateStartInput" class="fs-12 p-0">Ngày tạo WO<span class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="DateStartInput" class="fs-12 p-0"
+            >Ngày tạo WO<span class="text-danger ps-1"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('DateStart')?.invalid &&
               (formGroup.get('DateStart')?.dirty ||
                 formGroup.get('DateStart')?.touched)
                 ? 'Vui lòng chọn ngày tạo WO!'
                 : undefined
-            ">
-            <input nz-input type="date" name="DateStart" formControlName="DateStart" />
+            "
+          >
+            <input
+              nz-input
+              type="date"
+              name="DateStart"
+              formControlName="DateStart"
+            />
           </nz-form-control>
         </nz-form-item>
       </nz-col>
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="CompletedDateInput" class="fs-12 p-0">Ngày dự kiến hoàn thành<span
-              class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="CompletedDateInput" class="fs-12 p-0"
+            >Ngày dự kiến hoàn thành<span class="text-danger ps-1"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('CompletedDate')?.hasError('required') &&
               (formGroup.get('CompletedDate')?.dirty ||
                 formGroup.get('CompletedDate')?.touched)
                 ? 'Vui lòng chọn ngày dự kiến hoàn thành!'
-                : formGroup.get('CompletedDate')?.hasError('completedDateInvalid')
-                ? 'Ngày dự kiến hoàn thành phải lớn hơn ngày tạo!'
-                : undefined
-            ">
-            <input nz-input type="date" name="CompletedDate" formControlName="CompletedDate" />
+                : formGroup
+                      .get('CompletedDate')
+                      ?.hasError('completedDateInvalid')
+                  ? 'Ngày dự kiến hoàn thành phải lớn hơn ngày tạo!'
+                  : undefined
+            "
+          >
+            <input
+              nz-input
+              type="date"
+              name="CompletedDate"
+              formControlName="CompletedDate"
+            />
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -123,20 +200,36 @@
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label class="fs-12 p-0" [nzSpan]="24">Kỹ thuật viên phụ trách<span class="text-danger ps-1"
-              style="margin-bottom: 0.5rem">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label class="fs-12 p-0" [nzSpan]="24"
+            >Kỹ thuật viên phụ trách<span
+              class="text-danger ps-1"
+              style="margin-bottom: 0.5rem"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('UserId')?.invalid &&
               (formGroup.get('UserId')?.dirty ||
                 formGroup.get('UserId')?.touched)
                 ? 'Vui lòng chọn kỹ thuật viên phụ trách!'
                 : undefined
-            ">
-            <nz-select formControlName="UserId" nzPlaceHolder="Chọn người ký" nzShowSearch nzAllowClear
-              [nzFilterOption]="filterOption" class="fs-12 w-100">
-              <nz-option *ngFor="let emp of dataEmployee" [nzValue]="emp.Id"
-                [nzLabel]="emp.Code + ' - ' + emp.FullName">
+            "
+          >
+            <nz-select
+              formControlName="UserId"
+              nzPlaceHolder="Chọn người ký"
+              nzShowSearch
+              nzAllowClear
+              [nzFilterOption]="filterOption"
+              class="fs-12 w-100"
+            >
+              <nz-option
+                *ngFor="let emp of dataEmployee"
+                [nzValue]="emp.Id"
+                [nzLabel]="emp.Code + ' - ' + emp.FullName"
+              >
               </nz-option>
             </nz-select>
           </nz-form-control>
@@ -144,61 +237,103 @@
       </nz-col>
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="Status" class="form-label p-0">Trạng thái<span class="text-danger ps-1">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="Status" class="form-label p-0"
+            >Trạng thái<span class="text-danger ps-1">(*) </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('Status')?.invalid &&
               (formGroup.get('Status')?.dirty ||
                 formGroup.get('Status')?.touched)
                 ? 'Vui lòng chọn trạng thái !'
                 : undefined
-            ">
-            <nz-select formControlName="Status" nzPlaceHolder="Chọn trạng thái" nzShowSearch nzAllowClear
-              [nzFilterOption]="filterOption" class="fs-12 w-100">
-              <nz-option *ngFor="let status of dataStatus" [nzValue]="status.Id" [nzLabel]="status.Status">
+            "
+          >
+            <nz-select
+              formControlName="Status"
+              nzPlaceHolder="Chọn trạng thái"
+              nzShowSearch
+              nzAllowClear
+              [nzFilterOption]="filterOption"
+              class="fs-12 w-100"
+            >
+              <nz-option
+                *ngFor="let status of dataStatus"
+                [nzValue]="status.Id"
+                [nzLabel]="status.Status"
+              >
               </nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
     </nz-row>
-    <h3 style="border-bottom: 1px solid #eee; color: #2c3e50; font-size: 18px" class="mb-2 pb-2 mt-3">
+    <h3
+      style="border-bottom: 1px solid #eee; color: #2c3e50; font-size: 18px"
+      class="mb-2 pb-2 mt-3"
+    >
       Tiến độ công việc
     </h3>
     <nz-row [nzGutter]="16">
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label class="fs-12 p-0" [nzSpan]="24">% Hoàn thành:
-            <strong>{{ formGroup.get("ProgressComplete")?.value }}%</strong><span class="text-danger ps-1"
-              style="margin-bottom: 0.5rem">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label class="fs-12 p-0" [nzSpan]="24"
+            >% Hoàn thành:
+            <strong>{{ formGroup.get("ProgressComplete")?.value }}%</strong
+            ><span class="text-danger ps-1" style="margin-bottom: 0.5rem"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('ProgressComplete')?.invalid &&
               (formGroup.get('ProgressComplete')?.dirty ||
                 formGroup.get('ProgressComplete')?.touched)
                 ? 'Vui lòng chọn % hoàn thành!'
                 : undefined
-            ">
-            <nz-slider formControlName="ProgressComplete" [nzMin]="0" [nzMax]="100" [nzStep]="5" [nzMarks]="sliderMarks"
-              [nzTooltipVisible]="'never'">
+            "
+          >
+            <nz-slider
+              formControlName="ProgressComplete"
+              [nzMin]="0"
+              [nzMax]="100"
+              [nzStep]="5"
+              [nzMarks]="sliderMarks"
+              [nzTooltipVisible]="'never'"
+            >
             </nz-slider>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
       <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
         <nz-form-item>
-          <nz-form-label for="DateEndInput" class="fs-12 p-0">Ngày cập nhật cuối<span class="text-danger ps-1"
-              style="margin-bottom: 0.5rem">(*)
-            </span></nz-form-label>
-          <nz-form-control [nzSpan]="24" [nzErrorTip]="
+          <nz-form-label for="DateEndInput" class="fs-12 p-0"
+            >Ngày cập nhật cuối<span
+              class="text-danger ps-1"
+              style="margin-bottom: 0.5rem"
+              >(*)
+            </span></nz-form-label
+          >
+          <nz-form-control
+            [nzSpan]="24"
+            [nzErrorTip]="
               formGroup.get('DateEnd')?.hasError('required') &&
-              (formGroup.get('DateEnd')?.dirty || formGroup.get('DateEnd')?.touched)
+              (formGroup.get('DateEnd')?.dirty ||
+                formGroup.get('DateEnd')?.touched)
                 ? 'Vui lòng chọn ngày cập nhật cuối!'
                 : formGroup.get('DateEnd')?.hasError('dateEndInvalid')
-                ? 'Ngày cập nhật cuối phải sau ngày tạo!'
-                : undefined
-            ">
-            <input nz-input type="date" name="DateEnd" formControlName="DateEnd" />
+                  ? 'Ngày cập nhật cuối phải sau ngày tạo!'
+                  : undefined
+            "
+          >
+            <input
+              nz-input
+              type="date"
+              name="DateEnd"
+              formControlName="DateEnd"
+            />
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -208,20 +343,31 @@
         <nz-row [nzGutter]="16" class="mt-3">
           <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24" [nzLg]="24">
             <nz-form-item>
-              <nz-form-label for="TaskNameInput" class="form-label p-0">Chi tiết sửa chữa<span
-                  class="text-danger ps-1">(*)
-                </span></nz-form-label>
-              <nz-form-control [nzSpan]="24" [nzErrorTip]="
+              <nz-form-label for="TaskNameInput" class="form-label p-0"
+                >Chi tiết sửa chữa<span class="text-danger ps-1"
+                  >(*)
+                </span></nz-form-label
+              >
+              <nz-form-control
+                [nzSpan]="24"
+                [nzErrorTip]="
                   formGroup.get('Description')?.hasError('required') &&
                   (formGroup.get('Description')?.dirty ||
                     formGroup.get('Description')?.touched)
                     ? 'Vui lòng nhập tên công việc!'
                     : formGroup.get('Description')?.hasError('maxlength')
-                    ? 'Tên công việc tối đa 200 ký tự!'
-                    : undefined
-                ">
-                <textarea id="TaskNameInput" nz-input name="Description" placeholder="Nhập tên công việc"
-                  formControlName="Description" rows="4"></textarea>
+                      ? 'Tên công việc tối đa 200 ký tự!'
+                      : undefined
+                "
+              >
+                <textarea
+                  id="TaskNameInput"
+                  nz-input
+                  name="Description"
+                  placeholder="Nhập tên công việc"
+                  formControlName="Description"
+                  rows="4"
+                ></textarea>
               </nz-form-control>
             </nz-form-item>
           </nz-col>
@@ -236,7 +382,6 @@
         </nz-row>
       </nz-tab>
     </nz-tabset>
-
   </form>
 </div>
 <div class="modal-footer mt-3 gap-3">

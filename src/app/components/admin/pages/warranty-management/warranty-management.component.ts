@@ -81,7 +81,7 @@ export class WarrantyManagementComponent implements OnInit {
     private modal: NzModalService,
     private notification: NzNotificationService,
     private warrantyService: WarrantyClaimManagementService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
   ngOnInit() {
     this.initGrid();
@@ -356,7 +356,7 @@ export class WarrantyManagementComponent implements OnInit {
         this.filter.claimNo,
         this.filter.fromDate,
         this.filter.toDate,
-        this.filter.status
+        this.filter.status,
       )
       .subscribe({
         next: (res) => {
@@ -376,7 +376,7 @@ export class WarrantyManagementComponent implements OnInit {
     if (status == 0) {
       this.angularGrid.filterService.clearFilterByColumnId(
         {} as DOMMouseOrTouchEvent<HTMLDivElement>,
-        'StatusText'
+        'StatusText',
       );
     } else {
       const searchText = [this.statusMap[status].text];
@@ -494,10 +494,7 @@ export class WarrantyManagementComponent implements OnInit {
         this.loadData();
       },
       error: () => {
-        this.notification.error(
-          'Lỗi',
-          'Thao tác thất bại'
-        );
+        this.notification.error('Lỗi', 'Thao tác thất bại');
       },
     });
   }

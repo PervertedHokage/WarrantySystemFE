@@ -77,7 +77,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
     private notification: NzNotificationService,
     private injector: Injector,
     private menuEventService: MenuEventService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.menus = this.menuService.getMenus();
   }

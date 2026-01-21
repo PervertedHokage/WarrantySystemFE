@@ -110,7 +110,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
     private unitService: UnitService,
     private modal: NzModalService,
     private message: NzMessageService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.formGroup = this.fb.group({
       Name: [null, [Validators.required, Validators.maxLength(50)]],
@@ -190,7 +190,6 @@ export class UnitComponent implements OnInit, AfterViewInit {
     this.dataViewIssues = this.angularGridIssues?.dataView;
   }
 
-
   onActiveCellChanged(e: any) {
     const args = e?.detail?.args;
     const row = args?.row;
@@ -205,7 +204,6 @@ export class UnitComponent implements OnInit, AfterViewInit {
 
     this.UnitsID = dataContext?.Id ?? 0;
     this.UnitsData = dataContext || null;
-
   }
 
   onSelectedRowsChanged(e: any) {
@@ -230,7 +228,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
     if (this.isCheckmode == true && this.UnitsID === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn 1 bản ghi để sửa!'
+        'Vui lòng chọn 1 bản ghi để sửa!',
       );
       return;
     }
@@ -307,7 +305,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
         } else {
           this.notification.warning(
             'Thông báo',
-            res.message || 'Không thể lưu dữ liệu!'
+            res.message || 'Không thể lưu dữ liệu!',
           );
         }
       },
@@ -321,7 +319,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
     if (!this.angularGridIssues) {
       this.notification.error(
         NOTIFICATION_TITLE.error,
-        'Grid chưa được khởi tạo!'
+        'Grid chưa được khởi tạo!',
       );
       return;
     }
@@ -351,11 +349,10 @@ export class UnitComponent implements OnInit, AfterViewInit {
         .filter((item: any) => item);
     }
 
-
     if (selectedItems.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn ít nhất 1 đơn vị để xóa!'
+        'Vui lòng chọn ít nhất 1 đơn vị để xóa!',
       );
       return;
     }
@@ -373,7 +370,7 @@ export class UnitComponent implements OnInit, AfterViewInit {
     if (selectedIds.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Không tìm thấy yêu cầu hợp lệ để xóa!'
+        'Không tìm thấy yêu cầu hợp lệ để xóa!',
       );
       return;
     }
@@ -395,20 +392,20 @@ export class UnitComponent implements OnInit, AfterViewInit {
             if (res.status === 1) {
               this.notification.success(
                 NOTIFICATION_TITLE.success,
-                res.message || 'Đã xóa thành công!'
+                res.message || 'Đã xóa thành công!',
               );
               this.getUnit();
             } else {
               this.notification.warning(
                 NOTIFICATION_TITLE.warning,
-                res.message || 'Không thể xóa các bản ghi này!'
+                res.message || 'Không thể xóa các bản ghi này!',
               );
             }
           },
           error: (err) => {
             this.notification.error(
               NOTIFICATION_TITLE.error,
-              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!',
             );
           },
         });

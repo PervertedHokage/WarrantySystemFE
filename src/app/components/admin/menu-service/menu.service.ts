@@ -33,7 +33,7 @@ export class MenuService {
     private http: HttpClient,
     private permissionService: PermissionService,
     private appUserService: AppUserService,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
   ) {}
 
   private menuKeySource = new BehaviorSubject<string>('');
@@ -171,7 +171,7 @@ export class MenuService {
             comp: UnitComponent,
             // icon: 'assets/icon/menu_crm.svg',
           },
-           {
+          {
             kind: 'leaf',
             key: 'CustomerComponent',
             title: 'Khách hàng',

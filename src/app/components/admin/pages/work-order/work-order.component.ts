@@ -110,7 +110,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     private notification: NzNotificationService,
     private workOrderService: WorkOrderService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
   ) {}
 
   defineGrid() {
@@ -232,7 +232,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
             pct,
             columnDef,
             dataContext,
-            grid
+            grid,
           );
         },
         type: 'number',
@@ -423,7 +423,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     if (this.isCheckmode == true && this.WorkOrderId === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn 1 bản ghi để sửa!'
+        'Vui lòng chọn 1 bản ghi để sửa!',
       );
       return;
     }
@@ -499,7 +499,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     if (!this.angularGrid) {
       this.notification.error(
         NOTIFICATION_TITLE.error,
-        'Grid chưa được khởi tạo!'
+        'Grid chưa được khởi tạo!',
       );
       return;
     }
@@ -524,7 +524,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     if (selectedItems.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn ít nhất 1 yêu cầu để xóa!'
+        'Vui lòng chọn ít nhất 1 yêu cầu để xóa!',
       );
       return;
     }
@@ -542,7 +542,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
     if (selectedIds.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Không tìm thấy yêu cầu hợp lệ để xóa!'
+        'Không tìm thấy yêu cầu hợp lệ để xóa!',
       );
       return;
     }
@@ -564,7 +564,7 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
             if (res.status === 1) {
               this.notification.success(
                 NOTIFICATION_TITLE.success,
-                res.message || 'Đã xóa thành công!'
+                res.message || 'Đã xóa thành công!',
               );
               this.getWorkOrder();
               this.WorkOrderId = 0;
@@ -572,14 +572,14 @@ export class WorkOrderComponent implements OnInit, AfterViewInit {
             } else {
               this.notification.warning(
                 NOTIFICATION_TITLE.warning,
-                res.message || 'Không thể xóa các bản ghi này!'
+                res.message || 'Không thể xóa các bản ghi này!',
               );
             }
           },
           error: (err) => {
             this.notification.error(
               NOTIFICATION_TITLE.error,
-              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!',
             );
           },
         });

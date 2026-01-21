@@ -228,7 +228,7 @@ export class LandingPageComponent
     private authService: AuthService,
     private notification: NzNotificationService,
     private modal: NzModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
     super();
     const url = '/assets/docs/terms_and_conditions_placeholder.pdf';
@@ -486,7 +486,7 @@ export class LandingPageComponent
       .getWarrantyClaim(
         this.phoneNumberSearch,
         this.emailSearch,
-        this.claimNoSearch
+        this.claimNoSearch,
       )
       .subscribe({
         next: (result) => {
@@ -505,7 +505,7 @@ export class LandingPageComponent
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          'Load dữ liệu sản phẩm thất bại'
+          'Load dữ liệu sản phẩm thất bại',
         );
       },
     });
@@ -518,7 +518,7 @@ export class LandingPageComponent
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          'Load dữ liệu hiện tượng hỏng thất bại'
+          'Load dữ liệu hiện tượng hỏng thất bại',
         );
       },
     });
@@ -551,7 +551,8 @@ export class LandingPageComponent
   showConfirm() {
     this.modal.confirm({
       nzTitle: '<i>Thông báo?</i>',
-      nzContent: '<b>Sản phẩm này không có trong danh sách bảo hành, bạn có muốn tiếp tục không</b>',
+      nzContent:
+        '<b>Sản phẩm này không có trong danh sách bảo hành, bạn có muốn tiếp tục không</b>',
       nzOnOk: () => console.log('OK'),
     });
   }
@@ -625,7 +626,7 @@ export class LandingPageComponent
       this.newWarrantyClaimForm.markAllAsTouched();
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng điền đầy đủ thông tin hợp lệ'
+        'Vui lòng điền đầy đủ thông tin hợp lệ',
       );
       return;
     }
@@ -663,7 +664,7 @@ export class LandingPageComponent
         next: () => {
           this.notification.success(
             NOTIFICATION_TITLE.success,
-            'Đăng ký thành công'
+            'Đăng ký thành công',
           );
           this.newWarrantyClaimForm.reset();
           this.resetCaptcha();
@@ -671,14 +672,14 @@ export class LandingPageComponent
         error: (error: APIResponse<WarrantyClaim> | any) => {
           this.notification.error(
             NOTIFICATION_TITLE.error,
-            'Đăng ký thất bại: ' + error?.error?.message || error?.message
+            'Đăng ký thất bại: ' + error?.error?.message || error?.message,
           );
         },
       });
     } else {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng nhập captcha hợp lệ'
+        'Vui lòng nhập captcha hợp lệ',
       );
     }
   }
@@ -687,7 +688,7 @@ export class LandingPageComponent
     if (status == 0) {
       this.angularGrid.filterService.clearFilterByColumnId(
         {} as DOMMouseOrTouchEvent<HTMLDivElement>,
-        'StatusText'
+        'StatusText',
       );
     } else {
       const searchText = [this.statusMap[status].text];
@@ -707,13 +708,13 @@ export class LandingPageComponent
     return this.dataset.filter((d) => d.Status == status).length;
   }
   private stringifyFrom<T, K extends keyof T>(
-    searchValue: K
+    searchValue: K,
   ): TuiStringHandler<T> {
     return (value: T) => String(value[searchValue] ?? '');
   }
 
   private idMatcherFrom<T, K extends keyof T>(
-    searchValue: K
+    searchValue: K,
   ): TuiIdentityMatcher<T> {
     return (value1: T, value2: T) => {
       return value1[searchValue] === value2[searchValue];

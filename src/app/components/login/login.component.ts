@@ -14,7 +14,6 @@ import { jwtDecode } from 'jwt-decode';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { IUser } from '../../models/user.interface';
 
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -30,7 +29,7 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.loginForm = this.formBuilder.group({
       loginname: ['', [Validators.required]],
@@ -68,5 +67,4 @@ export class LoginComponent {
       },
     });
   }
-
 }

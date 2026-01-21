@@ -43,6 +43,7 @@
             (onAngularGridCreated)="gridReady($event)"
             (onActiveCellChanged)="onActiveCellChanged($event)"
             (selectedRowsChanged)="onSelectedRowsChanged($event)"
+            (onDblClick)="onAddProduct(true)"
           >
           </angular-slickgrid>
         </div>
@@ -91,6 +92,7 @@
             [options]="gridOptionsSparePart"
             [dataset]="datasetSparePart"
             (onAngularGridCreated)="gridSparePartReady($event)"
+            (onDblClick)="onAddSparePart(false)"
           >
           </angular-slickgrid>
         </div>
