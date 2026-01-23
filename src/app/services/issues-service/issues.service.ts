@@ -5,7 +5,7 @@ import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { IssuesGroup } from '../../models/issues.model';
 import { APIResponse } from '../../models/api-response.interface';
-import { IssueFullDTO } from '../../models/issue-full-DTO.model';
+import { IssueFullDTO } from '../../models/issue-full-dto.model';
 
 @Injectable({
   providedIn: 'root',
@@ -19,20 +19,20 @@ export class IssuesService {
     };
     return this.http.post<APIResponse<IssueFullDTO[]>>(
       environment.host + `api/issues/issues`,
-      asset
+      asset,
     );
   }
 
   getDataIssuesGroup(): Observable<APIResponse<IssuesGroup[]>> {
     return this.http.get<APIResponse<IssuesGroup[]>>(
-      environment.host + `api/issues`
+      environment.host + `api/issues`,
     );
   }
 
   saveDataIssuesGroup(data: any): Observable<any> {
     return this.http.post<any>(
       environment.host + `api/issues/save-data-issues`,
-      data
+      data,
     );
   }
 

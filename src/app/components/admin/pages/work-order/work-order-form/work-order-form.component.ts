@@ -76,7 +76,7 @@ import { ProductService } from '../../../../../services/products-service/product
 })
 export class WorkOrderFormComponent implements OnInit, AfterViewInit {
   @ViewChild('SparePartTable') tableRef1!: ElementRef;
-
+  claimNo: string = '';
   @Output() codeGenerated = new EventEmitter<string>();
 
   WorkOrderID: number = 0;
@@ -145,7 +145,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   constructor(
     @Inject(NZ_MODAL_DATA)
-    public data: { WorkOrderID: number; isEditMode: boolean; dataInput: any },
+    public data: { WorkOrderID: number; isEditMode: boolean; dataInput: any; claimNo: string },
     private fb: FormBuilder,
     private modal: NzModalService,
     private modalRef: NzModalRef,
@@ -154,20 +154,34 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     private productService: ProductService,
     private cdr: ChangeDetectorRef,
     private injector: EnvironmentInjector,
-    private appRef: ApplicationRef
+    private appRef: ApplicationRef,
   ) {
     if (data) {
       this.WorkOrderID = data.WorkOrderID || 0;
       this.isEditMode = data.isEditMode || false;
       this.dataInput = data.dataInput || null;
+      this.claimNo = data.claimNo || '';
     }
     this.formGroup = this.fb.group({
       Code: [null, [Validators.maxLength(50)]],
       WarrantyClaimId: [null, [Validators.required, Validators.maxLength(50)]],
-      QuotationId: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(50)]],
-      CustomerName: [{ value: '', disabled: true }, [Validators.required, Validators.maxLength(50)]],
+      QuotationId: [
+        { value: '', disabled: true },
+        [Validators.required, Validators.maxLength(50)],
+      ],
+      CustomerName: [
+        { value: '', disabled: true },
+        [Validators.required, Validators.maxLength(50)],
+      ],
       DateStart: ['', [Validators.required, Validators.maxLength(50)]],
-      CompletedDate: ['', [Validators.required, Validators.maxLength(50), this.completedDateValidator.bind(this)]],
+      CompletedDate: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          this.completedDateValidator.bind(this),
+        ],
+      ],
       UserId: ['', [Validators.required, Validators.maxLength(100)]],
       ProductId: [{ value: '', disabled: true }, [Validators.required]],
       Description: ['', [Validators.maxLength(1000)]],
@@ -196,9 +210,11 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     }
 
     return null;
-  } 
+  }
 
-  private completedDateValidator(control: AbstractControl): ValidationErrors | null {
+  private completedDateValidator(
+    control: AbstractControl,
+  ): ValidationErrors | null {
     if (!control.value) return null;
 
     const completedDate = new Date(control.value);
@@ -244,7 +260,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          err?.error?.message || err?.message
+          err?.error?.message || err?.message,
         );
       },
     });
@@ -268,13 +284,18 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-   getWarrantyClaims() {
-    this.workOrderService
-      .getWarrantyClaim(0)
-      .subscribe((response: any) => {
-        this.dataWarrantyClaims = response?.data || [];
-        this.loadOptionSparePartGroup();
-      });
+  getWarrantyClaims() {
+    this.workOrderService.getWarrantyClaim(0).subscribe((response: any) => {
+      this.dataWarrantyClaims = response?.data || [];
+      if (this.claimNo) {
+        const selectedClaim = this.dataWarrantyClaims.find(w => w.ClaimNo == this.claimNo)
+        this.formGroup.patchValue({
+          WarrantyClaimId: selectedClaim.Id
+        });
+        this.formGroup.get('WarrantyClaimId')?.disable();
+      }
+      this.loadOptionSparePartGroup();
+    });
   }
 
   getdataQuotation() {
@@ -289,7 +310,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       ?.valueChanges.subscribe((quotationId) => {
         if (quotationId) {
           const selectedQuotation = this.dataWarrantyClaims.find(
-            (q) => q.Id === quotationId
+            (q) => q.Id === quotationId,
           );
           if (selectedQuotation && selectedQuotation.CustomerName) {
             this.formGroup.patchValue({
@@ -297,7 +318,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
               QuotationId: selectedQuotation.QuotationId,
             });
           }
-           if (selectedQuotation && selectedQuotation.ProductId) {
+          if (selectedQuotation && selectedQuotation.ProductId) {
             this.formGroup.patchValue({
               ProductId: selectedQuotation.ProductId,
             });
@@ -367,11 +388,13 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     const warrantyClaimId = this.formGroup?.get('WarrantyClaimId')?.value;
 
     const selectedClaim = this.dataWarrantyClaims?.find(
-      (x: any) => x?.Id === warrantyClaimId
+      (x: any) => x?.Id === warrantyClaimId,
     );
 
     const productId =
-      Number(selectedClaim?.ProductId) || Number(this.dataInput?.ProductId) || 0;
+      Number(selectedClaim?.ProductId) ||
+      Number(this.dataInput?.ProductId) ||
+      0;
 
     if (!productId) {
       this.SparePartGroupOptions = [];
@@ -385,7 +408,9 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
           this.SparePartGroupOptions = productData
             .filter(
               (item) =>
-                item.GroupId !== null && item.GroupId !== undefined && item.GroupId !== 0
+                item.GroupId !== null &&
+                item.GroupId !== undefined &&
+                item.GroupId !== 0,
             )
             .map((data) => ({
               label: data.Name,
@@ -400,7 +425,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          err?.error?.message || err?.message
+          err?.error?.message || err?.message,
         );
       },
     });
@@ -429,7 +454,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     if (tableData.length === 0) {
       this.notification.warning(
         'Thông báo',
-        'Vui lòng thêm ít nhất 1 linh kiện sử dụng!'
+        'Vui lòng thêm ít nhất 1 linh kiện sử dụng!',
       );
       return;
     }
@@ -472,14 +497,14 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
         } else {
           this.notification.warning(
             'Thông báo',
-            res.message || 'Không thể lưu dữ liệu!'
+            res.message || 'Không thể lưu dữ liệu!',
           );
         }
       },
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          err?.error?.message || err?.message
+          err?.error?.message || err?.message,
         );
       },
     });
@@ -530,7 +555,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
                     }
                     row.delete();
                     this.dataSparePartGroup = this.dataSparePartGroup.filter(
-                      (x) => x !== rowData
+                      (x) => x !== rowData,
                     );
                   },
                 });
@@ -559,7 +584,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
               {
                 valueField: 'value',
                 labelField: 'label',
-              }
+              },
             ),
             formatter: (cell) => {
               const val = cell.getValue();
@@ -567,7 +592,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
                 return '<div class="d-flex justify-content-between align-items-center"><p class="w-100 m-0 text-muted"></p> <i class="fas fa-angle-down"></i></div>';
               }
               const product = this.SparePartGroupOptions.find(
-                (p: any) => p.value === val
+                (p: any) => p.value === val,
               );
               const productName = product ? product.Name : val;
               return `<div class="d-flex justify-content-between align-items-center"><p class="w-100 m-0">${productName}</p> <i class="fas fa-angle-down"></i></div>`;
@@ -576,7 +601,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
               const row = cell.getRow();
               const newValue = cell.getValue();
               const selectedProject = this.SparePartGroupOptions.find(
-                (p: any) => p.value === newValue
+                (p: any) => p.value === newValue,
               );
             },
           },
@@ -610,7 +635,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       valueField: string;
       labelField: string;
       placeholder?: string;
-    }
+    },
   ) {
     return (cell: any, onRendered: any, success: any, cancel: any) => {
       const container = document.createElement('div');

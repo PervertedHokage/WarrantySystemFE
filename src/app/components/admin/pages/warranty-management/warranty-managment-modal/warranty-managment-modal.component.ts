@@ -19,7 +19,7 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { WarrantyClaimDTO } from '../../../../../models/warranty-claims/warranty-claim-dto.model';
 import { WarrantyClaimManagementService } from '../../../../../services/warranty-claim-management.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { IssueFullDTO } from '../../../../../models/issue-full-DTO.model';
+import { IssueFullDTO } from '../../../../../models/issue-full-dto.model';
 import { IssuesService } from '../../../../../services/issues-service/issues.service';
 import { NOTIFICATION_TITLE } from '../../../../../app.config';
 import { UserManagementService } from '../../../../../services/user-service/user-management.service';
@@ -30,6 +30,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { Product } from '../../../../../models/product.model';
 import { ProductService } from '../../../../../services/products-service/product.service';
 import { WarrantyQuotationComponent } from './warranty-quotation/warranty-quotation.component';
+import { WarrantyWorkOrderComponent } from './warranty-work-order/warranty-work-order.component';
 
 @Component({
   selector: 'app-warranty-managment-modal',
@@ -57,6 +58,7 @@ import { WarrantyQuotationComponent } from './warranty-quotation/warranty-quotat
     NgTemplateOutlet,
     NzSwitchModule,
     WarrantyQuotationComponent,
+    WarrantyWorkOrderComponent,
   ],
 })
 export class WarrantyManagmentModalComponent implements OnInit {
@@ -76,6 +78,8 @@ export class WarrantyManagmentModalComponent implements OnInit {
   });
   trackings: WarrantyClaimTracking[] = [];
   deletedTrackings: WarrantyClaimTracking[] = [];
+  loadedTabs: Set<number> = new Set([1]);
+
   constructor(
     @Inject(NZ_MODAL_DATA)
     public data: { warrantyClaim: WarrantyClaimDTO },
@@ -105,6 +109,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
   ngOnInit() {}
   changeTab(newTab: number) {
     this.currentTab = newTab;
+    this.loadedTabs.add(newTab);
   }
   onStatusChange(index: number): void {
     this.warrantyClaim.Status = index + 1;

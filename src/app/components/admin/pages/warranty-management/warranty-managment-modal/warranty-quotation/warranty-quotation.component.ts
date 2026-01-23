@@ -204,7 +204,7 @@ export class WarrantyQuotationComponent implements OnInit {
       enableFiltering: true,
       forceFitColumns: true,
       enableCellNavigation: true,
-      rowHeight: 63,
+      rowHeight: 67,
       enableRowSelection: true,
       enableCheckboxSelector: true,
       multiSelect: false,

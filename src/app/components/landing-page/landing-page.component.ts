@@ -64,7 +64,7 @@ import { APIResponse } from '../../models/api-response.interface';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { TrackingModalComponent } from './tracking-modal/tracking-modal.component';
 import { TaigaDropdownData } from '../../models/taiga-dropdown-data';
-import { IssueFullDTO } from '../../models/issue-full-DTO.model';
+import { IssueFullDTO } from '../../models/issue-full-dto.model';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/products-service/product.service';
 import { IssuesService } from '../../services/issues-service/issues.service';
