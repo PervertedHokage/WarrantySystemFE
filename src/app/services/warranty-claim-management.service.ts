@@ -13,7 +13,7 @@ export class WarrantyClaimManagementService {
   private apiUrl = environment.host + 'api/warrantyclaim/';
   constructor(
     private http: HttpClient,
-    private notification: NzNotificationService
+    private notification: NzNotificationService,
   ) {}
   getWarrantyClaims(
     phoneNumber: string,
@@ -21,13 +21,13 @@ export class WarrantyClaimManagementService {
     claimNo: string,
     fromDate: Date,
     toDate: Date,
-    status: number
+    status: number,
   ) {
     const from = fromDate.toISOString().slice(0, 10); // yyyy-MM-dd
     const to = toDate.toISOString().slice(0, 10);
     return this.http.get<APIResponse<WarrantyClaimDTO[]>>(
       this.apiUrl +
-        `filter?phone-number=${phoneNumber}&email=${email}&claim-no=${claimNo}&from-date=${from}&to-date=${to}&status=${status}`
+        `filter?phone-number=${phoneNumber}&email=${email}&claim-no=${claimNo}&from-date=${from}&to-date=${to}&status=${status}`,
     );
   }
   getWarrantyClaimDropdownData() {
@@ -43,18 +43,34 @@ export class WarrantyClaimManagementService {
   create(data: WarrantyClaim | WarrantyClaimDTO) {
     return this.http.post<APIResponse<WarrantyClaim | WarrantyClaimDTO>>(
       this.apiUrl,
-      data
+      data,
     );
   }
   update(data: WarrantyClaim | WarrantyClaimDTO) {
     return this.http.put<APIResponse<WarrantyClaim | WarrantyClaimDTO>>(
       this.apiUrl + data.Id,
-      data
+      data,
     );
   }
   delete(data: WarrantyClaim | WarrantyClaimDTO) {
     return this.http.delete<APIResponse<WarrantyClaim | WarrantyClaimDTO>>(
-      this.apiUrl + data.Id
+      this.apiUrl + data.Id,
+    );
+  }
+  exportExcel(
+    phoneNumber: string,
+    email: string,
+    claimNo: string,
+    fromDate: Date,
+    toDate: Date,
+    status: number,
+  ) {
+    const from = fromDate.toISOString().slice(0, 10);
+    const to = toDate.toISOString().slice(0, 10);
+    return this.http.get(
+      this.apiUrl +
+        `export-excel?phone-number=${phoneNumber}&email=${email}&claim-no=${claimNo}&from-date=${from}&to-date=${to}&status=${status}`,
+      { responseType: 'blob' },
     );
   }
 }

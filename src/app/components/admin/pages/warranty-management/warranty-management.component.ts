@@ -36,6 +36,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { WarrantyClaimDTO } from '../../../../models/warranty-claims/warranty-claim-dto.model';
+import { WarrantyClaimExcelComponent } from './warranty-claim-excel/warranty-claim-excel.component';
 @Component({
   selector: 'app-warranty-management',
   templateUrl: './warranty-management.component.html',
@@ -51,6 +52,7 @@ import { WarrantyClaimDTO } from '../../../../models/warranty-claims/warranty-cl
     NzInputModule,
     NzDatePickerModule,
     NzCollapseModule,
+    WarrantyClaimExcelComponent,
   ],
 })
 export class WarrantyManagementComponent implements OnInit {
@@ -510,5 +512,52 @@ export class WarrantyManagementComponent implements OnInit {
       phoneNumber: '',
       claimNo: '',
     };
+  }
+
+  onImportExcel(): void {
+    const modalRef = this.modal.create({
+      nzTitle: 'Nhập dữ liệu Excel',
+      nzContent: WarrantyClaimExcelComponent,
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        overflow: 'auto',
+      },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result === true) {
+        this.loadData();
+      }
+    });
+  }
+
+  onExportExcel(): void {
+    this.warrantyService
+      .exportExcel(
+        this.filter.phoneNumber,
+        this.filter.email,
+        this.filter.claimNo,
+        this.filter.fromDate,
+        this.filter.toDate,
+        this.filter.status,
+      )
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `WarrantyClaims_${new Date().getTime()}.xlsx`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          this.notification.error('Lỗi', 'Không thể xuất file Excel');
+          console.error('Export error:', err);
+        },
+      });
   }
 }

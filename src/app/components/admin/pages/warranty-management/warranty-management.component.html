@@ -16,6 +16,12 @@
           <button class="fs-12 btn-delete" nz-button nzType="default" nzSize="small" (click)="onDelete()">
             <img src="assets/icon/action_delete_item_16.png" alt="Xóa" />Xóa
           </button>
+          <button class="fs-12" nz-button nzType="default" nzSize="small" (click)="onImportExcel()">
+            <img src="assets/icon/action_import_excel_24.svg" width="16" height="16" alt="Import" /> Nhập Excel
+          </button>
+          <button class="fs-12" nz-button nzType="default" nzSize="small" (click)="onExportExcel()">
+            <img src="assets/icon/action_export_excel_24.svg" width="16" height="16" alt="Export" /> Xuất Excel
+          </button>
         </div>
       </div>
       <div class="filter-wrapper" [class.open]="showFilter">

@@ -41,6 +41,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { QuotationService } from '../../../../services/quotations-service/quotation.service';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { Quotation } from '../../../../models/quotations/quotation.model';
+import { QuotationExcelComponent } from './quotation-excel/quotation-excel.component';
 
 @Component({
   selector: 'quotation',
@@ -55,6 +56,7 @@ import { Quotation } from '../../../../models/quotations/quotation.model';
     NzInputModule,
     NzDatePickerModule,
     NzIconModule,
+    QuotationExcelComponent,
   ],
 })
 export class QuotationComponent implements OnInit {
@@ -305,5 +307,48 @@ export class QuotationComponent implements OnInit {
       toDate: new Date(),
       claimNo: this.claimNo.trim(),
     };
+  }
+  onImportExcel() {
+    const modalRef = this.modal.create({
+      nzTitle: 'Nhập dữ liệu Excel',
+      nzContent: QuotationExcelComponent,
+      nzWidth: '80vw',
+      nzBodyStyle: {
+        'max-height': '70vh',
+        overflow: 'auto',
+      },
+      nzFooter: null,
+      nzMaskClosable: false,
+      nzKeyboard: false,
+    });
+
+    modalRef.afterClose.subscribe((result) => {
+      if (result) {
+        this.loadData();
+      }
+    });
+  }
+
+  onExportExcel() {
+    this.quotationService
+      .exportExcel(
+        this.filter.fromDate,
+        this.filter.toDate,
+        this.filter.claimNo.trim(),
+      )
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Quotations_${new Date().getTime()}.xlsx`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+          this.notification.success('Thông báo', 'Xuất file thành công');
+        },
+        error: (err) => {
+          this.notification.error('Thông báo', 'Xuất file thất bại');
+        },
+      });
   }
 }

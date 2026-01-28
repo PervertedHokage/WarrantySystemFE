@@ -18,7 +18,7 @@ export class QuotationService {
     const to = toDate.toISOString().slice(0, 10);
     return this.http.get<APIResponse<QuotationDTO[]>>(
       environment.host +
-        `api/quotation/filter?from-date=${from}&to-date=${to}&claim-no=${claimNo}`
+        `api/quotation/filter?from-date=${from}&to-date=${to}&claim-no=${claimNo}`,
     );
   }
   getDetailsById(quotationId: number) {
@@ -32,19 +32,28 @@ export class QuotationService {
   save(data: Quotation) {
     return this.http.post<APIResponse<QuotationDetail>>(
       environment.host + `api/quotation`,
-      data
+      data,
     );
   }
   update(data: Quotation) {
     return this.http.put<APIResponse<QuotationDetail>>(
       environment.host + `api/quotation/${data.Id}`,
-      data
+      data,
     );
   }
   saveDetails(data: QuotationDetail[]) {
     return this.http.post<APIResponse<QuotationDetail>>(
       environment.host + `api/quotation/details`,
-      data
+      data,
+    );
+  }
+  exportExcel(fromDate: Date, toDate: Date, claimNo: string) {
+    const from = fromDate.toISOString().slice(0, 10);
+    const to = toDate.toISOString().slice(0, 10);
+    return this.http.get(
+      environment.host +
+        `api/quotation/export-excel?from-date=${from}&to-date=${to}&claim-no=${claimNo}`,
+      { responseType: 'blob' },
     );
   }
 }
