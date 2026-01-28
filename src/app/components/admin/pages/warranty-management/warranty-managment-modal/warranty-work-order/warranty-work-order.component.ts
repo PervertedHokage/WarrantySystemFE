@@ -337,7 +337,9 @@ export class WarrantyWorkOrderComponent implements OnInit, AfterViewInit {
   }
 
   getWorkOrder() {
-      this.workOrderService.getWorkOrderByClaimNo(this.claimNo).subscribe((response: any) => {
+    this.workOrderService
+      .getWorkOrderByClaimNo(this.claimNo)
+      .subscribe((response: any) => {
         this.datasetWorkOrder = response?.data || [];
         this.computeOverviewCounts();
       });

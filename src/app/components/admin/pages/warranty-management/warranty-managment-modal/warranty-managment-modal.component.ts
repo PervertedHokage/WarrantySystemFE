@@ -31,6 +31,8 @@ import { Product } from '../../../../../models/product.model';
 import { ProductService } from '../../../../../services/products-service/product.service';
 import { WarrantyQuotationComponent } from './warranty-quotation/warranty-quotation.component';
 import { WarrantyWorkOrderComponent } from './warranty-work-order/warranty-work-order.component';
+import { WarrantySuppliesComponent } from './warranty-supplies/warranty-supplies.component';
+import { WarrantyResponseHistoryComponent } from './warranty-response-history/warranty-response-history.component';
 
 @Component({
   selector: 'app-warranty-managment-modal',
@@ -59,6 +61,8 @@ import { WarrantyWorkOrderComponent } from './warranty-work-order/warranty-work-
     NzSwitchModule,
     WarrantyQuotationComponent,
     WarrantyWorkOrderComponent,
+    WarrantySuppliesComponent,
+    WarrantyResponseHistoryComponent,
   ],
 })
 export class WarrantyManagmentModalComponent implements OnInit {

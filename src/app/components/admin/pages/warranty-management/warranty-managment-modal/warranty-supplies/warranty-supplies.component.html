@@ -1,0 +1,66 @@
+<ng-container class="w-100">
+    <div class="card h-100 border-0 rounded-0">
+        <div class="card-header bg-white p-2">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex gap-2">
+                    <button class="fs-12 btn-add" nz-button nzType="default" nzSize="small" (click)="openAddModal()">
+                        <img src="assets/icon/action_add_item_16.png" alt="Thêm" /> Thêm
+                    </button>
+                    <button class="fs-12 btn-edit" nz-button nzType="default" nzSize="small" (click)="openEditModal()">
+                        <img src="assets/icon/action_edit_item_16.png" alt="Sửa" />Sửa
+                    </button>
+                    <button class="fs-12 btn-delete" nz-button nzType="default" nzSize="small" (click)="onDelete()">
+                        <img src="assets/icon/action_delete_item_16.png" alt="Xóa" />Xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="grid_warranty_supplies_container" class="tab-container">
+            <div class="tab-content">
+                <angular-slickgrid #asg [gridId]="gridId" [columns]="columnDefinitions" [options]="gridOptions"
+                    [dataset]="dataset" (onAngularGridCreated)="angularGridReady($event.detail)"
+                    (onDblClick)="openEditModal()">
+                </angular-slickgrid>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <nz-modal [(nzVisible)]="isModalVisible" [nzTitle]="modalTitle" (nzOnCancel)="handleModalCancel()"
+        (nzOnOk)="handleModalOk()" nzWidth="600px">
+        <ng-container *nzModalContent>
+            <form class="d-flex flex-column gap-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="fs-12 fw-bold mb-1">Chọn vật tư <span class="text-danger">*</span></label>
+                        <nz-select nzShowSearch nzAllowClear placeholder="Chọn vật tư"
+                            [(ngModel)]="formData.SparePartId" name="sparePartId"
+                            (ngModelChange)="onSparePartChange($event)" class="w-100">
+                            <nz-option *ngFor="let part of sparePartList"
+                                [nzLabel]="part.SparePartNumber + ' - ' + part.Description"
+                                [nzValue]="part.Id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="fs-12 fw-bold mb-1">Số lượng <span class="text-danger">*</span></label>
+                        <nz-input-number class="w-100" [(ngModel)]="formData.Quantity" name="quantity"
+                            [nzMin]="1"></nz-input-number>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="fs-12 fw-bold mb-1">Ghi chú</label>
+                        <textarea nz-input [(ngModel)]="formData.Note" name="note" placeholder="Nhập ghi chú"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+            </form>
+        </ng-container>
+    </nz-modal>
+</ng-container>
