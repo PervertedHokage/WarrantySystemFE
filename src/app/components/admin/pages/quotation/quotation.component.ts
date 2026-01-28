@@ -56,7 +56,6 @@ import { QuotationExcelComponent } from './quotation-excel/quotation-excel.compo
     NzInputModule,
     NzDatePickerModule,
     NzIconModule,
-    QuotationExcelComponent,
   ],
 })
 export class QuotationComponent implements OnInit {

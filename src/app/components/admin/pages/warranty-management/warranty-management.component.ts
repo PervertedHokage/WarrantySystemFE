@@ -52,7 +52,6 @@ import { WarrantyClaimExcelComponent } from './warranty-claim-excel/warranty-cla
     NzInputModule,
     NzDatePickerModule,
     NzCollapseModule,
-    WarrantyClaimExcelComponent,
   ],
 })
 export class WarrantyManagementComponent implements OnInit {
