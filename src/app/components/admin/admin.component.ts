@@ -35,6 +35,7 @@ import {
   NotifyItem,
 } from './app-notifycation-dropdown/app-notifycation-dropdown.component';
 import { NzGridModule } from 'ng-zorro-antd/grid';
+import { MiddleClickDirective } from '../../directives/middleClick.directive';
 
 type TabItem = {
   title: string;
@@ -64,6 +65,7 @@ export const isGroup = (m: MenuItem): m is GroupItem => m.kind === 'group';
     AppUserDropdownComponent,
     NgComponentOutlet,
     NzGridModule,
+    MiddleClickDirective,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.less',
