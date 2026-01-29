@@ -172,11 +172,15 @@ export class WarrantyManagmentModalComponent implements OnInit {
     this.currentTracking = this.trackings[index];
   }
   onAddTracking() {
+    if (!this.currentTracking.Note) {
+      this.currentTracking.Note =
+        this.currentTracking.CreatedDate.toISOString().split('T')[0];
+    }
     this.trackings.push(this.currentTracking);
     this.trackings = [...this.trackings].sort((a, b) => {
       const da = new Date(a.CreatedDate ?? 0).getTime();
       const db = new Date(b.CreatedDate ?? 0).getTime();
-      return db - da;
+      return da - db;
     });
     this.currentTracking = new WarrantyClaimTracking({
       Id: 0,
@@ -195,8 +199,18 @@ export class WarrantyManagmentModalComponent implements OnInit {
     this.trackings = [...this.trackings].sort((a, b) => {
       const da = new Date(a.CreatedDate ?? 0).getTime();
       const db = new Date(b.CreatedDate ?? 0).getTime();
-      return db - da;
+      return da - db;
     });
+    this.currentTracking = new WarrantyClaimTracking({
+      Id: 0,
+      WarrantyClaimId: this.warrantyClaim.Id,
+      StatusText: '',
+      Note: '',
+      IsActive: false,
+      CreatedDate: new Date(),
+    });
+  }
+  onUnselectTracking() {
     this.currentTracking = new WarrantyClaimTracking({
       Id: 0,
       WarrantyClaimId: this.warrantyClaim.Id,
