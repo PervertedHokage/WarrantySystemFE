@@ -3,6 +3,7 @@ export class Issues {
   Code = '';
   Name: string | null = '';
   IssuesGroupId: number | null = null;
+  Checklist: string | null = '';
   CreatedDate: Date | null = null;
   CreatedBy: string | null = '';
   UpdatedDate: Date | null = null;

@@ -4,6 +4,7 @@ export class IssueFullDTO {
   Name: string = '';
   IssuesGroupId!: number;
   IssuesGroupName: string = '';
+  Checklist: string = '';
   constructor(init?: Partial<IssueFullDTO>) {
     Object.assign(this, init);
   }

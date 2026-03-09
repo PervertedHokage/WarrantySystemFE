@@ -218,6 +218,7 @@ export class LandingPageComponent
   emailSearch: string = '';
   claimNoSearch: string = '';
   currentUser: IUser | null = null;
+  selectedIssueChecklist: string | null = null;
   //#endregion
   //#region Constructor
   constructor(
@@ -262,6 +263,12 @@ export class LandingPageComponent
       UpdatedBy: [],
       _dummy: [null],
     });
+
+    this.newWarrantyClaimForm
+      .get('Issue')
+      ?.valueChanges.subscribe((issue: IssueFullDTO | null) => {
+        this.selectedIssueChecklist = issue?.Checklist || null;
+      });
   }
   //#endregion
   ngOnInit(): void {

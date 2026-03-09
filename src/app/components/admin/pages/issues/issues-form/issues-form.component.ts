@@ -94,7 +94,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
     private modal: NzModalService,
     private modalRef: NzModalRef,
     private notification: NzNotificationService,
-    private issuesService: IssuesService
+    private issuesService: IssuesService,
   ) {
     if (data) {
       this.IssuesGroupID = data.IssuesGroupID || 0;
@@ -120,6 +120,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
           Id: item.Id || 0,
           Code: item.Code || '',
           Name: item.Name || '',
+          Checklist: item.Checklist || '',
         }));
 
         if (this.IssuesTable) {
@@ -129,7 +130,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
       error: (err) => {
         this.notification.error(
           NOTIFICATION_TITLE.error,
-          'Lỗi khi load dữ liệu chi tiết lỗi!'
+          'Lỗi khi load dữ liệu chi tiết lỗi!',
         );
       },
     });
@@ -159,18 +160,18 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
     if (tableData.length === 0) {
       this.notification.warning(
         'Thông báo',
-        'Vui lòng thêm ít nhất 1 chi tiết lỗi!'
+        'Vui lòng thêm ít nhất 1 chi tiết lỗi!',
       );
       return;
     }
 
     const invalidRows = tableData.filter(
-      (row: any) => !row.Name || row.Name.trim() === ''
+      (row: any) => !row.Name || row.Name.trim() === '',
     );
     if (invalidRows.length > 0) {
       this.notification.warning(
         'Thông báo',
-        'Vui lòng nhập tên cho tất cả chi tiết lỗi!'
+        'Vui lòng nhập tên cho tất cả chi tiết lỗi!',
       );
       return;
     }
@@ -189,6 +190,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
         Id: this.isEditMode ? item.Id : 0,
         Code: item.Code || '',
         Name: item.Name || '',
+        Checklist: item.Checklist || '',
       })),
 
       DeletedIssues: this.DeletedIssues,
@@ -205,7 +207,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
         } else {
           this.notification.warning(
             'Thông báo',
-            res.message || 'Không thể lưu dữ liệu!'
+            res.message || 'Không thể lưu dữ liệu!',
           );
         }
       },
@@ -264,7 +266,7 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
                     }
                     row.delete();
                     this.IssuesData = this.IssuesData.filter(
-                      (x) => x !== rowData
+                      (x) => x !== rowData,
                     );
                   },
                 });
@@ -290,6 +292,20 @@ export class IssuesFormComponent implements OnInit, AfterViewInit {
             field: 'Name',
             headerHozAlign: 'center',
             editor: 'textarea',
+          },
+          {
+            title: 'Checklist (HD khách hàng)',
+            field: 'Checklist',
+            headerHozAlign: 'center',
+            editor: 'textarea',
+            minWidth: 300,
+            formatter: (cell: any) => {
+              const value = cell.getValue();
+              if (!value) return '';
+              // Replace newlines with <br> tags and preserve whitespace
+              const formatted = value.replace(/\n/g, '<br>');
+              return `<div style="white-space: pre-wrap;">${formatted}</div>`;
+            },
           },
         ],
       });

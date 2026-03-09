@@ -108,7 +108,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     private notification: NzNotificationService,
     private issuesService: IssuesService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
   ) {}
 
   defineGrid() {
@@ -240,7 +240,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       .subscribe((response: any) => {
         this.datasetIssues = response?.data || [];
 
-        if (this.angularGridIssues) {
+        if (this.angularGridIssues && this.angularGridIssues.gridService) {
           // Clear filters trước
           this.angularGridIssues.filterService?.clearFilters();
 
@@ -299,7 +299,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     if (this.isCheckmode == true && this.IssuesGroupID === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn 1 bản ghi để sửa!'
+        'Vui lòng chọn 1 bản ghi để sửa!',
       );
       return;
     }
@@ -311,6 +311,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
       nzFooter: null,
       nzMaskClosable: false,
       nzKeyboard: false,
+      nzWidth: '90vw',
       nzData: {
         IssuesGroupID: this.IssuesGroupID,
         isEditMode: this.isCheckmode,
@@ -333,7 +334,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     if (!this.angularGrid) {
       this.notification.error(
         NOTIFICATION_TITLE.error,
-        'Grid chưa được khởi tạo!'
+        'Grid chưa được khởi tạo!',
       );
       return;
     }
@@ -366,7 +367,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     if (selectedItems.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Vui lòng chọn ít nhất 1 lỗi để xóa!'
+        'Vui lòng chọn ít nhất 1 lỗi để xóa!',
       );
       return;
     }
@@ -386,7 +387,7 @@ export class IssuesComponent implements OnInit, AfterViewInit {
     if (selectedIds.length === 0) {
       this.notification.warning(
         NOTIFICATION_TITLE.warning,
-        'Không tìm thấy lỗi hợp lệ để xóa!'
+        'Không tìm thấy lỗi hợp lệ để xóa!',
       );
       return;
     }
@@ -408,20 +409,20 @@ export class IssuesComponent implements OnInit, AfterViewInit {
             if (res.status === 1) {
               this.notification.success(
                 NOTIFICATION_TITLE.success,
-                res.message || 'Đã xóa thành công!'
+                res.message || 'Đã xóa thành công!',
               );
               this.getIssuesGroup();
             } else {
               this.notification.warning(
                 NOTIFICATION_TITLE.warning,
-                res.message || 'Không thể xóa các bản ghi này!'
+                res.message || 'Không thể xóa các bản ghi này!',
               );
             }
           },
           error: (err) => {
             this.notification.error(
               NOTIFICATION_TITLE.error,
-              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!'
+              err?.error?.message || err?.message || 'Có lỗi xảy ra khi xóa!',
             );
           },
         });

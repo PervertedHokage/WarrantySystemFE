@@ -338,10 +338,10 @@ button[nz-button] img {
   font-size: 13px !important;
   color: #2c3e50 !important;
   text-transform: uppercase !important;
+}
 
-  &:hover {
-    background: rgba(0, 0, 0, 0.05) !important;
-  }
+.slick-header-column:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
 }
 
 .slick-header-column-sorted {
@@ -356,10 +356,10 @@ button[nz-button] img {
 
 .slick-header-menubutton {
   color: #7f8c8d !important;
+}
 
-  &:hover {
-    color: #2c3e50 !important;
-  }
+.slick-header-menubutton:hover {
+  color: #2c3e50 !important;
 }
 
 /* // Filter Row Styling */
@@ -379,23 +379,21 @@ button[nz-button] img {
   border-radius: 4px !important;
   padding: 4px 8px !important;
   font-size: 12px !important;
+}
 
-  &:focus {
-    border-color: #40a9ff !important;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
-    outline: none !important;
-  }
+.slick-headerrow-column input:focus {
+  border-color: #40a9ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  outline: none !important;
 }
 
 /* // Row Styling */
-.slick-row {
-  &:hover {
-    background: #f5f5f5 !important;
-  }
+.slick-row:hover {
+  background: #f5f5f5 !important;
+}
 
-  &.active {
-    background: #e6f7ff !important;
-  }
+.slick-row.active {
+  background: #e6f7ff !important;
 }
 
 .slick-cell {

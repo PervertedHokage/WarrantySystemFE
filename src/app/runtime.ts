@@ -1,4 +1,4 @@
-import { InjectionToken } from "@angular/core";
+import { InjectionToken } from '@angular/core';
 
 export const BASE_URL = new InjectionToken<string>('BASE_URL');
 export interface RuntimeConfig {
@@ -7,7 +7,7 @@ export interface RuntimeConfig {
 
 export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
   try {
-    const res = await fetch('/assets/environments/config.json', {
+    const res = await fetch('/web/assets/environments/config.json', {
       cache: 'no-store',
     });
     if (!res.ok) throw new Error(`Failed to load config: ${res.status}`);
