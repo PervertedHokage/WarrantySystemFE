@@ -1,0 +1,126 @@
+<form (ngSubmit)="$event.preventDefault()">
+  <nz-table
+    [nzBordered]="true"
+    [nzShowPagination]="false"
+    [nzNoResult]="undefined"
+    [nzData]="quotationDetailsForm"
+  >
+    <thead>
+      <tr>
+        <th nzWidth="40px">
+          <button
+            type="button"
+            class="btn btn-add btn-smaller"
+            (click)="addDetail()"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+        </th>
+        <th>Tên vật tư/dịch vụ</th>
+        <th nzWidth="150px">Đơn vị</th>
+        <th nzWidth="100px">Số lượng</th>
+        <th nzWidth="150px">Đơn giá</th>
+        <th nzWidth="150px">Thành tiền</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let detail of quotationDetailsForm; let i = index"
+        [hidden]="detail.IsDeleted"
+      >
+        <td>
+          <button
+            type="button"
+            class="btn btn-delete btn-smaller"
+            (click)="deleteDetail(i)"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+
+        <td>
+          <nz-select
+            class="w-100"
+            nzPlaceHolder="Chọn mã linh kiện"
+            nzShowSearch
+            nzAllowClear
+            nzOptionFilterProp="label"
+            [(ngModel)]="detail.SparePartId"
+            [name]="'sparepartid_' + i"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onSparePartChange($event, detail)"
+          >
+            <nz-option
+              *ngFor="let sparePart of sparePartList"
+              [nzLabel]="sparePart.SparePartNumber"
+              [nzValue]="sparePart.Id"
+            ></nz-option>
+          </nz-select>
+        </td>
+        <td>
+          <input
+            nz-input
+            [ngModel]="detail.UnitName"
+            [name]="'unitname_' + i"
+            [ngModelOptions]="{ standalone: true }"
+            readonly
+          />
+        </td>
+        <td>
+          <input
+            nz-input
+            [(ngModel)]="detail.Quantity"
+            [name]="'qty_' + i"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+
+        <td>
+          <input
+            nz-input
+            [(ngModel)]="detail.Price"
+            [name]="'price1_' + i"
+            [ngModelOptions]="{ standalone: true }"
+            mask="separator.0"
+            thousandSeparator=","
+          />
+        </td>
+
+        <td>
+          <input
+            nz-input
+            [(ngModel)]="detail.Price"
+            [name]="'price2_' + i"
+            [ngModelOptions]="{ standalone: true }"
+            mask="separator.0"
+            thousandSeparator=","
+          />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4"></td>
+        <td class="text-right fw-bold">Tổng cộng:</td>
+        <td class="fw-bold">{{ getSumPrice(0) | number: "1.0-0" }} ₫</td>
+      </tr>
+      <tr>
+        <td colspan="4"></td>
+        <td class="text-right">VAT (%):</td>
+        <td>
+          <input
+            type="number"
+            nz-input
+            [(ngModel)]="VATfeeForm"
+            name="vatfee"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4"></td>
+        <td class="text-right fw-bold">Tổng thanh toán:</td>
+        <td class="fw-bold text-danger">
+          {{ getSumPrice(VATfeeForm) | number: "1.0-0" }} ₫
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</form>

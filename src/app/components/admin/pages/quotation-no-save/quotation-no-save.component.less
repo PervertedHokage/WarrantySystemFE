@@ -1,0 +1,101 @@
+:host ::ng-deep {
+  .status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .status-1 {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .status-2 {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .status-3 {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+
+  .status-4 {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .status-5 {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .slick-cell {
+    padding: 15px !important;
+  }
+
+  .cell-center {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-sm {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+  }
+
+  .btn-outline:hover {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+}
+
+:host {
+  --primary-color: #47515b;
+  --secondary-color: #3498db;
+  --accent-color: #e74c3c;
+  --light-color: #ecf0f1;
+  --dark-color: #2c3e50;
+  --success-color: #27ae60;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+  display: block;
+  height: 100%;
+}
+
+.filter-label {
+  width: auto;
+}
+
+@media (max-width: 576px) {
+  .filter-label {
+    width: 74px;
+  }
+}
+
+.filter-input {
+  width: 170px;
+}
+
+.filter-wrapper {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 500ms ease, opacity 500ms ease;
+}
+
+.filter-wrapper.open {
+  max-height: 600px;
+  opacity: 1;
+}

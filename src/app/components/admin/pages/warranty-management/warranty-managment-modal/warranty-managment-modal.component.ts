@@ -96,15 +96,17 @@ export class WarrantyManagmentModalComponent implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {
     const input = data.warrantyClaim ?? new WarrantyClaimDTO();
-    this.warrantyClaimService.getWarrantyClaimById(input.Id).subscribe({
-      next: (res) => {
-        this.warrantyClaim = res.data;
-        console.log(this.warrantyClaim);
-        this.cdr.detectChanges();
-        this.loadTracking();
-      },
-      error: (err) => {},
-    });
+    if (input.Id) {
+      this.warrantyClaimService.getWarrantyClaimById(input.Id).subscribe({
+        next: (res) => {
+          this.warrantyClaim = res.data;
+          console.log(this.warrantyClaim);
+          this.cdr.detectChanges();
+          this.loadTracking();
+        },
+        error: (err) => {},
+      });
+    }
     this.loadIssues();
     this.loadProducts();
     this.loadUsers();

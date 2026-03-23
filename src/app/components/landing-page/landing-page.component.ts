@@ -219,6 +219,52 @@ export class LandingPageComponent
   claimNoSearch: string = '';
   currentUser: IUser | null = null;
   selectedIssueChecklist: string | null = null;
+  selectedFiles: File[] = [];
+  previewUrl: SafeResourceUrl | null = null;
+  previewType: 'image' | 'pdf' | null = null;
+  isPreviewVisible = false;
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        this.selectedFiles.push(files[i]);
+      }
+    }
+  }
+
+  removeFile(index: number): void {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  previewFile(file: File): void {
+    const type = file.type;
+
+    if (type.startsWith('image/')) {
+      this.previewType = 'image';
+      this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+        URL.createObjectURL(file),
+      );
+      this.isPreviewVisible = true;
+    } else if (type === 'application/pdf') {
+      this.previewType = 'pdf';
+      this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+        URL.createObjectURL(file),
+      );
+      this.isPreviewVisible = true;
+    } else {
+      this.notification.info(
+        NOTIFICATION_TITLE.info,
+        'Chỉ hỗ trợ xem trước ảnh hoặc PDF',
+      );
+    }
+  }
+
+  closePreview(): void {
+    this.isPreviewVisible = false;
+    this.previewUrl = null;
+    this.previewType = null;
+  }
   //#endregion
   //#region Constructor
   constructor(
@@ -232,7 +278,7 @@ export class LandingPageComponent
     private sanitizer: DomSanitizer,
   ) {
     super();
-    const url = '/assets/docs/terms_and_conditions_placeholder.pdf';
+    const url = '/web/assets/docs/terms_and_conditions_placeholder.pdf'; // will not display in dev environment, but IDGAF
     this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     this.newWarrantyClaimForm = this.formBuilder.group({
       Id: [0],
@@ -541,12 +587,46 @@ export class LandingPageComponent
   viewNewWarrantyClaimForm() {
     this.currentSection = 3;
     this.newWarrantyClaimForm.reset();
+
+    const patchData: any = {
+      SerialNumber: this.serialValue,
+    };
+
+    if (this.statusData) {
+      patchData.CustomerName = this.statusData.CustomerName;
+      patchData.CustomerEmail = this.statusData.CustomerEmail;
+      patchData.CustomerPhoneNumber = this.statusData.CustomerPhoneNumber;
+      patchData.CustomerAddress = this.statusData.CustomerAddress;
+
+      if (this.statusData.ProductName && this.productList?.length > 0) {
+        const foundProduct = this.productList.find(
+          (p) =>
+            p.Name?.toLowerCase() ===
+            this.statusData?.ProductName?.toLowerCase(),
+        );
+        if (foundProduct) {
+          patchData.Product = foundProduct;
+        }
+      }
+    }
+
+    this.newWarrantyClaimForm.patchValue(patchData);
   }
   checkStatusBySerial() {
     if (!this.serialValue) return;
     this.landingPageService.checkStatus(this.serialValue).subscribe({
       next: (result) => {
         this.statusData = result.data;
+        if (this.statusData && this.statusData.DateEnd) {
+          const endDate = new Date(this.statusData.DateEnd);
+          const today = new Date();
+          if (endDate < today) {
+            this.showConfirm(
+              '<b>Sản phẩm đã hết hạn bảo hành, bạn có muốn tiếp tục không</b>',
+            );
+            return;
+          }
+        }
         this.viewTermsAndConditions();
       },
       error: (err) => {
@@ -555,12 +635,15 @@ export class LandingPageComponent
       },
     });
   }
-  showConfirm() {
+  showConfirm(content?: string) {
     this.modal.confirm({
       nzTitle: '<i>Thông báo?</i>',
       nzContent:
+        content ||
         '<b>Sản phẩm này không có trong danh sách bảo hành, bạn có muốn tiếp tục không</b>',
-      nzOnOk: () => console.log('OK'),
+      nzOnOk: () => {
+        this.viewTermsAndConditions();
+      },
     });
   }
   private async initCaptcha() {
@@ -665,30 +748,30 @@ export class LandingPageComponent
       OperationEnvironment: rawData.OperationEnvironmentObj?.Value,
     });
     data.Id = 0; // just in case
-    const token = grecaptcha.getResponse(this.widgetId);
-    if (token) {
-      this.landingPageService.createWarrantyClaim(data).subscribe({
-        next: () => {
-          this.notification.success(
-            NOTIFICATION_TITLE.success,
-            'Đăng ký thành công',
-          );
-          this.newWarrantyClaimForm.reset();
-          this.resetCaptcha();
-        },
-        error: (error: APIResponse<WarrantyClaim> | any) => {
-          this.notification.error(
-            NOTIFICATION_TITLE.error,
-            'Đăng ký thất bại: ' + error?.error?.message || error?.message,
-          );
-        },
-      });
-    } else {
-      this.notification.warning(
-        NOTIFICATION_TITLE.warning,
-        'Vui lòng nhập captcha hợp lệ',
-      );
-    }
+    // const token = grecaptcha.getResponse(this.widgetId);
+    // if (token) {
+    this.landingPageService.createWarrantyClaim(data).subscribe({
+      next: () => {
+        this.notification.success(
+          NOTIFICATION_TITLE.success,
+          'Đăng ký thành công',
+        );
+        this.newWarrantyClaimForm.reset();
+        // this.resetCaptcha();
+      },
+      error: (error: APIResponse<WarrantyClaim> | any) => {
+        this.notification.error(
+          NOTIFICATION_TITLE.error,
+          'Đăng ký thất bại: ' + error?.error?.message || error?.message,
+        );
+      },
+    });
+    // } else {
+    //   this.notification.warning(
+    //     NOTIFICATION_TITLE.warning,
+    //     'Vui lòng nhập captcha hợp lệ',
+    //   );
+    // }
   }
   filterStatus(status: number) {
     this.currentFilter = status;

@@ -1,0 +1,188 @@
+<div class="modal-layout">
+  <div class="modal-content">
+    <form nz-form nzLayout="vertical" [formGroup]="quotationForm">
+      <!-- Thông tin chung -->
+      <nz-card nzTitle="Thông tin chung" class="mb-3">
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label
+                >Mã yêu cầu
+                <span class="warning-text ms-1">*</span></nz-form-label
+              >
+              <nz-form-control>
+                <nz-form-control>
+                  <nz-select
+                    nzPlaceHolder="Chọn phiếu bảo hành"
+                    formControlName="WarrantyClaimId"
+                    nzShowSearch
+                    nzAllowClear
+                    nzOptionFilterProp="label"
+                  >
+                    @for (claim of warrantyClaimList; track claim.Id) {
+                      <nz-option
+                        [nzLabel]="claim.ClaimNo"
+                        [nzValue]="claim.Id"
+                      ></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Khách hàng</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="CustomerName" readonly />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Sản phẩm</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="ProductName" readonly />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Serial Number</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="SerialNumber" readonly />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Ngày tạo báo giá</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  class="w-100"
+                  nzFormat="yyyy-MM-dd"
+                  formControlName="StartTime"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Hạn báo giá</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  class="w-100"
+                  nzFormat="yyyy-MM-dd"
+                  formControlName="DeadLine"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Trạng thái</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  nzPlaceHolder="Chọn trạng thái"
+                  formControlName="StatusQuotation"
+                >
+                  <nz-option nzLabel="Đã gửi KH" [nzValue]="1"></nz-option>
+                  <nz-option nzLabel="Chờ gửi" [nzValue]="2"></nz-option>
+                  <nz-option nzLabel="Đã duyệt" [nzValue]="3"></nz-option>
+                  <nz-option nzLabel="Đã từ chối" [nzValue]="4"></nz-option>
+                  <nz-option nzLabel="Hết hạn" [nzValue]="5"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Người tạo báo giá</nz-form-label>
+              <nz-form-control>
+                <input nz-input [value]="currentUser?.FullName" readonly />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card nzTitle="Chi tiết vật tư và dịch vụ" class="mb-3">
+        <quotation-no-save-details
+          [quotationId]="quotation.Id"
+          [initialDetails]="data.details || []"
+          [VATfee]="quotation.Vatfee ?? 0"
+          (valueChanged)="onChildValueChanged($event)"
+        ></quotation-no-save-details>
+      </nz-card>
+
+      <!-- Ghi chú -->
+      <nz-card nzTitle="Ghi chú và điều khoản" class="mb-3">
+        <nz-form-item>
+          <nz-form-label>Ghi chú nội bộ</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input rows="3" formControlName="Note"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-card>
+
+      <!-- Phản hồi KH -->
+      <nz-card nzTitle="Phản hồi từ khách hàng">
+        <div nz-row [nzGutter]="16">
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Phản hồi</nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="StatusReply">
+                  <nz-option nzLabel="Chờ phản hồi" [nzValue]="1"></nz-option>
+                  <nz-option nzLabel="Đồng ý" [nzValue]="2"></nz-option>
+                  <nz-option nzLabel="Từ chối" [nzValue]="3"></nz-option>
+                  <nz-option
+                    nzLabel="Yêu cầu điều chỉnh"
+                    [nzValue]="4"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div nz-col nzSpan="12">
+            <nz-form-item>
+              <nz-form-label>Ngày phản hồi</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  class="w-100"
+                  nzFormat="yyyy-MM-dd"
+                  formControlName="ReplyDate"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <nz-form-item>
+          <nz-form-label>Ghi chú phản hồi</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input rows="3" formControlName="ReplyNote"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-card>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button nz-button nzType="default" (click)="onCancel()">Đóng</button>
+    <button nz-button nzType="primary" (click)="onSave()">Lưu thay đổi</button>
+  </div>
+</div>

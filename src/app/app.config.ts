@@ -34,9 +34,9 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       TranslateModule.forRoot({
         defaultLanguage: 'vi',
-      })
+      }),
     ),
-    provideEnvironmentNgxMask(maskConfig)
+    provideEnvironmentNgxMask(maskConfig),
   ],
 };
 export const APP_LOGIN_NAME = 'admin';
@@ -52,4 +52,5 @@ export const NOTIFICATION_TITLE = {
   error: 'Lỗi',
   success: 'Thông báo',
   warning: 'Thông báo',
+  info: 'Thông báo',
 };
