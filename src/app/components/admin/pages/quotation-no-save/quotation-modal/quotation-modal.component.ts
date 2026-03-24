@@ -132,6 +132,9 @@ export class QuotationNoSaveModalComponent implements OnInit {
           },
         });
       });
+    
+    // Always disable WarrantyClaimId in no-save mode
+    this.quotationForm.get('WarrantyClaimId')!.disable();
   }
 
   ngOnInit() {

@@ -94,7 +94,7 @@
       *ngIf="loadedTabs.has(1)"
       id="master-tab"
     >
-      <form nz-form nzLayout="vertical">
+      <form nz-form nzLayout="vertical" [formGroup]="validateForm">
         <!-- Thông tin khách hàng -->
         <div class="form-section">
           <h3>Thông tin khách hàng</h3>
@@ -102,11 +102,14 @@
           <div nz-row [nzGutter]="16">
             <div nz-col nzSpan="24">
               <nz-form-item>
-                <nz-form-label>Khách hàng</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Khách hàng</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng nhập tên khách hàng!"
+                >
                   <input
                     nz-input
-                    [(ngModel)]="warrantyClaim.CustomerName"
+                    formControlName="CustomerName"
                     name="customername"
                   />
                 </nz-form-control>
@@ -117,12 +120,16 @@
           <div nz-row [nzGutter]="16">
             <div nz-col nzSpan="12">
               <nz-form-item>
-                <nz-form-label>Điện thoại di động</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Điện thoại di động</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng nhập số điện thoại!"
+                >
                   <input
                     nz-input
-                    [(ngModel)]="warrantyClaim.CustomerPhoneNumber"
+                    formControlName="CustomerPhoneNumber"
                     name="phonenumber"
+                    type="tel"
                   />
                 </nz-form-control>
               </nz-form-item>
@@ -130,12 +137,16 @@
 
             <div nz-col nzSpan="12">
               <nz-form-item>
-                <nz-form-label>Email</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Email</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng nhập Email hợp lệ!"
+                >
                   <input
                     nz-input
-                    [(ngModel)]="warrantyClaim.CustomerEmail"
+                    formControlName="CustomerEmail"
                     name="customeremail"
+                    type="email"
                   />
                 </nz-form-control>
               </nz-form-item>
@@ -145,12 +156,15 @@
           <div nz-row>
             <div nz-col nzSpan="24">
               <nz-form-item>
-                <nz-form-label>Địa chỉ</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Địa chỉ</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng nhập địa chỉ!"
+                >
                   <textarea
                     nz-input
                     rows="2"
-                    [(ngModel)]="warrantyClaim.CustomerAddress"
+                    formControlName="CustomerAddress"
                     name="address"
                   ></textarea>
                 </nz-form-control>
@@ -166,10 +180,13 @@
           <div nz-row [nzGutter]="16">
             <div nz-col nzSpan="12">
               <nz-form-item>
-                <nz-form-label>Sản phẩm</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Sản phẩm</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng chọn sản phẩm!"
+                >
                   <nz-select
-                    [(ngModel)]="warrantyClaim.ProductId"
+                    formControlName="ProductId"
                     name="productid"
                     class="w-100"
                   >
@@ -186,11 +203,14 @@
 
             <div nz-col nzSpan="12">
               <nz-form-item>
-                <nz-form-label>Serial Number</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Serial Number</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng nhập số Serial!"
+                >
                   <input
                     nz-input
-                    [(ngModel)]="warrantyClaim.SerialNumber"
+                    formControlName="SerialNumber"
                     name="serial"
                   />
                 </nz-form-control>
@@ -201,10 +221,13 @@
           <div nz-row [nzGutter]="16">
             <div nz-col nzSpan="24">
               <nz-form-item>
-                <nz-form-label>Hiện tượng hỏng hóc</nz-form-label>
-                <nz-form-control>
+                <nz-form-label nzRequired>Hiện tượng hỏng hóc</nz-form-label>
+                <nz-form-control
+                  nzHasFeedback
+                  nzErrorTip="Vui lòng chọn hiện tượng hỏng hóc!"
+                >
                   <nz-select
-                    [(ngModel)]="warrantyClaim.IssueId"
+                    formControlName="IssueId"
                     name="issueid"
                     class="w-100"
                   >
@@ -434,9 +457,10 @@
       *ngIf="loadedTabs.has(3)"
       id="quote-tab"
     >
-      <warranty-quotation
+      <quotation-no-save
         [claimNo]="warrantyClaim.ClaimNo ?? ''"
-      ></warranty-quotation>
+        [warrantyClaim]="warrantyClaim"
+      ></quotation-no-save>
     </div>
 
     <!-- Tab Vật tư -->

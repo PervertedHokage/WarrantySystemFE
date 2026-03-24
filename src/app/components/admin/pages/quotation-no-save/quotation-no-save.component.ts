@@ -1,6 +1,8 @@
 import {
   Component,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   ViewChild,
   ElementRef,
   TemplateRef,
@@ -42,6 +44,8 @@ import { QuotationService } from '../../../../services/quotations-service/quotat
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { Quotation } from '../../../../models/quotations/quotation.model';
 import { QuotationDetailDTO } from '../../../../models/quotations/quotation-detail-dto.model';
+import { WarrantyClaimDTO } from '../../../../models/warranty-claims/warranty-claim-dto.model';
+import { WarrantyClaimManagementService } from '../../../../services/warranty-claim-management.service';
 
 @Component({
   selector: 'quotation-no-save',
@@ -58,15 +62,17 @@ import { QuotationDetailDTO } from '../../../../models/quotations/quotation-deta
     NzIconModule,
   ],
 })
-export class QuotationNoSaveComponent implements OnInit {
+export class QuotationNoSaveComponent implements OnInit, OnChanges {
   @Input() claimNo: string = '';
+  @Input() warrantyClaim?: WarrantyClaimDTO;
   angularGrid!: AngularGridInstance;
   gridId = `grid-quotation-${crypto.randomUUID()}`;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
   dataset: QuotationDTO[] = [];
   // Local storage for details
-  private detailsMap = new Map<number, QuotationDetailDTO[]>();
+  public detailsMap = new Map<number, QuotationDetailDTO[]>();
+  public deletedIds: number[] = [];
   private nextId = -1; // Use negative IDs for local items
   statusMap: Record<number, { text: string; cls: string }> = {
     1: { text: 'Đã gửi', cls: 'status-badge status-1' },
@@ -77,7 +83,7 @@ export class QuotationNoSaveComponent implements OnInit {
   };
   showFilter = false;
   filter = {
-    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    fromDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
     toDate: new Date(),
     claimNo: this.claimNo,
   };
@@ -85,11 +91,18 @@ export class QuotationNoSaveComponent implements OnInit {
     private modal: NzModalService,
     private notification: NzNotificationService,
     private quotationService: QuotationService,
+    private warrantyClaimService: WarrantyClaimManagementService,
   ) {}
 
   ngOnInit() {
     this.initGrid();
     console.log(this.claimNo);
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['claimNo']) {
+      this.filter.claimNo = this.claimNo;
+      this.loadData();
+    }
   }
   angularGridReady(angularGrid: AngularGridInstance) {
     this.angularGrid = angularGrid;
@@ -212,12 +225,10 @@ export class QuotationNoSaveComponent implements OnInit {
     this.loadData();
   }
   loadData() {
-    // For no-save version, we might want to start with an empty list
-    // or fetch once and then work locally.
-    // Given the prompt "runs without saving", I'll initialize with empty
-    // OR I can keep the initial load but subsequent changes are local.
-    // The user said "whenever something is added/editted/deleted",
-    // indicating they want those actions to be local.
+    if (!this.filter.claimNo?.trim()) {
+      this.dataset = [];
+      return;
+    }
     if (this.dataset.length === 0 && this.nextId === -1) {
       this.quotationService
         .getAll(
@@ -239,13 +250,60 @@ export class QuotationNoSaveComponent implements OnInit {
     }
   }
   openAddModal() {
+    // If we have warrantyClaim input, use it directly instead of fetching
+    if (this.warrantyClaim) {
+      this.openAddModalWithClaim(this.warrantyClaim);
+      return;
+    }
+
+    // Fallback to searching by claimNo if available
+    if (this.claimNo) {
+      this.warrantyClaimService
+        .getWarrantyClaims(
+          '',
+          '',
+          this.claimNo,
+          this.filter.fromDate,
+          this.filter.toDate,
+          0,
+        )
+        .subscribe({
+          next: (result: any) => {
+            if (result.data && result.data.length > 0) {
+              this.openAddModalWithClaim(result.data[0]);
+            } else {
+              this.notification.warning(
+                'Thông báo',
+                'Không tìm thấy thông tin phiếu bảo hành',
+              );
+            }
+          },
+        });
+    } else {
+      this.notification.warning('Thông báo', 'Thiếu số phiếu bảo hành');
+    }
+  }
+
+  private openAddModalWithClaim(warrantyClaim: WarrantyClaimDTO) {
+    const newQuotation = new QuotationDTO({
+      WarrantyClaimId: warrantyClaim.Id,
+      CustomerName: warrantyClaim.CustomerName,
+      CustomerAddress: warrantyClaim.CustomerAddress,
+      CustomerEmail: warrantyClaim.CustomerEmail,
+      CustomerPhoneNumber: warrantyClaim.CustomerPhoneNumber,
+      StatusQuotation: 2, // Chưa gửi
+      StartTime: new Date(),
+    });
+
     const modalRef = this.modal.create({
-      nzTitle: 'Thêm mới phiếu báo giá',
+      nzTitle: 'Thêm mới báo giá (Tạm thời)',
       nzContent: QuotationNoSaveModalComponent,
       nzFooter: null,
       nzMaskClosable: false,
       nzKeyboard: false,
-      nzData: {},
+      nzData: {
+        quotation: newQuotation,
+      },
       nzWidth: '80vw',
       nzBodyStyle: {
         'max-height': '80vh',
@@ -256,14 +314,13 @@ export class QuotationNoSaveComponent implements OnInit {
 
     modalRef.afterClose.subscribe((result) => {
       if (result && result.quotation) {
-        const newQuotation = result.quotation as QuotationDTO;
-        newQuotation.Id = this.nextId--;
-        this.dataset = [newQuotation, ...this.dataset];
-        this.detailsMap.set(newQuotation.Id, result.allDetails || []);
-        this.notification.success(
-          'Thông báo',
-          'Thêm mới thành công (tạm thời)',
-        );
+        const localData = result.quotation as QuotationDTO;
+        const details = result.allDetails || [];
+
+        localData.Id = this.nextId--;
+        this.dataset = [localData, ...this.dataset];
+        this.detailsMap.set(localData.Id, details);
+        this.notification.success('Thông báo', 'Thêm thành công (tạm thời)');
       }
     });
   }
@@ -337,6 +394,9 @@ export class QuotationNoSaveComponent implements OnInit {
     if (!confirmed) return;
 
     const idToDelete = selectedData[0].Id;
+    if (idToDelete > 0) {
+      this.deletedIds.push(idToDelete);
+    }
     this.dataset = this.dataset.filter((d) => d.Id !== idToDelete);
     this.detailsMap.delete(idToDelete);
     this.notification.success('Thông báo', 'Xóa thành công (tạm thời)');

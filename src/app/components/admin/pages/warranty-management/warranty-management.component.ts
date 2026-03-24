@@ -70,7 +70,7 @@ export class WarrantyManagementComponent implements OnInit {
   showFilter = false;
   filter = {
     status: 0,
-    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days prior
+    fromDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 90 days prior
     toDate: new Date(),
     email: '',
     phoneNumber: '',
@@ -251,8 +251,9 @@ export class WarrantyManagementComponent implements OnInit {
           type: 'primary',
           onClick: () => {
             const instance = modalRef.getContentComponent();
-            instance.onSave();
-            modalRef.close(true);
+            if (instance.onSave()) {
+              modalRef.close(true);
+            }
           },
         },
       ],
@@ -296,8 +297,9 @@ export class WarrantyManagementComponent implements OnInit {
           type: 'primary',
           onClick: () => {
             const instance = modalRef.getContentComponent();
-            instance.onSave();
-            modalRef.close(true);
+            if (instance.onSave()) {
+              modalRef.close(true);
+            }
           },
         },
       ],

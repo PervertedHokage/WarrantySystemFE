@@ -92,7 +92,7 @@ export class SalesOrderComponent implements OnInit, AfterViewInit {
 
   showFilter = false;
   filter = {
-    fromDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    fromDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
     toDate: new Date(),
   };
 

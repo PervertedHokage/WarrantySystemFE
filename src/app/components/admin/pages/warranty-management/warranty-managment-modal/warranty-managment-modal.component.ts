@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -11,7 +17,13 @@ import { NzSplitterModule } from 'ng-zorro-antd/splitter';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { FormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
@@ -24,12 +36,17 @@ import { IssuesService } from '../../../../../services/issues-service/issues.ser
 import { NOTIFICATION_TITLE } from '../../../../../app.config';
 import { UserManagementService } from '../../../../../services/user-service/user-management.service';
 import { IUser } from '../../../../../models/user.interface';
+import { QuotationService } from '../../../../../services/quotations-service/quotation.service';
+import { Quotation } from '../../../../../models/quotations/quotation.model';
+import { QuotationDetail } from '../../../../../models/quotations/quotation-details.model';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { WarrantyClaimTracking } from '../../../../../models/warranty-claims/warranty-claim-tracking.model';
 import { LandingPageService } from '../../../../../services/landing-page.service';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { Product } from '../../../../../models/product.model';
 import { ProductService } from '../../../../../services/products-service/product.service';
-import { WarrantyQuotationComponent } from './warranty-quotation/warranty-quotation.component';
+import { QuotationNoSaveComponent } from '../../quotation-no-save/quotation-no-save.component';
 import { WarrantyWorkOrderComponent } from './warranty-work-order/warranty-work-order.component';
 import { WarrantySuppliesComponent } from './warranty-supplies/warranty-supplies.component';
 import { WarrantyResponseHistoryComponent } from './warranty-response-history/warranty-response-history.component';
@@ -40,6 +57,7 @@ import { WarrantyResponseHistoryComponent } from './warranty-response-history/wa
   styleUrls: ['./warranty-managment-modal.component.less'],
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     CommonModule,
     NzFormModule,
     NzInputModule,
@@ -59,13 +77,16 @@ import { WarrantyResponseHistoryComponent } from './warranty-response-history/wa
     NzPopoverModule,
     NgTemplateOutlet,
     NzSwitchModule,
-    WarrantyQuotationComponent,
+    QuotationNoSaveComponent,
     WarrantyWorkOrderComponent,
     WarrantySuppliesComponent,
     WarrantyResponseHistoryComponent,
   ],
 })
 export class WarrantyManagmentModalComponent implements OnInit {
+  @ViewChild(QuotationNoSaveComponent)
+  quotationNoSaveComp?: QuotationNoSaveComponent;
+  validateForm!: FormGroup;
   currentTab = 1;
   warrantyClaim: WarrantyClaimDTO = new WarrantyClaimDTO();
   productList: Product[] = [];
@@ -93,13 +114,18 @@ export class WarrantyManagmentModalComponent implements OnInit {
     private userService: UserManagementService,
     private landingPageService: LandingPageService,
     private productService: ProductService,
+    private quotationService: QuotationService,
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
   ) {
     const input = data.warrantyClaim ?? new WarrantyClaimDTO();
+    this.warrantyClaim = new WarrantyClaimDTO(input);
+    this.initForm();
     if (input.Id) {
       this.warrantyClaimService.getWarrantyClaimById(input.Id).subscribe({
         next: (res) => {
           this.warrantyClaim = res.data;
+          this.validateForm.patchValue(this.warrantyClaim);
           console.log(this.warrantyClaim);
           this.cdr.detectChanges();
           this.loadTracking();
@@ -113,6 +139,27 @@ export class WarrantyManagmentModalComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+  private initForm() {
+    this.validateForm = this.fb.group({
+      CustomerName: [this.warrantyClaim.CustomerName, [Validators.required]],
+      CustomerPhoneNumber: [
+        this.warrantyClaim.CustomerPhoneNumber,
+        [Validators.required],
+      ],
+      CustomerEmail: [
+        this.warrantyClaim.CustomerEmail,
+        [Validators.required, Validators.email],
+      ],
+      CustomerAddress: [
+        this.warrantyClaim.CustomerAddress,
+        [Validators.required],
+      ],
+      ProductId: [this.warrantyClaim.ProductId, [Validators.required]],
+      SerialNumber: [this.warrantyClaim.SerialNumber, [Validators.required]],
+      IssueId: [this.warrantyClaim.IssueId, [Validators.required]],
+    });
+  }
   changeTab(newTab: number) {
     this.currentTab = newTab;
     this.loadedTabs.add(newTab);
@@ -222,12 +269,32 @@ export class WarrantyManagmentModalComponent implements OnInit {
       CreatedDate: new Date(),
     });
   }
-  onSave() {
+  onSave(): boolean {
+    Object.values(this.validateForm.controls).forEach((control) => {
+      if (control.invalid) {
+        control.markAsDirty();
+        control.updateValueAndValidity({ onlySelf: true });
+      }
+    });
+
+    if (this.validateForm.invalid) {
+      this.notification.warning(
+        'Thông báo',
+        'Vui lòng kiểm tra lại thông tin!',
+      );
+      return false;
+    }
+
+    // Sync form values back to warrantyClaim
+    Object.assign(this.warrantyClaim, this.validateForm.getRawValue());
+
     console.log(this.warrantyClaim);
     this.warrantyClaimService.createOrUpdate(this.warrantyClaim).subscribe({
       next: (res) => {
+        const claimId = res.data.Id;
+        // Save trackings
         this.trackings.forEach((track) => {
-          track.WarrantyClaimId = res.data.Id;
+          track.WarrantyClaimId = claimId;
           if (!track.Id)
             this.landingPageService
               .createWarrantyClaimTrackings(track)
@@ -246,10 +313,74 @@ export class WarrantyManagmentModalComponent implements OnInit {
             next: () => {},
           });
         });
+
+        // Save quotations from no-save component
+        if (this.quotationNoSaveComp) {
+          const dataset = this.quotationNoSaveComp.dataset;
+          const deletedIds = this.quotationNoSaveComp.deletedIds;
+          const detailsMap = this.quotationNoSaveComp.detailsMap;
+
+          const obs: any[] = [];
+
+          // Handle deletions
+          deletedIds.forEach((id) => {
+            obs.push(
+              this.quotationService.update(
+                new Quotation({ Id: id, IsDeleted: true }),
+              ),
+            );
+          });
+
+          // Handle Add/Edit
+          dataset.forEach((q) => {
+            const quotationToSave = new Quotation({
+              ...q,
+              Vatfee: q.Vatfee ?? 0,
+            });
+            quotationToSave.WarrantyClaimId = claimId;
+            obs.push(
+              this.quotationService.saveOrUpdate(quotationToSave).pipe(
+                switchMap((qRes) => {
+                  const details = detailsMap.get(q.Id) || [];
+                  if (details.length > 0) {
+                    const detailsToSave = details.map(
+                      (d) =>
+                        new QuotationDetail({
+                          ...d,
+                          QuotationId: qRes.data.Id,
+                        }),
+                    );
+                    return this.quotationService.saveDetails(detailsToSave);
+                  }
+                  return of(null);
+                }),
+              ),
+            );
+          });
+
+          if (obs.length > 0) {
+            forkJoin(obs).subscribe({
+              next: () => {
+                this.notification.success(
+                  'Thông báo',
+                  'Lưu báo giá thành công',
+                );
+              },
+              error: (err) => {
+                this.notification.error('Lỗi', 'Lưu báo giá thất bại');
+              },
+            });
+          }
+        }
+
+        this.notification.success('Thông báo', 'Cập nhật thành công!');
       },
       error: (err) => {
+        console.log(err);
         this.notification.error('Lỗi', 'Thao tác thất bại');
       },
     });
+
+    return true;
   }
 }
