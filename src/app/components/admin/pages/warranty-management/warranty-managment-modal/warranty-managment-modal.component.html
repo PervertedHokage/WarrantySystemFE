@@ -166,6 +166,7 @@
                     rows="2"
                     formControlName="CustomerAddress"
                     name="address"
+                    autocomplete="on"
                   ></textarea>
                 </nz-form-control>
               </nz-form-item>
@@ -189,6 +190,8 @@
                     formControlName="ProductId"
                     name="productid"
                     class="w-100"
+                    nzShowSearch
+                    nzAllowClear
                   >
                     @for (product of productList; track product.Id) {
                       <nz-option
@@ -230,6 +233,8 @@
                     formControlName="IssueId"
                     name="issueid"
                     class="w-100"
+                    nzShowSearch
+                    nzAllowClear
                   >
                     @for (issue of issueList; track issue.Id) {
                       <nz-option
@@ -473,6 +478,7 @@
       <warranty-supplies
         [claimNo]="warrantyClaim.ClaimNo ?? ''"
         [claimId]="warrantyClaim.Id"
+        [isNoSave]="true"
       ></warranty-supplies>
     </div>
 
@@ -483,9 +489,10 @@
       *ngIf="loadedTabs.has(5)"
       id="workorder-tab"
     >
-      <warranty-work-order
+      <warranty-work-order-no-save
         [claimNo]="warrantyClaim.ClaimNo ?? ''"
-      ></warranty-work-order>
+        [warrantyClaim]="warrantyClaim"
+      ></warranty-work-order-no-save>
     </div>
 
     <!-- Tab Lịch sử phản hồi -->
@@ -498,6 +505,7 @@
       <warranty-response-history
         [claimNo]="warrantyClaim.ClaimNo ?? ''"
         [claimId]="warrantyClaim.Id"
+        [isNoSave]="true"
       ></warranty-response-history>
     </div>
     <!-- Tab Tài liệu đính kèm -->

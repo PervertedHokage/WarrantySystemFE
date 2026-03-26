@@ -1,0 +1,76 @@
+<div class="warranty-work-order-container">
+  <div class="overview-cards" nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="6">
+      <nz-card class="overview-card cho-xu-ly" (click)="openStatusList('Chờ xử lý')">
+        <div class="card-content">
+          <div class="icon-wrapper">
+            <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
+          </div>
+          <div class="info">
+            <span class="label">Chờ xử lý</span>
+            <span class="count">{{ countChoXuLy }}</span>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-card class="overview-card dang-sua-chua" (click)="openStatusList('Đang sửa chữa')">
+        <div class="card-content">
+          <div class="icon-wrapper">
+            <i nz-icon nzType="tool" nzTheme="outline"></i>
+          </div>
+          <div class="info">
+            <span class="label">Đang sửa chữa</span>
+            <span class="count">{{ countDangSuaChua }}</span>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-card class="overview-card cho-vat-tu" (click)="openStatusList('Chờ vật tư')">
+        <div class="card-content">
+          <div class="icon-wrapper">
+            <i nz-icon nzType="shopping-cart" nzTheme="outline"></i>
+          </div>
+          <div class="info">
+            <span class="label">Chờ vật tư</span>
+            <span class="count">{{ countChoVatTu }}</span>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-card class="overview-card hoan-thanh" (click)="openStatusList('Hoàn thành')">
+        <div class="card-content">
+          <div class="icon-wrapper">
+            <i nz-icon nzType="check-circle" nzTheme="outline"></i>
+          </div>
+          <div class="info">
+            <span class="label">Hoàn thành</span>
+            <span class="count">{{ countHoanThanh }}</span>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+
+  <div class="actions-bar">
+    <button nz-button nzType="primary" (click)="onAddWorkOrder(false)">
+      <i nz-icon nzType="plus"></i>Thêm yêu cầu
+    </button>
+    <button nz-button nzType="default" nzDanger (click)="onDeleteMultipleWorkOrders()">
+      <i nz-icon nzType="delete"></i>Xóa yêu cầu
+    </button>
+  </div>
+
+  <div id="warranty_work_order_no_save_grid_container" class="grid-container">
+    <angular-slickgrid
+      gridId="warranty_work_order_no_save_grid"
+      [columns]="columnWorkOrder"
+      [options]="gridOptionsWorkOrder"
+      [dataset]="datasetWorkOrder"
+      (onAngularGridCreated)="gridReady($event)"
+    >
+    </angular-slickgrid>
+  </div>
+</div>

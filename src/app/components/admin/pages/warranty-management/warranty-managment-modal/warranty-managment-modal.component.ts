@@ -47,9 +47,10 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { Product } from '../../../../../models/product.model';
 import { ProductService } from '../../../../../services/products-service/product.service';
 import { QuotationNoSaveComponent } from '../../quotation-no-save/quotation-no-save.component';
-import { WarrantyWorkOrderComponent } from './warranty-work-order/warranty-work-order.component';
+import { WarrantyWorkOrderNoSaveComponent } from './warranty-work-order-no-save/warranty-work-order-no-save.component';
 import { WarrantySuppliesComponent } from './warranty-supplies/warranty-supplies.component';
 import { WarrantyResponseHistoryComponent } from './warranty-response-history/warranty-response-history.component';
+import { WorkOrderService } from '../../../../../services/work-order-service/work-order.service';
 
 @Component({
   selector: 'app-warranty-managment-modal',
@@ -73,12 +74,11 @@ import { WarrantyResponseHistoryComponent } from './warranty-response-history/wa
     NzTableModule,
     NzUploadModule,
     NzRadioModule,
-    NzStepsModule,
     NzPopoverModule,
     NgTemplateOutlet,
     NzSwitchModule,
     QuotationNoSaveComponent,
-    WarrantyWorkOrderComponent,
+    WarrantyWorkOrderNoSaveComponent,
     WarrantySuppliesComponent,
     WarrantyResponseHistoryComponent,
   ],
@@ -86,6 +86,12 @@ import { WarrantyResponseHistoryComponent } from './warranty-response-history/wa
 export class WarrantyManagmentModalComponent implements OnInit {
   @ViewChild(QuotationNoSaveComponent)
   quotationNoSaveComp?: QuotationNoSaveComponent;
+  @ViewChild(WarrantyWorkOrderNoSaveComponent)
+  workOrderNoSaveComp?: WarrantyWorkOrderNoSaveComponent;
+  @ViewChild(WarrantySuppliesComponent)
+  suppliesComp?: WarrantySuppliesComponent;
+  @ViewChild(WarrantyResponseHistoryComponent)
+  responseHistoryComp?: WarrantyResponseHistoryComponent;
   validateForm!: FormGroup;
   currentTab = 1;
   warrantyClaim: WarrantyClaimDTO = new WarrantyClaimDTO();
@@ -115,6 +121,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
     private landingPageService: LandingPageService,
     private productService: ProductService,
     private quotationService: QuotationService,
+    private workOrderService: WorkOrderService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
   ) {
@@ -333,23 +340,39 @@ export class WarrantyManagmentModalComponent implements OnInit {
 
           // Handle Add/Edit
           dataset.forEach((q) => {
-            const quotationToSave = new Quotation({
-              ...q,
-              Vatfee: q.Vatfee ?? 0,
-            });
+            const quotationToSave = new Quotation();
+            quotationToSave.Id = q.Id && q.Id < 0 ? 0 : q.Id;
+            quotationToSave.QuotationNumber = q.QuotationNumber;
             quotationToSave.WarrantyClaimId = claimId;
+            quotationToSave.CustomerName = q.CustomerName;
+            quotationToSave.CustomerEmail = q.CustomerEmail;
+            quotationToSave.CustomerPhoneNumber = q.CustomerPhoneNumber;
+            quotationToSave.CustomerAddress = q.CustomerAddress;
+            quotationToSave.StatusQuotation = q.StatusQuotation;
+            quotationToSave.Note = q.Note;
+            quotationToSave.StartTime = q.StartTime;
+            quotationToSave.DeadLine = q.DeadLine;
+            quotationToSave.StatusReply = q.StatusReply;
+            quotationToSave.ReplyDate = q.ReplyDate;
+            quotationToSave.ReplyNote = q.ReplyNote;
+            quotationToSave.Vatfee = q.Vatfee ?? 0;
+            quotationToSave.IsDeleted = q.IsDeleted;
+
             obs.push(
               this.quotationService.saveOrUpdate(quotationToSave).pipe(
                 switchMap((qRes) => {
                   const details = detailsMap.get(q.Id) || [];
                   if (details.length > 0) {
-                    const detailsToSave = details.map(
-                      (d) =>
-                        new QuotationDetail({
-                          ...d,
-                          QuotationId: qRes.data.Id,
-                        }),
-                    );
+                    const detailsToSave = details.map((d) => {
+                      const detail = new QuotationDetail();
+                      detail.Id = d.Id && d.Id < 0 ? 0 : d.Id;
+                      detail.QuotationId = qRes.data.Id;
+                      detail.SparePartId = d.SparePartId;
+                      detail.Quantity = d.Quantity;
+                      detail.Price = d.Price;
+                      detail.IsDeleted = d.IsDeleted;
+                      return detail;
+                    });
                     return this.quotationService.saveDetails(detailsToSave);
                   }
                   return of(null);
@@ -369,6 +392,141 @@ export class WarrantyManagmentModalComponent implements OnInit {
               error: (err) => {
                 this.notification.error('Lỗi', 'Lưu báo giá thất bại');
               },
+            });
+          }
+        }
+
+        // Save work orders from no-save component
+        if (this.workOrderNoSaveComp) {
+          const dataset = this.workOrderNoSaveComp.datasetWorkOrder;
+          const sparePartsMap = this.workOrderNoSaveComp.sparePartsMap;
+          const deletedIds = this.workOrderNoSaveComp.deletedWorkOrderIds;
+
+          const woObs: any[] = [];
+
+          // Handle deletions
+          if (deletedIds.length > 0) {
+            woObs.push(this.workOrderService.deleteWorkOrders(deletedIds));
+          }
+
+          // Handle Add/Edit
+          dataset.forEach((wo) => {
+            const spareParts = sparePartsMap.get(wo.Id) || [];
+            const payload = {
+              WorkOrder: {
+                Id: wo.Id && wo.Id < 0 ? 0 : wo.Id,
+                WarrantyClaimsId: claimId,
+                DateStart: wo.DateStart,
+                CompletedDate: wo.CompletedDate,
+                UsersId: wo.UsersId || wo.UserId,
+                StatusId: wo.StatusId || wo.Status,
+                ProductId: wo.ProductId,
+                DateEnd: wo.DateEnd,
+                ProgressComplete: wo.ProgressComplete,
+                Description: wo.Description,
+              },
+              WorkOrderSpareParts: spareParts.map((sp) => ({
+                Id: sp.Id && sp.Id < 0 ? 0 : sp.Id,
+                SparePartGroupId: sp.SparePartGroupId,
+                Quantity: sp.Quantity,
+              })),
+              DeletedSpareSpart: [],
+            };
+            woObs.push(this.workOrderService.saveDataWorkOrder(payload));
+          });
+
+          if (woObs.length > 0) {
+            forkJoin(woObs).subscribe({
+              next: () => {
+                this.notification.success(
+                  'Thông báo',
+                  'Lưu lệnh sửa chữa thành công',
+                );
+              },
+              error: (err) => {
+                this.notification.error('Lỗi', 'Lưu lệnh sửa chữa thất bại');
+              },
+            });
+          }
+        }
+
+        // Save Supplies
+        if (this.suppliesComp) {
+          const added = this.suppliesComp.getAddedItems();
+          const updated = this.suppliesComp.getUpdatedItems();
+          const deletedIds = this.suppliesComp.getDeletedIds();
+          const sObs: any[] = [];
+
+          if (deletedIds.length > 0) {
+            deletedIds.forEach((id) =>
+              sObs.push(this.suppliesComp!.suppliesService.delete(id)),
+            );
+          }
+
+          added.forEach((item) => {
+            const payload = { ...item, Id: 0, WarrantyClaimId: claimId };
+            sObs.push(this.suppliesComp!.suppliesService.create(payload));
+          });
+
+          updated.forEach((item) => {
+            sObs.push(
+              this.suppliesComp!.suppliesService.update(item.Id, {
+                ...item,
+                WarrantyClaimId: claimId,
+              }),
+            );
+          });
+
+          if (sObs.length > 0) {
+            forkJoin(sObs).subscribe({
+              next: () =>
+                this.notification.success('Thông báo', 'Lưu vật tư thành công'),
+              error: () =>
+                this.notification.error('Lỗi', 'Lưu vật tư thất bại'),
+            });
+          }
+        }
+
+        // Save Response History
+        if (this.responseHistoryComp) {
+          const added = this.responseHistoryComp.getAddedItems();
+          const updated = this.responseHistoryComp.getUpdatedItems();
+          const deletedIds = this.responseHistoryComp.getDeletedIds();
+          const hObs: any[] = [];
+
+          if (deletedIds.length > 0) {
+            deletedIds.forEach((id) =>
+              hObs.push(
+                this.responseHistoryComp!.responseHistoryService.delete(id),
+              ),
+            );
+          }
+
+          added.forEach((item) => {
+            const payload = { ...item, Id: 0, WarrantyClaimId: claimId };
+            hObs.push(
+              this.responseHistoryComp!.responseHistoryService.create(payload),
+            );
+          });
+
+          updated.forEach((item) => {
+            hObs.push(
+              this.responseHistoryComp!.responseHistoryService.update(item.Id, {
+                ...item,
+                WarrantyClaimId: claimId,
+              }),
+            );
+          });
+
+          if (hObs.length > 0) {
+            forkJoin(hObs).subscribe({
+              next: () =>
+                this.notification.success(
+                  'Thông báo',
+                  'Lưu lịch sử phản hồi thành công',
+                ),
+              error: () =>
+                this.notification.error('Lỗi', 'Lưu lịch sử phản hồi thất bại'),
             });
           }
         }

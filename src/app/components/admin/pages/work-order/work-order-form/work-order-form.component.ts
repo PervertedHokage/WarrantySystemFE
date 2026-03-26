@@ -81,6 +81,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   WorkOrderID: number = 0;
   isEditMode: boolean = false;
+  isNoSave: boolean = false;
   dataInput: any | null = null;
   formGroup: FormGroup;
 
@@ -116,21 +117,28 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
     if (!this.isEditMode) {
       this.generateWorkOrderCode();
     }
-    if (this.isEditMode && this.dataInput) {
+    if (this.dataInput) {
       this.formGroup.patchValue({
         Code: this.dataInput.Code || '',
         WarrantyClaimId: this.dataInput.WarrantyClaimId || '',
         QuotationId: this.dataInput.QuotationId || '',
         CustomerName: this.dataInput.CustomerName || '',
-        DateStart: this.formatDateForInput(this.dataInput.DateStart),
+        DateStart: this.formatDateForInput(this.dataInput.DateStart || new Date().toISOString()),
         CompletedDate: this.formatDateForInput(this.dataInput.CompletedDate),
-        UserId: this.dataInput.UserId || '',
-        Status: this.dataInput.StatusId || '',
+        UserId: this.dataInput.UserId || this.dataInput.UsersId || '',
+        Status: this.dataInput.StatusId || this.dataInput.Status || 'New',
         ProductId: this.dataInput.ProductId || '',
-        DateEnd: this.formatDateForInput(this.dataInput.DateEnd),
-        ProgressComplete: this.dataInput.ProgressComplete || '',
+        DateEnd: this.formatDateForInput(this.dataInput.DateEnd || new Date().toISOString()),
+        ProgressComplete: this.dataInput.ProgressComplete || 0,
         Description: this.dataInput.Description || '',
       });
+
+      if (this.isNoSave) {
+        this.formGroup.get('WarrantyClaimId')?.disable();
+        this.formGroup.get('QuotationId')?.disable();
+        this.formGroup.get('CustomerName')?.disable();
+        this.formGroup.get('ProductId')?.disable();
+      }
     }
   }
 
@@ -145,7 +153,13 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
   constructor(
     @Inject(NZ_MODAL_DATA)
-    public data: { WorkOrderID: number; isEditMode: boolean; dataInput: any; claimNo: string },
+    public data: {
+      WorkOrderID: number;
+      isEditMode: boolean;
+      dataInput: any;
+      claimNo: string;
+      isNoSave?: boolean;
+    },
     private fb: FormBuilder,
     private modal: NzModalService,
     private modalRef: NzModalRef,
@@ -161,6 +175,7 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
       this.isEditMode = data.isEditMode || false;
       this.dataInput = data.dataInput || null;
       this.claimNo = data.claimNo || '';
+      this.isNoSave = data.isNoSave || false;
     }
     this.formGroup = this.fb.group({
       Code: [null, [Validators.maxLength(50)]],
@@ -287,11 +302,14 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
   getWarrantyClaims() {
     this.workOrderService.getWarrantyClaim(0).subscribe((response: any) => {
       this.dataWarrantyClaims = response?.data || [];
-      if (this.claimNo) {
-        const selectedClaim = this.dataWarrantyClaims.find(w => w.ClaimNo == this.claimNo)
-        this.formGroup.patchValue({
-          WarrantyClaimId: selectedClaim.Id
-        });
+      if (this.claimNo || (this.isNoSave && this.dataInput?.ClaimNo)) {
+        const cNo = this.claimNo || this.dataInput.ClaimNo;
+        const selectedClaim = this.dataWarrantyClaims.find(w => w.ClaimNo == cNo);
+        if (selectedClaim) {
+           this.formGroup.patchValue({
+             WarrantyClaimId: selectedClaim.Id
+           });
+        }
         this.formGroup.get('WarrantyClaimId')?.disable();
       }
       this.loadOptionSparePartGroup();
@@ -486,6 +504,12 @@ export class WorkOrderFormComponent implements OnInit, AfterViewInit {
 
       DeletedSpareSpart: this.DeletedSpareSpart || [],
     };
+
+    if (this.isNoSave) {
+      this.modalRef.close(payload);
+      return;
+    }
+
     this.workOrderService.saveDataWorkOrder(payload).subscribe({
       next: (res) => {
         if (res.status === 1) {

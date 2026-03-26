@@ -52,8 +52,11 @@ import { SparePart } from '../../../../../../models/spare-parts.model';
 export class WarrantySuppliesComponent implements OnInit {
   @Input() claimNo: string = '';
   @Input() claimId: number = 0;
+  @Input() isNoSave: boolean = false;
 
   angularGrid!: AngularGridInstance;
+  deletedIds: number[] = [];
+  tempIdCounter: number = -1;
   gridId = `grid-warranty-supplies-${crypto.randomUUID()}`;
   columnDefinitions: Column[] = [];
   gridOptions: GridOption = {};
@@ -82,7 +85,7 @@ export class WarrantySuppliesComponent implements OnInit {
   constructor(
     private modal: NzModalService,
     private notification: NzNotificationService,
-    private suppliesService: WarrantySuppliesService,
+    public suppliesService: WarrantySuppliesService,
     private productService: ProductService,
     private unitService: UnitService,
   ) {}
@@ -251,6 +254,23 @@ export class WarrantySuppliesComponent implements OnInit {
       WarrantyClaimId: this.claimId,
     };
 
+    if (this.isNoSave) {
+      if (this.isEditMode) {
+        const index = this.dataset.findIndex((x) => x.Id === this.formData.Id);
+        if (index !== -1) {
+          this.dataset[index] = { ...payload };
+          this.dataset = [...this.dataset];
+        }
+      } else {
+        const newId = this.tempIdCounter--;
+        const newItem = { ...payload, Id: newId };
+        this.dataset = [newItem, ...this.dataset];
+      }
+      this.isModalVisible = false;
+      this.resetForm();
+      return;
+    }
+
     if (this.isEditMode) {
       this.suppliesService.update(this.formData.Id!, payload).subscribe({
         next: () => {
@@ -316,6 +336,15 @@ export class WarrantySuppliesComponent implements OnInit {
 
     const selectedItem =
       this.angularGrid.gridService.getSelectedRowsDataItem()[0];
+
+    if (this.isNoSave) {
+      if (selectedItem.Id > 0) {
+        this.deletedIds.push(selectedItem.Id);
+      }
+      this.dataset = this.dataset.filter((x) => x.Id !== selectedItem.Id);
+      return;
+    }
+
     this.suppliesService.delete(selectedItem.Id).subscribe({
       next: () => {
         this.notification.success(NOTIFICATION_TITLE.success, 'Xóa thành công');
@@ -324,5 +353,17 @@ export class WarrantySuppliesComponent implements OnInit {
       error: () =>
         this.notification.error(NOTIFICATION_TITLE.error, 'Xóa thất bại'),
     });
+  }
+
+  getAddedItems() {
+    return this.dataset.filter((x) => x.Id < 0);
+  }
+
+  getUpdatedItems() {
+    return this.dataset.filter((x) => x.Id > 0);
+  }
+
+  getDeletedIds() {
+    return this.deletedIds;
   }
 }
