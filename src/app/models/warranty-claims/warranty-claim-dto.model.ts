@@ -1,3 +1,5 @@
+import { WarrantyClaimAttachment } from './warranty-claim-attachment.model';
+
 export class WarrantyClaimDTO {
   Id = 0;
   ClaimNo: string | null = '';
@@ -33,6 +35,7 @@ export class WarrantyClaimDTO {
   DiagnosisNote: string | null = '';
   ReceptionDate: Date | null = null;
   ReceptionWorker: string | null = '';
+  Attachments: WarrantyClaimAttachment[] = [];
 
   constructor(init?: Partial<WarrantyClaimDTO>) {
     Object.assign(this, init);

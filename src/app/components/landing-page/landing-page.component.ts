@@ -180,6 +180,8 @@ export class LandingPageComponent
   angularGrid!: AngularGridInstance;
   @ViewChild('captchaHolder')
   captchaHolder?: ElementRef<HTMLDivElement>;
+  @ViewChild('fileInput')
+  fileInput?: ElementRef<HTMLInputElement>;
   private widgetId?: number;
 
   newWarrantyClaimForm: FormGroup;
@@ -751,13 +753,34 @@ export class LandingPageComponent
     // const token = grecaptcha.getResponse(this.widgetId);
     // if (token) {
     this.landingPageService.createWarrantyClaim(data).subscribe({
-      next: () => {
-        this.notification.success(
-          NOTIFICATION_TITLE.success,
-          'Đăng ký thành công',
-        );
-        this.newWarrantyClaimForm.reset();
-        // this.resetCaptcha();
+      next: (res) => {
+        const claimId = res.data.Id;
+        if (this.selectedFiles.length > 0 && claimId) {
+          this.landingPageService
+            .uploadFiles(claimId, this.selectedFiles)
+            .subscribe({
+              next: () => {
+                this.notification.success(
+                  NOTIFICATION_TITLE.success,
+                  'Đăng ký thành công và đã tải lên tệp đính kèm',
+                );
+                this.resetFormAfterSubmit();
+              },
+              error: () => {
+                this.notification.warning(
+                  NOTIFICATION_TITLE.warning,
+                  'Đăng ký thành công nhưng tải lên tệp đính kèm thất bại',
+                );
+                this.resetFormAfterSubmit();
+              },
+            });
+        } else {
+          this.notification.success(
+            NOTIFICATION_TITLE.success,
+            'Đăng ký thành công',
+          );
+          this.resetFormAfterSubmit();
+        }
       },
       error: (error: APIResponse<WarrantyClaim> | any) => {
         this.notification.error(
@@ -772,6 +795,14 @@ export class LandingPageComponent
     //     'Vui lòng nhập captcha hợp lệ',
     //   );
     // }
+  }
+
+  private resetFormAfterSubmit() {
+    this.newWarrantyClaimForm.reset();
+    this.selectedFiles = [];
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
   }
   filterStatus(status: number) {
     this.currentFilter = status;

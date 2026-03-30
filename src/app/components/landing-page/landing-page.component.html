@@ -1,67 +1,19 @@
 <div class="custom-portal">
   <ng-container #viewContainer />
 </div>
-<header tuiNavigationHeader>
-  <button
-    title="Menu"
-    tuiIconButton
-    tuiNavigationDrawer
-    type="button"
-    [(open)]="open"
-    class="menu-mobile"
-  >
-    <tui-data-list>
-      @for (group of drawer | keyvalue; track group.key) {
-        <tui-opt-group [label]="">
-          @for (item of group.value; track item) {
-            <button
-              tuiOption
-              new
-              type="button"
-              (click)="open = false"
-              [iconStart]="item.icon"
-              [class.active]="currentTab == item.tabIndex"
-              (click)="
-                item.tabIndex ? (currentTab = item.tabIndex) : currentTab
-              "
-            >
-              {{ item.name }}
-            </button>
-          }
-        </tui-opt-group>
-      }
-    </tui-data-list>
-  </button>
-  <span tuiNavigationLogo (click)="currentTab = 0">
-    <tui-icon icon="@tui.home" />
-    <span tuiFade class="cursor-pointer">Warranty Portal</span>
-  </span>
-  <hr />
-  <!-- @if (currentUser) {
-    <button
-      appearance="secondary-grayscale"
-      iconStart="@tui.house"
-      tuiButton
-      type="button"
-      (click)="navigateToAdmin()"
-    >
-      Trang chủ
-    </button>
-  } @else {
-    <button
-      appearance="secondary-grayscale"
-      iconStart="@tui.log-in"
-      tuiButton
-      type="button"
-      (click)="navigateToLogin()"
-    >
-      Đăng nhập
-    </button>
-  } -->
-</header>
+
 <div class="content-div">
   <aside [tuiNavigationAside]="expanded" class="menu-desktop">
     <header>
+      <button
+        tuiAsideItem
+        type="button"
+        iconStart="@tui.home"
+        class="home-btn"
+        (click)="currentTab = 0"
+      >
+        {{ expanded ? "Warranty Portal" : "Warranty Portal" }}
+      </button>
       <button
         tuiAsideItem
         type="button"
@@ -116,11 +68,7 @@
         @if (currentTab == 0) {
           <section id="warranty-history" class="page active">
             <div class="page-header">
-              <div class="icon-wrapper">
-                <div class="warranty-icon">🌏</div>
-              </div>
               <h2>Trung tâm hỗ trợ khách hàng</h2>
-              <p>Trung tâm Dịch vụ & Bảo hành Chính hãng</p>
             </div>
             <div class="p-3 pb-1">
               <div class="services-grid">
@@ -215,11 +163,7 @@
         @if (currentTab == 1) {
           <section id="create-request" class="page active">
             <div class="page-header">
-              <div class="icon-wrapper">
-                <div class="warranty-icon">🛡️</div>
-              </div>
               <h2>{{ title }}</h2>
-              <p>{{ subTitle }}</p>
             </div>
             @if (currentSection == 1) {
               <form
@@ -941,11 +885,7 @@
         @if (currentTab == 2) {
           <section id="warranty-history" class="page active">
             <div class="page-header">
-              <div class="icon-wrapper">
-                <div class="warranty-icon">📋</div>
-              </div>
               <h2>Lịch sử bảo hành</h2>
-              <p>Tìm kiếm và theo dõi các yêu cầu bảo hành của bạn</p>
             </div>
 
             <div class="search-box">
@@ -1073,11 +1013,7 @@
         @if (currentTab == 3) {
           <section id="contact" class="page active">
             <div class="page-header">
-              <div class="icon-wrapper">
-                <div class="warranty-icon">💼</div>
-              </div>
               <h2>Liên hệ với chúng tôi</h2>
-              <p>Trung tâm bảo hành luôn sẵn sàng hỗ trợ bạn</p>
             </div>
 
             <div class="contact-container">

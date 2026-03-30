@@ -57,4 +57,14 @@ export class LandingPageService {
       environment.host + `api/serialcheck?serial=${serial}`
     );
   }
+  uploadFiles(id: number, files: File[]) {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files', file, file.name);
+    });
+    return this.http.post<APIResponse<any>>(
+      this.apiUrl + `${id}/upload`,
+      formData
+    );
+  }
 }

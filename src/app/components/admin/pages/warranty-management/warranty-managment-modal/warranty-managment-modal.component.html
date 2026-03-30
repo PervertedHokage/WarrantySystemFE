@@ -530,6 +530,7 @@
                     nzMultiple
                     nzType="select"
                     [nzShowUploadList]="true"
+                    (nzChange)="onUploadAttachment($event)"
                   >
                     <button nz-button nzType="default">
                       <span nz-icon nzType="upload"></span>
@@ -548,7 +549,7 @@
             <nz-table
               nzBordered
               [nzShowPagination]="false"
-              [nzData]="[]"
+              [nzData]="warrantyClaim.Attachments"
               style="margin-top: 15px"
             >
               <thead>
@@ -562,89 +563,39 @@
               </thead>
 
               <tbody>
-                <tr>
-                  <td>hinh_anh_loi_1.jpg</td>
-                  <td>Hình ảnh</td>
-                  <td>2.4 MB</td>
-                  <td>admin</td>
-                  <td>
-                    <button
-                      nz-button
-                      nzType="primary"
-                      nzSize="small"
-                      nzShape="circle"
-                    >
-                      <span nz-icon nzType="download"></span>
-                    </button>
+                @for (attachment of warrantyClaim.Attachments; track attachment.Id) {
+                  <tr>
+                    <td>{{ attachment.FileName }}</td>
+                    <td>{{ attachment.FileType }}</td>
+                    <td>
+                      {{ (attachment.FileSize / 1024 / 1024).toFixed(2) }} MB
+                    </td>
+                    <td>{{ attachment.CreatedBy }}</td>
+                    <td>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nzSize="small"
+                        nzShape="circle"
+                        (click)="downloadAttachment(attachment)"
+                      >
+                        <span nz-icon nzType="download"></span>
+                      </button>
 
-                    <button
-                      nz-button
-                      nzType="default"
-                      nzDanger
-                      nzSize="small"
-                      nzShape="circle"
-                      style="margin-left: 6px"
-                    >
-                      <span nz-icon nzType="delete"></span>
-                    </button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>bao_gia.pdf</td>
-                  <td>PDF</td>
-                  <td>1.2 MB</td>
-                  <td>admin</td>
-                  <td>
-                    <button
-                      nz-button
-                      nzType="primary"
-                      nzSize="small"
-                      nzShape="circle"
-                    >
-                      <span nz-icon nzType="download"></span>
-                    </button>
-
-                    <button
-                      nz-button
-                      nzType="default"
-                      nzDanger
-                      nzSize="small"
-                      nzShape="circle"
-                      style="margin-left: 6px"
-                    >
-                      <span nz-icon nzType="delete"></span>
-                    </button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>work_order.docx</td>
-                  <td>Word</td>
-                  <td>580 KB</td>
-                  <td>admin</td>
-                  <td>
-                    <button
-                      nz-button
-                      nzType="primary"
-                      nzSize="small"
-                      nzShape="circle"
-                    >
-                      <span nz-icon nzType="download"></span>
-                    </button>
-
-                    <button
-                      nz-button
-                      nzType="default"
-                      nzDanger
-                      nzSize="small"
-                      nzShape="circle"
-                      style="margin-left: 6px"
-                    >
-                      <span nz-icon nzType="delete"></span>
-                    </button>
-                  </td>
-                </tr>
+                      <button
+                        nz-button
+                        nzType="default"
+                        nzDanger
+                        nzSize="small"
+                        nzShape="circle"
+                        style="margin-left: 6px"
+                        (click)="deleteAttachment(attachment)"
+                      >
+                        <span nz-icon nzType="delete"></span>
+                      </button>
+                    </td>
+                  </tr>
+                }
               </tbody>
             </nz-table>
           </div>

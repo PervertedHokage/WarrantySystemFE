@@ -63,6 +63,67 @@
     background-color: var(--secondary-color);
     color: white;
   }
+
+  aside {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    background: linear-gradient(180deg, #001f3f 0%, #003366 100%) !important;
+    color: white !important;
+
+    &::before,
+    &::after {
+      background: transparent !important;
+      display: none !important;
+    }
+
+    header {
+      background: transparent !important;
+
+      &::before,
+      &::after {
+        background: transparent !important;
+        display: none !important;
+      }
+    }
+
+    [tuiAsideItem],
+    .home-btn {
+      color: white !important;
+      transition: all 0.2s ease !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+
+      &[data-appearance="active"],
+      &[tuiAppearanceState="active"],
+      &.active {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-left: 4px solid var(--secondary-color) !important;
+      }
+    }
+  }
+
+  div[tuiNavigationMain] {
+    border-radius: 0 !important;
+  }
+
+  .home-btn {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+  }
+
+  // Target ALL sidebar icons when collapsed for perfect centering
+  aside[data-state="collapsed"] {
+    [tuiAsideItem],
+    .home-btn {
+      padding: 0 !important;
+      justify-content: center !important;
+    }
+  }
 }
 
 * {
@@ -112,13 +173,13 @@ button[tuiOption].active {
   /* horizontal only */
   align-items: stretch;
   /* NOT center */
-  padding: 20px;
+  padding: 0;
 }
 
 .container {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 0;
+  box-shadow: none;
   width: 100%;
   max-width: 100%;
   min-height: 100%;
@@ -422,16 +483,16 @@ button[tuiOption].active {
 
 .content-div {
   display: flex;
-  height: calc(100% - 48px);
+  height: 100%;
 }
 
 aside {
   border: 0 !important;
-  height: calc(100vh - 48px) !important;
+  height: 100vh !important;
 }
 
 div[tuiNavigationMain] {
-  min-height: calc(100vh - 48px);
+  min-height: 100vh;
   height: auto;
   width: 100%;
   background: linear-gradient(135deg, #e0f7ff 0%, #b3e5fc 50%, #4fc3f7 100%);
@@ -443,14 +504,14 @@ div[tuiNavigationMain] {
 }
 
 :host {
-  --primary-color: #47515b;
-  --secondary-color: #3498db;
+  --primary-color: #001f3f;
+  --secondary-color: #1e90ff;
   --accent-color: #e74c3c;
-  --light-color: #ecf0f1;
-  --dark-color: #2c3e50;
+  --light-color: #f0f8ff;
+  --dark-color: #001f3f;
   --success-color: #27ae60;
   --border-radius: 8px;
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   --transition: all 0.3s ease;
 }
 
@@ -537,25 +598,21 @@ div[tuiNavigationMain] {
 
 .page-header {
   border-bottom: 1px solid #ddd;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
   background: linear-gradient(
     300deg,
-    deepskyblue,
-    #32cd32,
-    #4169e1,
-    #228b22,
     #0000ff,
-    #008000,
+    #1e90ff,
     #00008b,
-    #006400,
-    #4682b4,
-    #20b2aa
+    #4169e1,
+    #00bfff,
+    #191970
   );
   background-size: 600% 600%;
-  animation: gradient-animation 60s ease infinite;
+  animation: gradient-animation 20s ease infinite;
   color: white;
-  padding: 40px 30px;
+  padding: 18px 30px;
   text-align: center;
 }
 
@@ -575,9 +632,9 @@ div[tuiNavigationMain] {
 
 .page-header h2 {
   color: white;
-  font-size: 2.8rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 16px;
+  margin-bottom: 0;
   position: relative;
   letter-spacing: -1px;
   text-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);

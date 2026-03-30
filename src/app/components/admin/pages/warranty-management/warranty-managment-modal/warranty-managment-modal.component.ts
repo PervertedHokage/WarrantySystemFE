@@ -28,6 +28,8 @@ import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { environment } from '../../../../../environments/environment';
+import { WarrantyClaimAttachment } from '../../../../../models/warranty-claims/warranty-claim-attachment.model';
 import { WarrantyClaimDTO } from '../../../../../models/warranty-claims/warranty-claim-dto.model';
 import { WarrantyClaimManagementService } from '../../../../../services/warranty-claim-management.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -110,6 +112,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
   trackings: WarrantyClaimTracking[] = [];
   deletedTrackings: WarrantyClaimTracking[] = [];
   loadedTabs: Set<number> = new Set([1]);
+  baseUrl = environment.host;
 
   constructor(
     @Inject(NZ_MODAL_DATA)
@@ -540,5 +543,35 @@ export class WarrantyManagmentModalComponent implements OnInit {
     });
 
     return true;
+  }
+
+  downloadAttachment(attachment: WarrantyClaimAttachment) {
+    const url = this.baseUrl + attachment.FilePath;
+    window.open(url, '_blank');
+  }
+
+  onUploadAttachment(event: any) {
+    const files: File[] = event.target.files || event.fileList?.map((f: any) => f.originFileObj) || [];
+    if (files.length > 0) {
+      this.landingPageService.uploadFiles(this.warrantyClaim.Id, files).subscribe({
+        next: (res) => {
+          this.notification.success('Thông báo', 'Tải lên tài liệu thành công');
+          this.warrantyClaim.Attachments = [...(this.warrantyClaim.Attachments || []), ...res.data];
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.notification.error('Lỗi', 'Tải lên tài liệu thất bại');
+        }
+      });
+    }
+  }
+
+  deleteAttachment(attachment: WarrantyClaimAttachment) {
+    if (confirm('Bạn có chắc chắn muốn xóa tài liệu này không?')) {
+      // Assuming there's a delete endpoint or we just remove it from the list for now
+      // If there's no BE delete yet, we might need to add it or just advise user
+      this.warrantyClaim.Attachments = this.warrantyClaim.Attachments.filter(a => a.Id !== attachment.Id);
+      this.notification.info('Thông báo', 'Đã xóa tài liệu khỏi danh sách (tạm thời)');
+    }
   }
 }
