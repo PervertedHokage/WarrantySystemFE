@@ -226,6 +226,12 @@ export class LandingPageComponent
   previewType: 'image' | 'pdf' | null = null;
   isPreviewVisible = false;
   isDragging = false;
+  currentFormStep = 1;
+  readonly formSteps = [
+    { step: 1, label: 'Thông tin khách hàng', icon: 'bi-person' },
+    { step: 2, label: 'Thông tin sản phẩm', icon: 'bi-box-seam' },
+    { step: 3, label: 'Vận chuyển & Bổ sung', icon: 'bi-truck' },
+  ];
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -628,6 +634,7 @@ export class LandingPageComponent
   }
   viewNewWarrantyClaimForm() {
     this.currentSection = 3;
+    this.currentFormStep = 1;
     this.newWarrantyClaimForm.reset();
 
     const patchData: any = {
