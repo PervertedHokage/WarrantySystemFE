@@ -82,7 +82,7 @@ declare let grecaptcha: any;
     AngularSlickgridModule,
     CommonModule,
     FormsModule,
-    KeyValuePipe,
+    // KeyValuePipe,
     NzModalModule,
     TuiAppearance,
     TuiButton,
@@ -91,8 +91,8 @@ declare let grecaptcha: any;
     TuiDataListWrapper,
     TuiDropdown,
     TuiSelect,
-    TuiFade,
-    TuiIcon,
+    // TuiFade,
+    // TuiIcon,
     TuiNavigation,
     TuiTabs,
     TuiTextfield,
@@ -225,14 +225,54 @@ export class LandingPageComponent
   previewUrl: SafeResourceUrl | null = null;
   previewType: 'image' | 'pdf' | null = null;
   isPreviewVisible = false;
+  isDragging = false;
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    const files = event.dataTransfer?.files;
+    if (files) {
+      this.handleFiles(files);
+    }
+  }
 
   onFileSelected(event: any): void {
     const files = event.target.files;
     if (files) {
-      for (let i = 0; i < files.length; i++) {
-        this.selectedFiles.push(files[i]);
-      }
+      this.handleFiles(files);
     }
+  }
+
+  private handleFiles(files: FileList): void {
+    for (let i = 0; i < files.length; i++) {
+      this.selectedFiles.push(files[i]);
+    }
+    // Reset input value so same file can be re-selected if needed
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
+
+  getFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
   removeFile(index: number): void {

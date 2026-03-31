@@ -45,7 +45,7 @@
             tuiAsideItem
             type="button"
             [tuiAppearanceState]="currentTab == 1 ? 'active' : null"
-            (click)="currentTab = 1"
+            (click)="currentTab = 1; currentSection = 1"
           >
             Tạo phiếu bảo hành
           </button>
@@ -171,7 +171,10 @@
                 class="search-form form-container d-flex flex-column"
               >
                 <div class="serial-search-row">
-                  <label for="serial-search">Số Serial (SN) sản phẩm <span style="color: red">*</span></label>
+                  <label for="serial-search"
+                    >Số Serial (SN) sản phẩm
+                    <span style="color: red">*</span></label
+                  >
                   <div class="serial-input-group">
                     <input
                       type="text"
@@ -182,7 +185,11 @@
                       (keyup.enter)="checkStatusBySerial()"
                       required
                     />
-                    <button type="button" class="btn btn-success" (click)="checkStatusBySerial()">
+                    <button
+                      type="button"
+                      class="btn btn-success"
+                      (click)="checkStatusBySerial()"
+                    >
                       <i class="bi bi-arrow-right-circle"></i> Tiếp tục
                     </button>
                   </div>
@@ -714,56 +721,102 @@
 
                   <div class="form-group">
                     <label for="attachments">Đính kèm hình ảnh hay file</label>
-                    <div class="file-input-wrapper">
-                      <input
-                        type="file"
-                        id="attachments"
-                        name="attachments"
-                        multiple
-                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
-                        (change)="onFileSelected($event)"
-                        #fileInput
-                      />
-                    </div>
-
-                    @if (selectedFiles.length > 0) {
-                      <ul class="file-list mt-2">
-                        @for (file of selectedFiles; track $index) {
-                          <li
-                            class="file-item d-flex align-items-center gap-2 mb-2"
+                    <div class="upload-container">
+                      <div
+                        class="upload-zone"
+                        [class.dragging]="isDragging"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)"
+                        (drop)="onDrop($event)"
+                        (click)="fileInput.click()"
+                      >
+                        <input
+                          type="file"
+                          id="attachments"
+                          name="attachments"
+                          multiple
+                          accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+                          (change)="onFileSelected($event)"
+                          #fileInput
+                          class="d-none"
+                        />
+                        <div class="upload-content">
+                          <div class="upload-icon-wrapper">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                          </div>
+                          <div class="upload-text">
+                            <h4>Chọn tệp hoặc kéo thả vào đây</h4>
+                            <p>
+                              Hỗ trợ: JPG, JPEG, PNG, PDF, DOC, DOCX, XLS, XLSX,
+                              PPT, PPTX, TXT (Tối đa 10MB/tệp)
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            tuiButton
+                            appearance="secondary"
+                            size="s"
+                            class="select-button"
                           >
-                            <span class="file-name text-truncate">{{
-                              file.name
-                            }}</span>
-                            <div class="file-actions d-flex gap-2">
-                              @if (
-                                file.type.startsWith("image/") ||
-                                file.type === "application/pdf"
-                              ) {
+                            Chọn tệp
+                          </button>
+                        </div>
+                      </div>
+
+                      @if (selectedFiles.length > 0) {
+                        <div class="file-cards-grid mt-3">
+                          @for (file of selectedFiles; track $index) {
+                            <div class="file-card">
+                              <div class="file-info">
+                                <div class="file-type-icon">
+                                  @if (file.type.startsWith("image/")) {
+                                    <i class="bi bi-file-earmark-image"></i>
+                                  } @else if (file.type === "application/pdf") {
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                  } @else {
+                                    <i class="bi bi-file-earmark-text"></i>
+                                  }
+                                </div>
+                                <div class="file-details">
+                                  <span class="file-name" [title]="file.name">{{
+                                    file.name
+                                  }}</span>
+                                  <span class="file-size">{{
+                                    getFileSize(file.size)
+                                  }}</span>
+                                </div>
+                              </div>
+                              <div class="file-actions">
+                                @if (
+                                  file.type.startsWith("image/") ||
+                                  file.type === "application/pdf"
+                                ) {
+                                  <button
+                                    type="button"
+                                    tuiIconButton
+                                    appearance="flat"
+                                    iconStart="@tui.eye"
+                                    size="s"
+                                    tuiHint="Xem trước"
+                                    (click)="previewFile(file)"
+                                  ></button>
+                                }
                                 <button
                                   type="button"
-                                  tuiButton
-                                  appearance="secondary"
+                                  tuiIconButton
+                                  appearance="flat"
+                                  iconStart="@tui.trash"
                                   size="s"
-                                  (click)="previewFile(file)"
-                                >
-                                  Xem trước
-                                </button>
-                              }
-                              <button
-                                type="button"
-                                tuiButton
-                                appearance="secondary-grayscale"
-                                size="s"
-                                (click)="removeFile($index)"
-                              >
-                                Xóa
-                              </button>
+                                  tuiHint="Xóa"
+                                  (click)="removeFile($index)"
+                                  class="text-danger"
+                                ></button>
+                              </div>
                             </div>
-                          </li>
-                        }
-                      </ul>
-                    }
+                          }
+                        </div>
+                      }
+                    </div>
                   </div>
 
                   <!-- Preview Modal -->
@@ -1007,6 +1060,11 @@
                 >
                 </angular-slickgrid>
               </div>
+            </div>
+            <!-- Footer -->
+            <div class="footer">
+              <p>© 2024 MobyData. Tất cả các quyền được bảo lưu.</p>
+              <p>Hotline: 1800 1234 • Email: support&#64;mobydata.com</p>
             </div>
           </section>
         }

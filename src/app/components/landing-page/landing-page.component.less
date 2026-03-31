@@ -184,6 +184,8 @@ button[tuiOption].active {
   max-width: 100%;
   min-height: 100%;
   height: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -775,27 +777,185 @@ textarea:focus {
   height: auto;
 }
 
-.file-input-wrapper {
-  margin-bottom: 1rem;
+.upload-container {
+  width: 100%;
 }
 
-.file-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 0.5rem;
-}
+.upload-zone {
+  border: 2px dashed #cbd5e0;
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
 
-.file-item {
-  padding: 0.5rem;
-  border-bottom: 1px solid #f0f0f0;
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    border-color: var(--secondary-color);
+    background: #f0f7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+
+    .upload-icon-wrapper i {
+      transform: translateY(-5px);
+      color: var(--secondary-color);
+    }
   }
+
+  &.dragging {
+    border-color: var(--success-color);
+    background: #f0fff4;
+    border-style: solid;
+    transform: scale(1.02);
+  }
+
+  .upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .upload-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 8px;
+
+    i {
+      font-size: 32px;
+      color: #94a3b8;
+      transition: all 0.3s ease;
+    }
+  }
+
+  .upload-text {
+    h4 {
+      margin: 0;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+  }
+
+  .select-button {
+    margin-top: 10px;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    transition: all 0.2s ease !important;
+    padding: 10px 20px !important;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+.file-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.file-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  animation: slideIn 0.3s ease-out;
+
+  &:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+
+    .file-type-icon {
+      width: 40px;
+      height: 40px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      i {
+        font-size: 20px;
+        color: var(--secondary-color);
+      }
+    }
+
+    .file-details {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+
+      .file-name {
+        font-weight: 600;
+        color: #334155;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; // Helper if needed
+        max-width: 150px;
+      }
+
+      .file-size {
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+    }
+  }
+
+  .file-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .file-name {
@@ -1302,7 +1462,7 @@ textarea:focus {
 .footer {
   text-align: center;
   padding: 20px;
-  margin-top: 30px;
+  margin-top: auto;
   color: #666;
   font-size: 0.9rem;
   border-top: 1px solid #eee;

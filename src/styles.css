@@ -16,12 +16,14 @@
   border-radius: 0;
 }
 
-/* Giới hạn độ dài dropdown list của Tabulator - CSS Global */
-.tabulator-edit-list {
-  max-width: 400px !important;
-  min-width: 200px !important;
-  width: 400px !important;
-  box-sizing: border-box !important;
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+app-root {
+  height: 100%;
+  display: block;
 }
 
 * {
