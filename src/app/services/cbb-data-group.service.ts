@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root',
 })

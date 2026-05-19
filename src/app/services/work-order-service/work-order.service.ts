@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { BASE_URL } from '../../runtime';
+import {  Injectable , Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { WorkOrder, WorkOrderSpareDetail } from '../../models/work-order.model';
 import { Product } from '../../models/product.model';
 import { APIResponse } from '../../models/api-response.interface';
@@ -12,14 +12,14 @@ import { WorkOrderByClaimNoDTO } from '../../models/work-orders/work-order-by-cl
   providedIn: 'root',
 })
 export class WorkOrderService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(BASE_URL) private baseUrl: string) {}
 
   getWorkOrder(WorkOrderId: number): Observable<APIResponse<WorkOrder[]>> {
     const asset: any = {
       WorkOrderId: WorkOrderId || 0,
     };
     return this.http.get<APIResponse<WorkOrder[]>>(
-      environment.host + `api/workorder`,
+      this.baseUrl + `api/workorder`,
       { params: asset },
     );
   }
@@ -27,7 +27,7 @@ export class WorkOrderService {
     ClaimNo: string,
   ): Observable<APIResponse<WorkOrderByClaimNoDTO[]>> {
     return this.http.get<APIResponse<WorkOrderByClaimNoDTO[]>>(
-      environment.host + `api/workorder/claim-no?claim-no=${ClaimNo}`,
+      this.baseUrl + `api/workorder/claim-no?claim-no=${ClaimNo}`,
     );
   }
   getWorkOrderDetail(
@@ -37,7 +37,7 @@ export class WorkOrderService {
       WorkOrderId: WorkOrderId || 0,
     };
     return this.http.get<APIResponse<WorkOrderSpareDetail[]>>(
-      environment.host + `api/workorder/work-order-detail`,
+      this.baseUrl + `api/workorder/work-order-detail`,
       { params: asset },
     );
   }
@@ -47,7 +47,7 @@ export class WorkOrderService {
       WarrantyClaimId: WarrantyClaimId || 0,
     };
     return this.http.get<any>(
-      environment.host + `api/workorder/warranty-claim`,
+      this.baseUrl + `api/workorder/warranty-claim`,
       { params: asset },
     );
   }
@@ -57,43 +57,43 @@ export class WorkOrderService {
       Status: Status || 0,
     };
     return this.http.post<any>(
-      environment.host + `api/workorder/employees`,
+      this.baseUrl + `api/workorder/employees`,
       asset,
     );
   }
 
   getStatus(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/workorder/status`);
+    return this.http.get<any>(this.baseUrl + `api/workorder/status`);
   }
 
   getDataProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(environment.host + `api/products`);
+    return this.http.get<Product[]>(this.baseUrl + `api/products`);
   }
 
   getQuotation(): Observable<any> {
-    return this.http.get<any>(environment.host + `api/workorder/quotation`);
+    return this.http.get<any>(this.baseUrl + `api/workorder/quotation`);
   }
 
   getSparePartGroup(): Observable<any> {
     return this.http.get<any>(
-      environment.host + `api/products/spare-parts-group`,
+      this.baseUrl + `api/products/spare-parts-group`,
     );
   }
 
   getWarrantyClaims(): Observable<any> {
     return this.http.get<any>(
-      environment.host + `api/workorder/warranty-claim`,
+      this.baseUrl + `api/workorder/warranty-claim`,
     );
   }
 
   saveDataWorkOrder(data: any): Observable<any> {
     return this.http.post<any>(
-      environment.host + `api/workorder/save-data-work-order`,
+      this.baseUrl + `api/workorder/save-data-work-order`,
       data,
     );
   }
 
   deleteWorkOrders(ids: number[]): Observable<any> {
-    return this.http.post<any>(environment.host + `api/workorder/delete`, ids);
+    return this.http.post<any>(this.baseUrl + `api/workorder/delete`, ids);
   }
 }

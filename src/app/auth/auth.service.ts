@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { BASE_URL, API_KEY } from '../runtime';
+import {  Injectable , Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { PermissionService } from '../services/permission.service';
-import { environment } from '../environments/environment';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NOTIFICATION_TITLE } from '../app.config';
 import { APIResponse } from '../models/api-response.interface';
@@ -16,16 +16,14 @@ import { IUser } from '../models/user.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.host + 'api/home/';
+  private apiUrl = this.baseUrl + 'api/home/';
   private tokenkey = 'token';
   public RedirectUrl: string | null = null;
 
-  constructor(
-    private http: HttpClient,
+  constructor(private http: HttpClient,
     private userService: UserService,
     private permissionService: PermissionService,
-    private notification: NzNotificationService
-  ) {}
+    private notification: NzNotificationService, @Inject(BASE_URL) private baseUrl: string, @Inject(API_KEY) private apiKey: string) {}
 
   login(credentials: { loginname: string; password: string }): Observable<any> {
     return this.http.post(this.apiUrl + 'login', credentials).pipe(
@@ -68,7 +66,7 @@ export class AuthService {
     // Sử dụng API key từ environment
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
-      'x-api-key': environment.apiKey,
+      'x-api-key': this.apiKey,
       'Content-Type': 'application/json',
     });
 

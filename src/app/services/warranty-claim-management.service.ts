@@ -1,7 +1,7 @@
+import { BASE_URL } from '../runtime';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {  Injectable , Inject } from '@angular/core';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { environment } from '../environments/environment';
 import { APIResponse } from '../models/api-response.interface';
 import { WarrantyClaim } from '../models/warranty-claims/warranty-claim.model';
 import { WarrantyClaimDTO } from '../models/warranty-claims/warranty-claim-dto.model';
@@ -10,11 +10,9 @@ import { WarrantyClaimDTO } from '../models/warranty-claims/warranty-claim-dto.m
   providedIn: 'root',
 })
 export class WarrantyClaimManagementService {
-  private apiUrl = environment.host + 'api/warrantyclaim/';
-  constructor(
-    private http: HttpClient,
-    private notification: NzNotificationService,
-  ) {}
+  private apiUrl = this.baseUrl + 'api/warrantyclaim/';
+  constructor(private http: HttpClient,
+    private notification: NzNotificationService,, @Inject(BASE_URL) private baseUrl: string) {}
   getWarrantyClaims(
     phoneNumber: string,
     email: string,

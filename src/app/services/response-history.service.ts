@@ -1,15 +1,15 @@
+import { BASE_URL } from '../runtime';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment';
+import {  Injectable , Inject } from '@angular/core';
 import { APIResponse } from '../models/api-response.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ResponseHistoryService {
-  private apiUrl = environment.host + 'api/responsehistory';
+  private apiUrl = this.baseUrl + 'api/responsehistory';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(BASE_URL) private baseUrl: string) {}
 
   getByClaimId(claimId: number) {
     return this.http.get<APIResponse<any[]>>(`${this.apiUrl}/claim/${claimId}`);

@@ -1,8 +1,7 @@
-import { Injectable, Type } from '@angular/core';
+import { BASE_URL } from '../../../runtime';
+import {  Injectable, Type , Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-
 import { PermissionService } from '../../../services/permission.service';
 
 import { AppUserService } from '../../../services/app-user.service';
@@ -27,14 +26,12 @@ import { CustomerComponent } from '../pages/customer/customer.component';
   providedIn: 'root',
 })
 export class MenuService {
-  private apiUrl = environment.host + 'api/menu/';
+  private apiUrl = this.baseUrl + 'api/menu/';
   //   private apiUrl = HOST + 'api/menu/';
-  constructor(
-    private http: HttpClient,
+  constructor(private http: HttpClient,
     private permissionService: PermissionService,
     private appUserService: AppUserService,
-    private notification: NzNotificationService,
-  ) {}
+    private notification: NzNotificationService,, @Inject(BASE_URL) private baseUrl: string) {}
 
   private menuKeySource = new BehaviorSubject<string>('');
   menuKey$ = this.menuKeySource.asObservable();

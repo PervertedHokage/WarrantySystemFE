@@ -17,7 +17,6 @@ import { NzModalService, NzModalModule, NzModalRef, NZ_MODAL_DATA } from 'ng-zor
 import { HttpClient } from '@angular/common/http';
 import { SaleOrder } from '../../../../../models/sale-order.model';
 import { SalesOrderService } from '../../../../../services/sales-order-service/sales-order.service';
-import { environment } from '../../../../../environments/environment';
 import { ProductService } from '../../../../../services/products-service/product.service';
 
 @Component({

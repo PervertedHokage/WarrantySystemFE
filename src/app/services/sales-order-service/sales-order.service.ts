@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import { BASE_URL } from '../../runtime';
+import {  Injectable , Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { APIResponse } from '../../models/api-response.interface';
 import { SaleOrder } from '../../models/sale-order.model';
 
@@ -10,7 +10,7 @@ import { SaleOrder } from '../../models/sale-order.model';
   providedIn: 'root',
 })
 export class SalesOrderService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(BASE_URL) private baseUrl: string) {}
 
   getSaleOrder(
     OrderId: number,
@@ -22,17 +22,17 @@ export class SalesOrderService {
       .set('FromDateStart', FromDateStart ? FromDateStart.toISOString() : '')
       .set('ToDateStart', ToDateStart ? ToDateStart.toISOString() : '');
     return this.http.get<APIResponse<SaleOrder[]>>(
-      environment.host + `api/saleorder`,
+      this.baseUrl + `api/saleorder`,
       { params }
     );
   }
 
   saveDataSaleOder(data: any): Observable<any> {
-    return this.http.post<any>(environment.host + `api/saleorder`, data);
+    return this.http.post<any>(this.baseUrl + `api/saleorder`, data);
   }
 
   deleteSaleOrder(ids: number[]): Observable<any> {
-    return this.http.post<any>(environment.host + `api/saleorder/delete`, ids);
+    return this.http.post<any>(this.baseUrl + `api/saleorder/delete`, ids);
   }
   exportExcel(OrderId: number, FromDateStart: Date, ToDateStart: Date) {
     let params = new HttpParams()
@@ -40,7 +40,7 @@ export class SalesOrderService {
       .set('FromDateStart', FromDateStart ? FromDateStart.toISOString() : '')
       .set('ToDateStart', ToDateStart ? ToDateStart.toISOString() : '');
     return this.http.get<Blob>(
-      environment.host + `api/saleorder/export-excel`,
+      this.baseUrl + `api/saleorder/export-excel`,
       {
         params,
         responseType: 'blob' as 'json',

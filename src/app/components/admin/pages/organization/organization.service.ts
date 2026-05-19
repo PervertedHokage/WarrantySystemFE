@@ -1,15 +1,14 @@
-import { Injectable } from '@angular/core';
+import { BASE_URL } from '../../../../runtime';
+import {  Injectable , Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../../environments/environment';
-
 @Injectable({
   providedIn: 'root',
 })
 export class OrganizationService {
-  private _url = environment.host + 'api/organization/';
+  private _url = this.baseUrl + 'api/organization/';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(BASE_URL) private baseUrl: string) {}
 
   getOrganizations(): Observable<any> {
     return this.http.get<any>(this._url);

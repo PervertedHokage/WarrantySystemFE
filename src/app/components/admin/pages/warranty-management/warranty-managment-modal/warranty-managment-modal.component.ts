@@ -1,3 +1,4 @@
+import { BASE_URL } from '../../../../../runtime';
 import {
   ChangeDetectorRef,
   Component,
@@ -28,7 +29,6 @@ import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
-import { environment } from '../../../../../environments/environment';
 import { WarrantyClaimAttachment } from '../../../../../models/warranty-claims/warranty-claim-attachment.model';
 import { WarrantyClaimDTO } from '../../../../../models/warranty-claims/warranty-claim-dto.model';
 import { WarrantyClaimManagementService } from '../../../../../services/warranty-claim-management.service';
@@ -112,10 +112,9 @@ export class WarrantyManagmentModalComponent implements OnInit {
   trackings: WarrantyClaimTracking[] = [];
   deletedTrackings: WarrantyClaimTracking[] = [];
   loadedTabs: Set<number> = new Set([1]);
-  baseUrl = environment.host;
+  baseUrl = this.baseUrl;
 
-  constructor(
-    @Inject(NZ_MODAL_DATA)
+  constructor(@Inject(NZ_MODAL_DATA)
     public data: { warrantyClaim: WarrantyClaimDTO },
     private notification: NzNotificationService,
     private warrantyClaimService: WarrantyClaimManagementService,
@@ -126,8 +125,7 @@ export class WarrantyManagmentModalComponent implements OnInit {
     private quotationService: QuotationService,
     private workOrderService: WorkOrderService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
+    private cdr: ChangeDetectorRef,, @Inject(BASE_URL) private baseUrl: string) {
     const input = data.warrantyClaim ?? new WarrantyClaimDTO();
     this.warrantyClaim = new WarrantyClaimDTO(input);
     this.initForm();

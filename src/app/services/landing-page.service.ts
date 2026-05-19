@@ -1,6 +1,6 @@
+import { BASE_URL } from '../runtime';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment';
+import {  Injectable , Inject } from '@angular/core';
 import { WarrantyClaim } from '../models/warranty-claims/warranty-claim.model';
 import { APIResponse } from '../models/api-response.interface';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -12,11 +12,9 @@ import { CheckStatusBySerialResult } from '../models/serial-check-result.model';
   providedIn: 'root',
 })
 export class LandingPageService {
-  private apiUrl = environment.host + 'api/warrantyclaim/';
-  constructor(
-    private http: HttpClient,
-    private notification: NzNotificationService
-  ) {}
+  private apiUrl = this.baseUrl + 'api/warrantyclaim/';
+  constructor(private http: HttpClient,
+    private notification: NzNotificationService, @Inject(BASE_URL) private baseUrl: string) {}
   getWarrantyClaim(phoneNumber: string, email: string, claimNo: string) {
     return this.http.get<APIResponse<WarrantyClaimDTO[]>>(
       this.apiUrl +
@@ -32,29 +30,29 @@ export class LandingPageService {
   }
   getWarrantyClaimTrackings(claimId: number) {
     return this.http.get<APIResponse<WarrantyClaimTracking[]>>(
-      environment.host + `api/warrantyclaimtracking?claim-id=${claimId}`
+      this.baseUrl + `api/warrantyclaimtracking?claim-id=${claimId}`
     );
   }
   createWarrantyClaimTrackings(data: WarrantyClaimTracking) {
     return this.http.post<APIResponse<WarrantyClaimTracking[]>>(
-      environment.host + `api/warrantyclaimtracking`,
+      this.baseUrl + `api/warrantyclaimtracking`,
       data
     );
   }
   updateWarrantyClaimTrackings(data: WarrantyClaimTracking) {
     return this.http.put<APIResponse<WarrantyClaimTracking[]>>(
-      environment.host + `api/warrantyclaimtracking/${data.Id}`,
+      this.baseUrl + `api/warrantyclaimtracking/${data.Id}`,
       data
     );
   }
   deleteWarrantyClaimTrackings(data: WarrantyClaimTracking){
     return this.http.delete<APIResponse<WarrantyClaimTracking[]>>(
-      environment.host + `api/warrantyclaimtracking/${data.Id}`
+      this.baseUrl + `api/warrantyclaimtracking/${data.Id}`
     );
   }
   checkStatus(serial: string) {
     return this.http.get<APIResponse<CheckStatusBySerialResult>>(
-      environment.host + `api/serialcheck?serial=${serial}`
+      this.baseUrl + `api/serialcheck?serial=${serial}`
     );
   }
   uploadFiles(id: number, files: File[]) {

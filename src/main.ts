@@ -4,7 +4,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { ApplicationConfig } from '@angular/core';
-import { BASE_URL, loadRuntimeConfig } from './app/runtime';
+import { BASE_URL, API_KEY, loadRuntimeConfig } from './app/runtime';
 
 (async () => {
   const runtime = await loadRuntimeConfig();
@@ -12,6 +12,7 @@ import { BASE_URL, loadRuntimeConfig } from './app/runtime';
     providers: [
       ...appConfig.providers,
       { provide: BASE_URL, useValue: runtime.apiBaseUrl },
+      { provide: API_KEY, useValue: runtime.apiKey },
     ],
   };
   await bootstrapApplication(AppComponent, config).catch((err) =>

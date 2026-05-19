@@ -1,3 +1,4 @@
 {
-  "apiBaseUrl": "https://10.20.28.161:500/api"
+  "apiBaseUrl": "https://10.20.28.161:500/api",
+  "apiKey": "YOUR_API_KEY_HERE"
 }

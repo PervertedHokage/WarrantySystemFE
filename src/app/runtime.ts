@@ -1,8 +1,10 @@
 import { InjectionToken } from '@angular/core';
 
 export const BASE_URL = new InjectionToken<string>('BASE_URL');
+export const API_KEY = new InjectionToken<string>('API_KEY');
 export interface RuntimeConfig {
   apiBaseUrl: string;
+  apiKey: string;
 }
 
 export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
@@ -14,6 +16,6 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
     return (await res.json()) as RuntimeConfig;
   } catch (err) {
     console.error('Could not load runtime config, using fallback', err);
-    return { apiBaseUrl: '' };
+    return { apiBaseUrl: '', apiKey: '' };
   }
 }
